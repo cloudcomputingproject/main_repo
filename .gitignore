@@ -1,5 +1,13 @@
+# Standard ignores
 *.pyc
-# don't include third-party dependencies.
-lib/
-!lib/README.md
-.DS_Store
+*.pyo
+*.DS_Store
+*.swp
+*.idea
+*.project
+*.pydevproject
+*.kpf
+venv
+
+# Don't store secret keys in version control
+secret_keys.py
