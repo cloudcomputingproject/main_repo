@@ -2,7 +2,7 @@
 
 {% block style_block %}
     <style type="text/css">
-        #map { height: 100%; }
+        #map { height: 100vh; }
 
     </style>
 {% endblock %}
@@ -20,32 +20,10 @@
 
 {% block tail_script %}
     <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
-
-        var FormHelpers = {
-            validate: function (form, evt) {
-                // Form validation for modal dialog
-                var example_name = form.find('#example_name').val();
-                var example_description = form.find('#example_description').val();
-                if (!(example_name)) {
-                    evt.preventDefault();
-                    Utils.renderFieldErrorTooltip('#example_name', 'Name is required', 'right');
-                }
-                if (!(example_description)) {
-                    evt.preventDefault();
-                    Utils.renderFieldErrorTooltip('#example_description', 'Description is required', 'right');
-                }
-            },
-            init: function () {
-                var self = this;
-                var example_form = $('#new-example-form');
-                example_form.on('submit', function (evt) {
-                    self.validate(example_form, evt)
-                });
-            }
-        };
-        $(document).ready(function() {
-            FormHelpers.init();
-        });
+        var map = L.map('map').setView([-37.87, 175.475], 5);
+        var tiles = L.tileLayer('http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', 
+            {
+                id: 'examples.map-i86nkdio'
+            }).addTo(map);
     </script>
 {% endblock tail_script %}
