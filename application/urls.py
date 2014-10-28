@@ -7,8 +7,8 @@ URL dispatch route mappings and error handlers
 from flask import render_template
 
 from application import app
-from application import views.views
-from application import views.home
+from application.views import views
+from application.home import home
 
 
 ## URL dispatch rules
