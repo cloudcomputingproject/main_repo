@@ -8,7 +8,7 @@ from flask import render_template
 
 from application import app
 from application.views import views
-from application.home import home
+from application.views import home
 
 
 ## URL dispatch rules
