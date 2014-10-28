@@ -1,11 +1,9 @@
 """
-views.py
+home.py
 
 URL route handlers
 
-Note that any handler params must match the URL route params.
-For example the *say_hello* handler, handling the URL route '/hello/<username>',
-  must be passed *username* as the argument.
+
 
 """
 from google.appengine.api import users
