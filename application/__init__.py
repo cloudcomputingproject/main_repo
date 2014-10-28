@@ -15,10 +15,7 @@ import all blueprint modules
 # that are dependent on app (e.g views.home)
 app = Flask('application')
 
-print "==========="
 from views.home import home
-print "+++++++++++"
-
 
 
 if os.getenv('FLASK_CONF') == 'DEV':
