@@ -7,6 +7,12 @@ import os
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.debug import DebuggedApplication
 
+"""
+import all blueprint modules
+"""
+from .views.home import home
+
+
 app = Flask('application')
 
 if os.getenv('FLASK_CONF') == 'DEV':
@@ -35,4 +41,4 @@ else:
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 # Pull in URL dispatch routes
-import urls
+app.register_blueprint(profile)
