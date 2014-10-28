@@ -10,10 +10,16 @@ from werkzeug.debug import DebuggedApplication
 """
 import all blueprint modules
 """
-from .views.home import home
 
-
+# App needs to be initialised before any other modules 
+# that are dependent on app (e.g views.home)
 app = Flask('application')
+
+print "==========="
+from views.home import home
+print "+++++++++++"
+
+
 
 if os.getenv('FLASK_CONF') == 'DEV':
 	#development settings n
@@ -41,4 +47,4 @@ else:
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 # Pull in URL dispatch routes
-app.register_blueprint(profile)
+app.register_blueprint(home)
