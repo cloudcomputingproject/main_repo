@@ -21,13 +21,11 @@ from application.models import ExampleModel
 
 from application import app
 
+
 # Flask-Cache (configured to use App Engine Memcache API)
 cache = Cache(app)
 
 home = Blueprint('home', __name__)
-
-
-
 
 @home.route('/')
 def homepage():

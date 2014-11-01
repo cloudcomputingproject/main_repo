@@ -7,15 +7,16 @@ import os
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.debug import DebuggedApplication
 
-"""
-import all blueprint modules
-"""
 
 # App needs to be initialised before any other modules 
 # that are dependent on app (e.g views.home)
 app = Flask('application')
 
+"""
+import all blueprint modules
+"""
 from views.home import home
+from api.external_api import external_api
 
 
 if os.getenv('FLASK_CONF') == 'DEV':
@@ -45,3 +46,4 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 # Pull in URL dispatch routes
 app.register_blueprint(home)
+app.register_blueprint(external_api)
