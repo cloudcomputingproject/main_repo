@@ -37,7 +37,7 @@ supported external servers, our corresponding method and the parameters it takes
 1 worldbank - getWorldBankData()  params: dataType?date&format 
 '''
 servers = {
-'worldbank':  id:1
+'worldbank' : 1
 }
 
 @external_api.route('/api/'+str(servers['worldbank'])+'/<dataType>/<date>/<format>')
