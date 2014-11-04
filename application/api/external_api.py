@@ -22,6 +22,7 @@ from application import app
 
 from servers import worldbank
 from servers import geocoding
+from servers import foodstandartsagency
 
 # Flask-Cache (configured to use App Engine Memcache API)
 cache = Cache(app)
@@ -39,7 +40,8 @@ supported external servers, our corresponding method and the parameters it takes
 '''
 servers = {
 'worldbank' : 1,
-'geocoding' : 2 
+'geocoding' : 2,
+'foodstandartsagency' : 3
 }
 
 @external_api.route('/api/'+str(servers['worldbank'])+'/<dataType>/<date>/<format>')
@@ -47,7 +49,6 @@ servers = {
 def getWorldBankData(dataType, date, format):
 	# result = worldbank.getData("NY.GDP.MKTP.CD", "date=2013", "format=json")
 	result = worldbank.getData(dataType, date, format)
-
  	return jsonify(result)
 
 
@@ -56,6 +57,13 @@ def getWorldBankData(dataType, date, format):
 def getGeocodingData(address):
 	result = geocoding.getData(address)
  	return jsonify(result)
+
+# Gets data from the Food Standarts Agency
+@external_api.route('/api/'+str(servers['foodstandartsagency'])+'/<name>/<location>/<format>')
+def getFoodStandartsAgencyData(name, location, format):
+	# result = foodstandartsagency.getData("spitfire", "southampton", "json")
+	result = foodstandartsagency.getData(name, location, format)
+	return jsonify(result)
 
 
 
