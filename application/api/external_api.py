@@ -42,7 +42,7 @@ supported external servers, our corresponding method and the parameters it takes
 servers = {
 'worldbank' : 1,
 'geocoding' : 2,
-'foodstandartsagency' : 3
+'foodstandartsagency' : 3,
 'police' : 4
 }
 
