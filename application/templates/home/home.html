@@ -8,16 +8,20 @@
 {% endblock %}
 
 {% block content %}
-
+	
     <h1 id="">THIS IS HOME</h1>
     <div>&nbsp;</div>
- 
-  <div id="map"></div>
+  
+
+    <input id="input1" type="text" value="England">
+  	<button type="button" value='Click' id='btn1' onClick='zoomTo(document.getElementById("input1").value,10);' > Go </button>	
+    <br>  
+    <div id="map"></div>
 
 
 {% endblock content %}
  
 
 {% block tail_script %}
-    <script src="/static/js/home.js"></script>
+<script src="/static/js/home.js"></script>
 {% endblock tail_script %}
