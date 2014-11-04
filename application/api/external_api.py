@@ -23,6 +23,7 @@ from application import app
 from servers import worldbank
 from servers import geocoding
 from servers import foodstandartsagency
+from servers import police
 
 # Flask-Cache (configured to use App Engine Memcache API)
 cache = Cache(app)
@@ -41,7 +42,8 @@ supported external servers, our corresponding method and the parameters it takes
 servers = {
 'worldbank' : 1,
 'geocoding' : 2,
-'foodstandartsagency' : 3
+'foodstandartsagency' : 3,
+'police' : 4
 }
 
 @external_api.route('/api/'+str(servers['worldbank'])+'/<dataType>/<date>/<format>')
@@ -65,13 +67,36 @@ def getFoodStandartsAgencyData(name, location, format):
 	result = foodstandartsagency.getData(name, location, format)
 	return jsonify(result)
 
+#Gets the crime categories from the police api
+@external_api.route('/api/'+str(servers['police']))
+def getCrimeCategories():
+        result = police.getCategories()
+        return jsonify(result)
 
+# Gets the neighbourhoods in a county from the police api
+@external_api.route('/api/'+str(servers['police'])+'/<county>')
+def getNeighbourhoods(county):
+	result = police.getNeighbourhoodsData(county)
+	return jsonify(result)
 
+# Gets the boundary coordinates for a neighbourhood in a county
+@external_api.route('/api/'+str(servers['police'])+'/<county>/<nhood>')
+def getBoundary(county, nhood):
+	result = police.getBoundaryData(county, nhood)
+	return jsonify(result)
 
+# Gets the crimes done in this location during that month from the police api
+# The date must be a string in the format 'yyyy-mm'
+@external_api.route('/api/'+str(servers['police'])+'/<category>/<lat>/<lng>/<date>')
+def getCrimes(category, lat, lng, date):
+	result = police.getCrimesData(category, lat, lng, date)
+	return jsonify(result)
 
-
-
-
-
+# Gets the crimes done in this area during that month from the police api
+# The date must be a string in the format 'yyyy-mm'
+@external_api.route('/api/'+str(servers['police'])+'/<category>/<latArr>/<lngArr>/<date>')
+def getCrimesInArea(category, latArr, lngArr, date):
+	result = police.getCrimesInAreaData(category, latArr, lngArr, date)
+	return jsonify(result)
 
 
