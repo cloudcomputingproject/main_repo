@@ -76,27 +76,27 @@ def getCrimeCategories():
 # Gets the neighbourhoods in a county from the police api
 @external_api.route('/api/'+str(servers['police'])+'/<county>')
 def getNeighbourhoods(county):
-	result = police.getNeighbourhoods(county)
+	result = police.getNeighbourhoodsData(county)
 	return jsonify(result)
 
 # Gets the boundary coordinates for a neighbourhood in a county
 @external_api.route('/api/'+str(servers['police'])+'/<county>/<nhood>')
 def getBoundary(county, nhood):
-	result = police.getBoundary(county, nhood)
+	result = police.getBoundaryData(county, nhood)
 	return jsonify(result)
 
 # Gets the crimes done in this location during that month from the police api
 # The date must be a string in the format 'yyyy-mm'
 @external_api.route('/api/'+str(servers['police'])+'/<category>/<lat>/<lng>/<date>')
 def getCrimes(category, lat, lng, date):
-	result = police.getCrimes(category, lat, lng, date):
+	result = police.getCrimesData(category, lat, lng, date)
 	return jsonify(result)
 
 # Gets the crimes done in this area during that month from the police api
 # The date must be a string in the format 'yyyy-mm'
 @external_api.route('/api/'+str(servers['police'])+'/<category>/<latArr>/<lngArr>/<date>')
-def getCrimes(category, latArr, lngArr, date):
-	result = police.getCrimes(category, latArr, lngArr, date):
+def getCrimesInArea(category, latArr, lngArr, date):
+	result = police.getCrimesInAreaData(category, latArr, lngArr, date)
 	return jsonify(result)
 
 

@@ -36,12 +36,12 @@ def getCategories():
     return getData()
 
 #Neighbourhoods must be lower case and the white spaces replaced with '-'
-def getNeighbourhoods(county):
+def getNeighbourhoodsData(county):
     global url
     url += county + '/neighbourhoods'
     return getData()
 
-def getBoundary(county, nhood):
+def getBoundaryData(county, nhood):
     global url
     url += county + '/' + getNeighbourhoodID(county, nhood) + '/boundary'
     return getData()
@@ -55,12 +55,12 @@ def getNeighbourhoodID(county, nhood):
         if data[j]["name"] == nhood:
             return data[j]["id"]
 #date must be in the format yyyy-mm
-def getCrimes(category, lat, lng, date):
+def getCrimesData(category, lat, lng, date):
     global url
     url+='crimes-street/' + category + '?lat=' + str(lat) + '&lng=' + str(lng) + '&date=' + date
     return getData()
 
-def getCrimesInArea(category, latArr, lngArr, date):
+def getCrimesInAreaData(category, latArr, lngArr, date):
     global url
     url+='crimes-street/' + category + '?poly='
     for j in xrange(0, len(latArr)):
