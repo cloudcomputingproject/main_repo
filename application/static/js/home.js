@@ -11,11 +11,13 @@ var map;
 
 
 
+var domain = document.location.origin;
 var init = function(locationName,zoomLevel) {
- 	//zoomLevel = 8;
-	//var locationName = "Cambrige";
-	if (!map) {
-		var geoCodingAPI_URL = "http://localhost:8080/api/2/";
+  //zoomLevel = 8;
+  //var locationName = "Cambrige";
+  if (!map) {
+    var geoCodingAPI_URL = domain + "/api/2/";
+		// var geoCodingAPI_URL = "http://localhost:8080/api/2/";
 		$.getJSON( geoCodingAPI_URL+locationName).success(function( json ) {
 		// convert name to coordinates using /api/2/
 			var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
@@ -44,7 +46,7 @@ var init = function(locationName,zoomLevel) {
 
 
 var zoomTo = function(locationName,zoomLevel) {
-	var geoCodingAPI_URL = "http://localhost:8080/api/2/";
+	var geoCodingAPI_URL = domain + "/api/2/England/";
 	$.getJSON( geoCodingAPI_URL+locationName).success(function( json ) {
 		// convert name to coordinates using /api/2/
 		var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
