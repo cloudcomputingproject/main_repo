@@ -16,8 +16,8 @@ app = Flask('application')
 import all blueprint modules
 """
 from views.home import home
-from api.external_api import external_api
-
+# from api.external_api import external_api
+from request_handler.handler import handler
 
 if os.getenv('FLASK_CONF') == 'DEV':
 	#development settings n
@@ -46,4 +46,5 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 # Pull in URL dispatch routes
 app.register_blueprint(home)
-app.register_blueprint(external_api)
+# app.register_blueprint(external_api)
+app.register_blueprint(handler)
