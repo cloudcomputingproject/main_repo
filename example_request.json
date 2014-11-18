@@ -1,0 +1,5 @@
+{ "location" : "Some location name or null",
+  "features" : [{"name" : "feature_name","args" : {"arg_name":"value"}},
+                {"name" : "new_name","args" : {"arg_name":"value"}}
+]
+ }

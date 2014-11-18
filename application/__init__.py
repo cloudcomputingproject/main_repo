@@ -44,7 +44,7 @@ else:
 # Enable jinja2 loop controls extension
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
-# Pull in URL dispatch routes
+# Pull in URL dispatch routes - here all blueprints are registered
 app.register_blueprint(home)
 # app.register_blueprint(external_api)
 app.register_blueprint(handler)

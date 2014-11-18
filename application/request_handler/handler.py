@@ -27,12 +27,23 @@ ideally, the request_handler accepts POST requests, extract the data in the POST
 calls the controller method which returns the JSON object which the client expect,
 and then finally, send the result(the json) back to the client
 '''
+'''
+body of the request has to contain JSON object with the following schema:
+{ "location" : "Some location name or null",
+  "features" : [{"name" : "feature_name","args" : {"arg_name":"value"}}
+]
+ }
+'''
+
 @handler.route('/app/', methods=['POST'])
 def handleReq():
 	#extract the data sent from the client
 	#the POST request's body should contain a key-value pair and the name of the key is 'data'
-	input_data = request.form['data']
-	result = controller.main()
+	print "inside POST request handler"
+	input_data = request.data
+	print "data received ",input_data
+	input_data = json.loads(input_data)	
+	result = controller.main(input_data)
  	return result
 
 
