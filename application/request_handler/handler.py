@@ -55,12 +55,25 @@ def handleGeoLocReq():
 def handleDataReq():
 	#extract the data sent from the client
 	#the POST request's body should contain a key-value pair and the name of the key is 'data'
-	print "inside POST request handler"
-	input_data = request.data
-	print "data received ",input_data
-	input_data = json.loads(input_data)	
-	result = controller.main(input_data)
- 	return result
+	
+ 	
+ 	response = "There was an error"
+	try:
+	
+		print "inside POST request handler"
+		input_data = request.data
+		print "data received ",input_data
+		input_data = json.loads(input_data)	
+		response = controller.main(input_data)
+
+	except Exception, e:
+		response = str(e),400
+		print response
+	except ValueError as e:
+		response = str(e),400
+		print response	
+	finally:
+		return response
 
 
 
