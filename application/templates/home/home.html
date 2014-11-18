@@ -10,13 +10,17 @@
 {% block content %}
 	
     <h1 id="">THIS IS HOME</h1>
-    <div>&nbsp;</div>
-  
 
-    <input id="input1" type="text" value="England">
-  	<button type="button" value='Click' id='btn1' onClick='zoomTo(document.getElementById("input1").value,10);' > Go </button>	
-    <br>  
+    <div>&nbsp;</div>
+
+    <input id="location" type="text" value="England">
+  	<button type="button" value='Click' id='go' onClick='zoomTo(document.getElementById("location").value,10);'>Go</button>	
+    
+    <div>&nbsp;</div>
+
     <div id="map"></div>
+
+    <div>&nbsp;</div>s
 
 
 {% endblock content %}
