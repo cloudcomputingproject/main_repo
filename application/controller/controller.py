@@ -14,6 +14,7 @@ from application import app
 from servers import police
 from servers import geocoding
 from class_definitions import Boundaries
+from datetime import date
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {"police" : lambda arg: processPolice(arg),
@@ -57,17 +58,31 @@ def processFeatures(features):
 	response =""
 	for feature in features:
 		response+=(featuresOptions[feature["name"]](feature["args"]))
+		#test 
+		parsed = "{\r\n\r\n    \"type\":\"FeatureCollection\",\r\n    \"features\":[\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    102.0,\r\n                    0.388799\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.333833,\r\n                    0.487521\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.371837,\r\n                    0.481811\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        }\r\n    ]\r\n\r\n}"
+
+		'''
+		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		
+		TO PARSE
+		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		'''
 		print feature['name']
-		return response
+		return parsed
 
 def processPolice(policeArgs):
 	print policeArgs
-	
-	neigh = police.getNeighbourhoods('hampshire').read()
-	boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
-	crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
-	crimesArea = police.getCrimesInArea('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09').read()
-	return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
+	category = policeArgs["category"]
+	someDate = date.today()
+	someDate = str(someDate.year)+"-"+str(someDate.month-2)
+	print category
+	print someDate
+	#neigh = police.getNeighbourhoods('hampshire').read()
+	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
+	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
+	crimesArea = police.getCrimesInArea(category, [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], someDate).read()
+	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
+	return crimesArea
 
 def processWeather(policeArgs):
 	print policeArgs
