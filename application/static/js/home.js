@@ -73,7 +73,7 @@ var zoomTo = function(locationName, zoomLevel) {
       url: domain+'/app/geo',
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({"name": locationName}),
+      data: JSON.stringify({"name": locationName.replace(/\s/g, '%20')}),
       
       success:  function(json){
     
@@ -81,12 +81,15 @@ var zoomTo = function(locationName, zoomLevel) {
                          json["results"][0]["geometry"]["location"]["lng"]);
 
         // Bounds
-        var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
+
+        if (L.latLng(json["results"][0]["geometry"]["bounds"])){
+          var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
                        json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-        var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
+          var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
                          json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
 
-        bounds = L.latLngBounds(southWest, northEast);
+          bounds = L.latLngBounds(southWest, northEast);
+        }
 
         // Map not inialized
         if (!map){
