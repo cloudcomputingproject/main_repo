@@ -12,16 +12,11 @@ from application.forms import ExampleForm
 from application import app
 
 from servers import police
-
-#List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
-featuresOptions = {"police" : processPolice,
-					"weather" : processWeather,
-					"restaurants" : processRestaurants}
 #takes python object representation fo the received JSON object
 def main(data):
 	location = data["location"]
 	if location:
-		actualLocation = processLocation(location)
+		processLocation(location)
 	features = data["features"]
 	if features:
 		processFeatures(features)
@@ -30,39 +25,17 @@ def main(data):
 	#with some external API
 	#we parse that response with the PARSER
 	#and return it to the request handler
-	print actualLocation.locationName
-	print "Latitude: " + str(actualLocation.southWest[0]) + ", Longitude: " + str(actualLocation.southWest[1])
-	print actualLocation.northEast
 	test_response = police.getCategories()
 
 	temp = test_response.read()
 
 	return temp
-
 def processLocation(location):
-	nEast = location["bounds"]["NorthEast"]
-	sWest = location["bounds"]["SouthWest"]
-	place = location["name"]
-	return Boundaries(nEast, sWest, place	)
-
-#takes array of features
+	#TODO
+	return 
+#takes array fo features
 def processFeatures(features):
 	for feature in features:
-		featuresOptions[feature["name"]](feature["args"])
+		#TODO
 		print feature['name']
 
-def processPolice(policeArgs):
-	print policeArgs
-
-def processWeather(policeArgs):
-	print policeArgs
-
-def processRestaurants(policeArgs):
-	print policeArgs
-
-# Container class, it contains a location given by leaflet
-class Boundaries:
-	def __init__(self, northEast=[0,0], southWest=[0,0], locationName="undefined"):
-		self.northEast = northEast
-		self.southWest = southWest
-		self.locationName = locationName
