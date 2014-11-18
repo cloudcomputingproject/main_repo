@@ -1,0 +1,35 @@
+{
+    "location": {
+        "bounds": {
+            "NorthEast": [
+                20,
+                30
+            ],
+            "SouthWest": [
+                40,
+                50
+            ]
+        },
+        "name": "Southampton"
+    },
+    "features": [
+        {
+            "name": "police",
+            "args": {
+                "arg_name": "value"
+            }
+        },
+        {
+            "name": "restaurants",
+            "args": {
+                "arg_name": "value"
+            }
+        },
+        {
+            "name": "weather",
+            "args": {
+                "arg_name": "value"
+            }
+        }
+    ]
+}
