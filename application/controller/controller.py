@@ -13,6 +13,7 @@ from application import app
 
 from servers import police
 from servers import geocoding
+from class_definitions import Boundaries
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {"police" : lambda arg: processPolice(arg),
@@ -74,9 +75,3 @@ def processWeather(policeArgs):
 def processRestaurants(policeArgs):
 	print policeArgs
 
-# Container class, it contains a location given by leaflet
-class Boundaries:
-	def __init__(self, northEast=[0,0], southWest=[0,0], locationName="undefined"):
-		self.northEast = northEast
-		self.southWest = southWest
-		self.locationName = locationName
