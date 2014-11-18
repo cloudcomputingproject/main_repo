@@ -15,9 +15,9 @@ from servers import police
 from servers import geocoding
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
-featuresOptions = {"police" : processPolice,
-					"weather" : processWeather,
-					"restaurants" : processRestaurants}
+featuresOptions = {"police" : lambda arg: processPolice(arg),
+					"weather" : lambda arg: processWeather(arg),
+					"restaurants" : lambda arg: processRestaurants(arg)}
 
 def getGeoCoding(location):
 	name = location["name"]
@@ -59,6 +59,12 @@ def processFeatures(features):
 
 def processPolice(policeArgs):
 	print policeArgs
+	
+	neigh = police.getNeighbourhoods('hampshire').read()
+	boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
+	crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
+	crimesArea = police.getCrimesInArea('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09').read()
+	#return neigh+boundry+crimes+crimesArea
 
 def processWeather(policeArgs):
 	print policeArgs
