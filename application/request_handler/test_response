@@ -1,0 +1,17 @@
+  { "type": "FeatureCollection",
+    "features": [
+      { "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [102.0, 0.388799]},
+        "properties": {"type": "police"}
+        },
+     { "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [52.333833, 0.487521]},
+        "properties": {"type": "police"}
+        },
+     { "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [52.371837, 0.481811]},
+        "properties": {"type": "police"}
+        }
+         
+       ]
+     }
