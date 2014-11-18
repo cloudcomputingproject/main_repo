@@ -1,5 +1,5 @@
 """
-handles interaction with the worldbank api
+handles interaction with the geocoding api
 
 """
 import urllib2
@@ -38,9 +38,9 @@ components = "components=country:UK"
 def getData(address):
 	url = "https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&"+components+"&"+"sensor=false"+"&"+"key="+API_KEY
 	request = urllib2.urlopen(url)	
-	result = json.load(request)
+	#result = json.load(request)
 	
-	return result
+	return request
 
 
 

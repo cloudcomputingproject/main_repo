@@ -12,6 +12,12 @@ from application.forms import ExampleForm
 from application import app
 
 from servers import police
+from servers import geocoding
+
+def getGeoCoding(location):
+	name = location["name"]
+	print name
+	return geocoding.getData(name).read()
 #takes python object representation fo the received JSON object
 def main(data):
 	location = data["location"]
@@ -26,7 +32,7 @@ def main(data):
 	#we parse that response with the PARSER
 	#and return it to the request handler
 	test_response = police.getCategories()
-
+	
 	temp = test_response.read()
 
 	return temp
