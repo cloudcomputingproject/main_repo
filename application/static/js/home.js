@@ -95,6 +95,7 @@ var zoomTo = function(locationName, zoomLevel) {
 
         // Map initialised  
         else{   
+          map.setZoom(200);      
           map.panTo(centerLocation);
           //map.setMaxBounds(bounds);
           map.setZoom(zoomLevel);      
