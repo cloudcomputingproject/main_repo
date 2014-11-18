@@ -12,20 +12,17 @@ from application.forms import ExampleForm
 from application import app
 
 from servers import police
-<<<<<<< HEAD
+from servers import geocoding
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {"police" : processPolice,
 					"weather" : processWeather,
 					"restaurants" : processRestaurants}
-=======
-from servers import geocoding
 
 def getGeoCoding(location):
 	name = location["name"]
 	print name
 	return geocoding.getData(name).read()
->>>>>>> 39bf24520d2c7ac16927117a7f3e280fc3a72489
 #takes python object representation fo the received JSON object
 def main(data):
 	location = data["location"]
