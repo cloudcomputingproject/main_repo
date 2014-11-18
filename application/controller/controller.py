@@ -30,7 +30,7 @@ def main(data):
 		actualLocation = processLocation(location)
 	features = data["features"]
 	if features:
-		processFeatures(features)
+		return processFeatures(features)
 	#test response will be the response from
 	#the module taking care of a communication 
 	#with some external API
@@ -53,9 +53,11 @@ def processLocation(location):
 
 #takes array of features
 def processFeatures(features):
+	response =""
 	for feature in features:
-		featuresOptions[feature["name"]](feature["args"])
+		response+=(featuresOptions[feature["name"]](feature["args"]))
 		print feature['name']
+		return response
 
 def processPolice(policeArgs):
 	print policeArgs
@@ -64,7 +66,7 @@ def processPolice(policeArgs):
 	boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
 	crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
 	crimesArea = police.getCrimesInArea('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09').read()
-	#return neigh+boundry+crimes+crimesArea
+	return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
 
 def processWeather(policeArgs):
 	print policeArgs
