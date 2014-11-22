@@ -1,5 +1,5 @@
 """
-Request Handler
+external_api.py
 
 """
 import urllib2
@@ -34,25 +34,9 @@ body of the request has to contain JSON object with the following schema:
 ]
  }
 '''
-@handler.route('/app/geo', methods=['POST'])
-def handleGeoLocReq():
-	response = "There was an error"
-	try:
-		input_data = request.data
-		input_data = json.loads(input_data)	
-		response = controller.getGeoCoding(input_data)
-	except Exception, e:
-		response = str(e),400
-		print response
-	except ValueError as e:
-		response = str(e),400
-		print response	
-	finally:
-		return response
-	
 
 @handler.route('/app/', methods=['POST'])
-def handleDataReq():
+def handleReq():
 	#extract the data sent from the client
 	#the POST request's body should contain a key-value pair and the name of the key is 'data'
 	
