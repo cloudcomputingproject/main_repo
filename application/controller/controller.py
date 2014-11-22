@@ -27,7 +27,9 @@ def getGeoCoding(location):
 	return geocoding.getData(name).read()
 #takes python object representation fo the received JSON object
 def main(data):
+	print "inside main method controller"
 	location = data["location"]
+	print location
 	if location:
 		actualLocation = processLocation(location)
 	features = data["features"]
@@ -48,15 +50,19 @@ def main(data):
 	return temp
 
 def processLocation(location):
+	print "processLocation"
 	nEast = location["bounds"]["NorthEast"]
 	sWest = location["bounds"]["SouthWest"]
 	place = location["name"]
-	return Boundaries(nEast, sWest, place	)
+	print nEast,sWest,place
+	return Boundaries(nEast, sWest, place)
 
 #takes array of features
 def processFeatures(features):
+	print "processFeatures"
 	response =""
 	for feature in features:
+		print "Feature name:",feature['name']
 		response+=(featuresOptions[feature["name"]](feature["args"]))
 		#test 
 		parsed = "{\r\n\r\n    \"type\":\"FeatureCollection\",\r\n    \"features\":[\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    102.0,\r\n                    0.388799\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.333833,\r\n                    0.487521\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.371837,\r\n                    0.481811\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        }\r\n    ]\r\n\r\n}"
@@ -67,7 +73,8 @@ def processFeatures(features):
 		TO PARSE
 		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		'''
-		print feature['name']
+		
+		print parsed
 		return parsed
 
 def processPolice(policeArgs):

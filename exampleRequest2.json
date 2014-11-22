@@ -16,7 +16,7 @@
         {
             "name": "police",
             "args": {
-                "arg_name": "value"
+                "category": "all-crimes"
             }
         },
         {

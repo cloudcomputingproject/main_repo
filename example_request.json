@@ -1,5 +1,35 @@
-{ "location" : "Some location name or null",
-  "features" : [{"name" : "feature_name","args" : {"arg_name":"value"}},
-                {"name" : "new_name","args" : {"arg_name":"value"}}
-]
- }
+{
+    "location": {
+        "bounds": {
+            "NorthEast": [
+                20,
+                30
+            ],
+            "SouthWest": [
+                40,
+                50
+            ]
+        },
+        "name": "Southampton"
+    },
+    "features": [
+        {
+            "name": "police",
+            "args": {
+                "category": "all-crimes"
+            }
+        },
+        {
+            "name": "restaurants",
+            "args": {
+                "arg_name": "value"
+            }
+        },
+        {
+            "name": "weather",
+            "args": {
+                "arg_name": "value"
+            }
+        }
+    ]
+}

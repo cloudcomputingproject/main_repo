@@ -52,10 +52,10 @@ def handleReq():
 
 	except Exception, e:
 		response = str(e),400
-		print response
+		print e
 	except ValueError as e:
 		response = str(e),400
-		print response	
+		print e
 	finally:
 		return response
 
