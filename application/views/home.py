@@ -30,8 +30,21 @@ home = Blueprint('home', __name__)
 @home.route('/')
 def homepage():
     return render_template('home/home.html')
-
-
+@home.route('/<page_name>')
+def renderPage(page_name):
+    return render_template(page_name+'.html')
+# @home.route('/500')
+# def render500():
+#     return render_template('500.html')
+# @home.route('/base')
+# def renderBase():
+#     return render_template('base.html')
+# @home.route('/edit_example')
+# def renderEdit_ex():
+#     return render_template('edit_example.html')
+# @home.route('/edit_example')
+# def renderEdit_ex():
+#     return render_template('edit_example.html')
 # def say_hello(username):
 #     """Contrived example to demonstrate Flask's url routing capabilities"""
 #     return 'Hello %s' % username

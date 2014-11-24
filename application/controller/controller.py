@@ -24,8 +24,8 @@ featuresOptions = {"police" : lambda arg: processPolice(arg),
 def getGeoCoding(location):
 	name = location["name"]
 	print name
-	return geocoding.getData(name).read()
-#takes python object representation fo the received JSON object
+	return geocoding.getData(name)
+#takes python object representation of the received JSON object
 def main(data):
 	print "inside main method controller"
 	location = data["location"]
