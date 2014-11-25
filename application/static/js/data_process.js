@@ -8,6 +8,9 @@ var displayData = function(data,layers){
 		var fcName = fc.properties.type;
 		//alert("Name:"+fcName);
 		var layer = layers[fcName];
+		console.log("layer:",layer);
+		console.log("data:",data);
+		if(layer)
 		layer.addData(data); 
 		// var layer =	L.geoJson(fc, {
 		// 	style: function (feature) {

@@ -3,7 +3,7 @@ var DEFAULT_LOCATION = "England";
 var DEFAULT_ZOOM = 6;
 
 var map;
-
+var availableLayers = new Object();
 
 
 var domain = document.location.origin;
@@ -46,16 +46,32 @@ function init(locationName, zoomLevel){
 
         //after the request has been made draw controls
         map.addControl(new NavControl());
+        initLayers();  
         }
-
+        
     });
 
   }
 }
 function initLayers(){
   var serverData = getServerData();
-  var api_names = serverData['categoriesAPI'];
-  console.log(api_names);
+  var layerData = serverData['categoriesAPI'];
+  console.log(layerData);
+        //create layers
+      //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
+
+      for (var i = 0; i < layerData.length; i++) {
+        availableLayers[layerData[i]] = L.geoJson(false, {
+        style: function (feature) {
+              return feature.properties && feature.properties.style;
+              },
+            onEachFeature: onEachFeature,
+            pointToLayer: drawFeature
+          }
+            ).addTo(map);
+          };
+          //add to map
+        L.control.layers(null, availableLayers).addTo(map); 
 }
 //this function gets the data which is passed from the controller trhrouh the
 //template engine.
@@ -105,8 +121,8 @@ var zoomTo = function(locationName, zoomLevel) {
           map.setZoom(zoomLevel);      
           map.setView(centerLocation);       
         }
-        var availableLayers = displayData([data,data2]);
-        L.control.layers(null, availableLayers).addTo(map);
+        displayData([data,data2],availableLayers);
+       
 
     }
 
@@ -116,7 +132,7 @@ var zoomTo = function(locationName, zoomLevel) {
 $(document).ready(function(){
 
   init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-  initLayers();
+ 
 
   $("#go").on('click', function(){
     alert("Clicked");
