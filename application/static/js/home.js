@@ -8,7 +8,7 @@ var map;
 
 var domain = document.location.origin;
 
-var init = function (locationName, zoomLevel){
+function init(locationName, zoomLevel){
 
   if (!map){
 
@@ -51,9 +51,20 @@ var init = function (locationName, zoomLevel){
     });
 
   }
-  
-  
-};
+}
+function initLayers(){
+  var serverData = getServerData();
+  var api_names = serverData['categoriesAPI'];
+  console.log(api_names);
+}
+//this function gets the data which is passed from the controller trhrouh the
+//template engine.
+//the data is attached to an html element attribute( the #map <div> in our case)
+function getServerData(){
+  var data = $('#map').data("fromserver");
+  console.log(data);
+  return data;
+}
 var zoomTo = function(locationName, zoomLevel) {
 
 
@@ -105,7 +116,7 @@ var zoomTo = function(locationName, zoomLevel) {
 $(document).ready(function(){
 
   init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-
+  initLayers();
 
   $("#go").on('click', function(){
     alert("Clicked");
