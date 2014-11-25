@@ -3,7 +3,7 @@ var DEFAULT_LOCATION = "England";
 var DEFAULT_ZOOM = 6;
 
 var map;
-
+var availableLayers = new Object();
 
 
 var domain = document.location.origin;
@@ -12,6 +12,8 @@ var init = function (locationName, zoomLevel){
 
   if (!map){
 
+
+ 
 		$.ajax({
       type: "POST",
       url: domain+'/app/geo',
@@ -46,13 +48,33 @@ var init = function (locationName, zoomLevel){
 
         //after the request has been made draw controls
         map.addControl(new NavControl());
+
+        //create layers
+        //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
+  
+        var layerData = ["police","restaurants"];
+        for (var i = 0; i < layerData.length; i++) {
+          availableLayers[layerData[i]] = L.geoJson(false, {
+          style: function (feature) {
+                return feature.properties && feature.properties.style;
+                },
+              onEachFeature: onEachFeature,
+              pointToLayer: drawFeature
+            }
+              ).addTo(map);
+            };
+            //add to map
+          L.control.layers(null, availableLayers).addTo(map);    
+
+
         }
+
 
     });
 
   }
   
-  
+
 };
 var zoomTo = function(locationName, zoomLevel) {
 
@@ -94,7 +116,7 @@ var zoomTo = function(locationName, zoomLevel) {
           map.setZoom(zoomLevel);      
           map.setView(centerLocation);       
         }
-        var availableLayers = displayData([data,data2]);
+        displayData([data,data2],availableLayers);
         
 
     }
@@ -123,12 +145,5 @@ $(document).ready(function(){
   });
 
  
-  //create layers
-  //dictionary to store layer (name,reference)
-  var availableLayers = new Object();
-  for (var i = 0; i < layerData.length; i++) {
-      availableLayers[layerData[i]] = L.geoJson().addTo(map);
-  };
-  //add to map
-  L.control.layers(null, availableLayers).addTo(map);
+
 });
