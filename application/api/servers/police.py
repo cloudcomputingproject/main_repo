@@ -1,7 +1,7 @@
 
 import urllib2
 import json
-"""
+
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
@@ -16,8 +16,9 @@ from application.forms import ExampleForm
 from application.models import ExampleModel
 
 from application import app
-"""
+
 url = 'http://data.police.uk/api/'
+
 
 def getData():
     global url
@@ -25,10 +26,10 @@ def getData():
     data = urllib2.urlopen(url)
     
     #for testing purposes
-    print json.load(data)
+    #print json.load(data)
     
     url = 'http://data.police.uk/api/'
-    return data
+    return data.read()
 
 def getCategories():
     global url
@@ -54,6 +55,7 @@ def getNeighbourhoodID(county, nhooed):
     for j in xrange(0, len(data)):
         if data[j]["name"] == nhood:
             return data[j]["id"]
+            
 #date must be in the format yyyy-mm
 def getCrimesData(category, lat, lng, date):
     global url
@@ -69,9 +71,10 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
     url+='&date=' + date
     return getData()
 
-
+"""
 getCategories()
 getNeighbourhoodsData('hampshire')
 getBoundaryData('hampshire', 'Fair Oak')
 getCrimesData('all-crimes', 52.629729, -1.131592, '2014-09')
 getCrimesInAreaData('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
+"""

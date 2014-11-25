@@ -12,21 +12,71 @@ from flask import request, render_template, flash, url_for, redirect, Blueprint
 
 from flask_cache import Cache
 
-
-
 from application.decorators import login_required, admin_required
 from application.forms import ExampleForm
 from application.models import ExampleModel
 
 from application import app
 
-# Flask-Cache (configured to use App Engine Memcache API)
-cache = Cache(app)
 
-def getData(name, location, format):
-	url = "http://ratings.food.gov.uk/search/" + name + "/" + location + "/" + format
-	data = urllib2.urlopen(url)
-	#remove the headers, and only get the relevant info
+url = 'http://ratings.food.gov.uk/'
+format = 'json'
+
+def getData():
+    global url, format
+
+    """
+    #remove the headers, and only get the relevant info
 	result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
+	"""
 
-	return result
+	#obtaining the data in order to get the number of entries
+    data = json.load(urllib2.urlopen(url + '/' + format))
+    
+    #for testing purposes
+    #print data['FHRSEstablishment']['Header']['ItemCount']
+    #print url
+    #print url + '/1/' + str(data['FHRSEstablishment']['Header']['ItemCount']) + '/' + format
+
+    #building the new url setting the parameter PageSize to be equal to the number of entries
+    url += '/1/' + data['FHRSEstablishment']['Header']['ItemCount'] + '/' + format
+    
+    data = urllib2.urlopen(url)
+
+    #for testing purposes
+    #print json.load(data)
+
+    #reseting the url
+    url = 'http://ratings.food.gov.uk/search/'
+    return data.read()
+
+
+#IMPORTANT!
+#
+#In order to get data for every location or every restaurant pass 'all' as a value (e.g. searchNameLoc(all, southampton))
+def searchNameLoc(name, location):
+	global url
+	if name == 'all':
+		name = '^'
+	if location =='all':
+		location = '^'
+	url += 'search/' + name + "/" + location
+	return getData()
+
+def searchName(name):
+	global url
+	if name == 'all':
+		name = '^'
+	url += 'search-name/' + name
+	return getData()
+
+def searchLoc(location):
+	global url
+	if location =='all':
+		location = '^'
+	url += 'search-address/' + location
+	return getData()	
+
+#searchNameLoc('tesco','southampton');
+#searchName('parfait');
+#searchLoc('southampton');
