@@ -1,10 +1,8 @@
  // global variables
-var DEFAULT_LOCATION = "England";
-var DEFAULT_ZOOM = 6;
+var DEFAULT_LOCATION = "United Kingdom";
+var DEFAULT_ZOOM = 5;
 
 var map;
-
-
 
 var domain = document.location.origin;
 
@@ -17,7 +15,7 @@ var init = function(locationName, zoomLevel){
       url: domain+'/app/geo',
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({"name": locationName}),
+      data: JSON.stringify({"name": encodeURIComponent(locationName)}),
 
       success:  function(json){
     
@@ -45,7 +43,7 @@ var init = function(locationName, zoomLevel){
                                 }).addTo(map);
 
         //after the request has been made draw controls
-        map.addControl(new NavControl());
+        //map.addControl(new NavControl());
         }
 
     });
@@ -106,7 +104,7 @@ var zoomTo = function(locationName, zoomLevel) {
 $(document).ready(function(){
   
   $("#go").on('click', function(){
-    alert("Clicked");
+    //alert("Clicked");
     zoomTo($("#location").val(),10);
   });
 

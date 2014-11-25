@@ -7,7 +7,7 @@ var displayData = function(data){
 	for (var i = 0; i < data.length; i++) {
 		var fc = data[i];
 		var fcName = fc.properties.type;
-		alert("Name:"+fcName);
+		//alert("Name:"+fcName);
 		
 		var layer =	L.geoJson(fc, {
 			style: function (feature) {
