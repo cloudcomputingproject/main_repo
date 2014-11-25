@@ -30,18 +30,24 @@ def getData():
     url = 'http://data.police.uk/api/'
     return data
 
+
+'''
+[{"url":"all-crime","name":"All crime"},{"url":"anti-social-behaviour","name":"Anti-social behaviour"},{"url":"burglary","name":"Burglary"},
+{"url":"robbery","name":"Robbery"},{"url":"vehicle-crime","name":"Vehicle crime"},{"url":"violent-crime","name":"Violent crime"},{"url":"other-crime","name":"Other crime"}]
+'''
+
 def getCategories():
     global url
     url += 'crime-categories?date=2011-08'
     return getData()
 
 #Neighbourhoods must be lower case and the white spaces replaced with '-'
-def getNeighbourhoodsData(county):
+def getNeighbourhoods(county):
     global url
     url += county + '/neighbourhoods'
     return getData()
 
-def getBoundaryData(county, nhood):
+def getBoundary(county, nhood):
     global url
     url += county + '/' + getNeighbourhoodID(county, nhood) + '/boundary'
     return getData()
@@ -55,12 +61,12 @@ def getNeighbourhoodID(county, nhood):
         if data[j]["name"] == nhood:
             return data[j]["id"]
 #date must be in the format yyyy-mm
-def getCrimesData(category, lat, lng, date):
+def getCrimes(category, lat, lng, date):
     global url
     url+='crimes-street/' + category + '?lat=' + str(lat) + '&lng=' + str(lng) + '&date=' + date
     return getData()
 
-def getCrimesInAreaData(category, latArr, lngArr, date):
+def getCrimesInArea(category, latArr, lngArr, date):
     global url
     url+='crimes-street/' + category + '?poly='
     for j in xrange(0, len(latArr)):
@@ -71,7 +77,7 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 
 
 #getCategories()
-#getNeighbourhoods('hampshire')
+#getNeighbourhoodsData('hampshire')
 #getBoundary('hampshire', 'Fair Oak')
 #getCrimes('all-crimes', 52.629729, -1.131592, '2014-09')
 #getCrimesInArea('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')

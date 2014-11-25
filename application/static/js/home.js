@@ -4,23 +4,7 @@ var DEFAULT_ZOOM = 6;
 
 var map;
 
-$(document).ready(function(){
-  
-  $("#go").on('click', function(){
-    zoomTo($("#location").val(),10);
-  });
 
-  $("#location").keypress(function(event){
-    if ( event.which == 13 ) {
-     $('#go').click();
-  }
-  });
-
-  $("#reset").on('click', function(){
-    zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
-  });
-
-});
 
 var domain = document.location.origin;
 
@@ -52,16 +36,23 @@ var init = function(locationName, zoomLevel){
            zoom: zoomLevel,
            //maxBounds: bounds
         });
-
-        var tiles = L.tileLayer('http://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
-                                id: 'qwerty123123.k312hg0n'
+        var mapLink1 = "tile.openstreetmap.org";
+        var mapLink2 = "tiles.mapbox.com/v3/{id}"
+        var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
+                                maxZoom: 18,
+                                // id: 'qwerty123123.k312hg0n'
+                                id : 'examples.map-20v6611k'
                                 }).addTo(map);
+
+        //after the request has been made draw controls
+        map.addControl(new NavControl());
         }
 
     });
 
   }
-
+  
+  
 }(DEFAULT_LOCATION, DEFAULT_ZOOM);
 
 var zoomTo = function(locationName, zoomLevel) {
@@ -73,7 +64,7 @@ var zoomTo = function(locationName, zoomLevel) {
       url: domain+'/app/geo',
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({"name": locationName.replace(/\s/g, '%20')}),
+      data: JSON.stringify({"name": encodeURIComponent(locationName)}),//locationName.replace(/\s/g, '%20')}),
       
       success:  function(json){
     
@@ -104,9 +95,29 @@ var zoomTo = function(locationName, zoomLevel) {
           map.setZoom(zoomLevel);      
           map.setView(centerLocation);       
         }
-  
+        var availableLayers = displayData([data,data2]);
+        L.control.layers(null, availableLayers).addTo(map);
+
     }
 
    });
 
 };
+$(document).ready(function(){
+  
+  $("#go").on('click', function(){
+    alert("Clicked");
+    zoomTo($("#location").val(),10);
+  });
+
+  $("#location").keypress(function(event){
+    if ( event.which == 13 ) {
+     $('#go').click();
+  }
+  });
+
+  $("#reset").on('click', function(){
+    zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
+  });
+
+});

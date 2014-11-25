@@ -1,5 +1,5 @@
 """
-handles interaction with the geocoding api
+handles interaction with the worldbank api
 
 """
 import urllib2
@@ -40,7 +40,7 @@ def getData(address):
 	request = urllib2.urlopen(url)	
 	#result = json.load(request)
 	
-	return request
+	return request.read()
 
 
 
