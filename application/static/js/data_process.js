@@ -7,7 +7,7 @@ var displayData = function(data){
 	for (var i = 0; i < data.length; i++) {
 		var fc = data[i];
 		var fcName = fc.properties.type;
-		alert("Name:"+fcName);
+		//alert("Name:"+fcName);
 		
 		var layer =	L.geoJson(fc, {
 			style: function (feature) {
@@ -38,13 +38,31 @@ var displayData = function(data){
 	//handles feature drawing, called to draw each feature
 	function drawFeature(feature, latlng) {
 		return L.circleMarker(latlng, {
-			radius: 8,
-			fillColor: "#ff7800",
-			color: "#000",
+			// TODO(dorota): add a function that would scale the data and adjust the radius.
+			radius: parseInt(feature.properties.value),
+			fillColor: mapColour(feature),
+			color: mapColour(feature),
 			weight: 1,
 			opacity: 1,
 			fillOpacity: 0.5
 		});
+	}
+	
+	// Private method mapping a different colour to each type of data.
+	function mapColour(feature) {
+		switch(feature.properties.type) {
+			case "police":
+				return "#0000FF";
+			case "restaurant":
+				return "#ff7800";
+				
+			// add all the other cases here
+			// case {type}
+			// return {colour}
+			
+			default:
+				return "#000";
+		}
 	}
 
 
