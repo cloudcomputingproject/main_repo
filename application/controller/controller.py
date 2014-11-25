@@ -20,6 +20,10 @@ from datetime import date
 featuresOptions = {"police" : lambda arg: processPolice(arg),
 					"weather" : lambda arg: processWeather(arg),
 					"restaurants" : lambda arg: processRestaurants(arg)}
+def getCategoriesAPI():
+	keys = featuresOptions.keys()
+	keys.sort()
+	return keys
 
 def getGeoCoding(location):
 	name = location["name"]

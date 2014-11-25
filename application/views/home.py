@@ -9,7 +9,7 @@ URL route handlers
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
-from flask import request, render_template, flash, url_for, redirect, Blueprint
+from flask import request, render_template, flash, url_for, redirect, Blueprint, json
 
 from flask_cache import Cache
 
@@ -18,6 +18,7 @@ from flask_cache import Cache
 from application.decorators import login_required, admin_required
 from application.forms import ExampleForm
 from application.models import ExampleModel
+from application.controller import controller
 
 from application import app
 
@@ -29,7 +30,12 @@ home = Blueprint('home', __name__)
 
 @home.route('/')
 def homepage():
-    return render_template('home/home.html')
+	dataToSend = {
+		'categoriesAPI': controller.getCategoriesAPI()
+	}
+	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
+	return render_template('home/home.html', dataToSend=dataToSend)
+
 @home.route('/<page_name>')
 def renderPage(page_name):
     return render_template(page_name+'.html')

@@ -8,7 +8,7 @@ var map;
 
 var domain = document.location.origin;
 
-var init = function(locationName, zoomLevel){
+var init = function (locationName, zoomLevel){
 
   if (!map){
 
@@ -53,8 +53,7 @@ var init = function(locationName, zoomLevel){
   }
   
   
-}(DEFAULT_LOCATION, DEFAULT_ZOOM);
-
+};
 var zoomTo = function(locationName, zoomLevel) {
 
 
@@ -104,7 +103,10 @@ var zoomTo = function(locationName, zoomLevel) {
 
 };
 $(document).ready(function(){
-  
+
+  init(DEFAULT_LOCATION, DEFAULT_ZOOM);
+
+
   $("#go").on('click', function(){
     alert("Clicked");
     zoomTo($("#location").val(),10);
