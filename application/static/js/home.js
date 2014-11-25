@@ -96,7 +96,7 @@ var zoomTo = function(locationName, zoomLevel) {
           map.setView(centerLocation);       
         }
         var availableLayers = displayData([data,data2]);
-        L.control.layers(null, availableLayers).addTo(map);
+        
 
     }
 
@@ -120,4 +120,13 @@ $(document).ready(function(){
     zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
   });
 
+ 
+  //create layers
+  //dictionary to store layer (name,reference)
+  var availableLayers = new Object();
+  for (var i = 0; i < layerData.length; i++) {
+      availableLayers[layerData[i]] = L.geoJson().addTo(map);
+  };
+  //add to map
+  L.control.layers(null, availableLayers).addTo(map);
 });

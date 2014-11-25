@@ -10,7 +10,7 @@ var data = { "type": "FeatureCollection",
         },
      { "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [0.481811, 52.371837]},
-        "properties": {"type": "police"}
+        "properties": {"type": "police","value":"5"}
         }
          
        ],
