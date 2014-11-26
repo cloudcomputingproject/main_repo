@@ -46,6 +46,8 @@ function init(locationName, zoomLevel){
 
         //after the request has been made draw controls
         map.addControl(new NavControl());
+        var as = new PanelControl();
+        map.addControl(new PanelControl());
         }
 
     });

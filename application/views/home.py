@@ -31,7 +31,8 @@ home = Blueprint('home', __name__)
 @home.route('/')
 def homepage():
 	dataToSend = {
-		'categoriesAPI': controller.getCategoriesAPI()
+		'categoriesAPI': controller.getCategoriesAPI(),
+		'policeCategories': ['street crime', 'domestic crimes']
 	}
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
 	return render_template('home/home.html', dataToSend=dataToSend)
