@@ -1,11 +1,12 @@
  // global variables
-var DEFAULT_LOCATION = "England";
-var DEFAULT_ZOOM = 6;
+var DEFAULT_LOCATION = "United Kingdom";
+var DEFAULT_ZOOM = 5;
 
 var map;
 var availableLayers = new Object();
 var MAX_CACHE_AGE = 600; //600sec = 10minutes
 var cache = new Object();
+
 
 
 var domain = document.location.origin;
@@ -19,7 +20,7 @@ function init(locationName, zoomLevel){
       url: domain+'/app/geo',
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({"name": locationName}),
+      data: JSON.stringify({"name": encodeURIComponent(locationName)}),
 
       success:  function(json){
     
@@ -47,11 +48,13 @@ function init(locationName, zoomLevel){
                                 }).addTo(map);
 
         //after the request has been made draw controls
-        map.addControl(new NavControl());
+
+        // map.addControl(new NavControl());
         map.addControl(new PanelControl());
         initLayers();  
       }
         
+
     });
 
   }
@@ -151,7 +154,7 @@ $(document).ready(function(){
   init(DEFAULT_LOCATION, DEFAULT_ZOOM);
 
   $("#go").on('click', function(){
-    alert("Clicked");
+    //alert("Clicked");
     zoomTo($("#location").val(),10);
   });
 

@@ -26,6 +26,7 @@ var displayData = function(data,layers){
 	 //        pointToLayer: drawFeature
 		//     }
 	 //        ).addTo(map);
+
 		
 	}
 		

@@ -1,4 +1,4 @@
-var NavControl =  L.Control.extend({
+/*var NavControl =  L.Control.extend({
     options: {
         position: 'topleft'
     },
@@ -14,7 +14,7 @@ var NavControl =  L.Control.extend({
         var goBtn = L.DomUtil.create('button','button',container);
         goBtn.setAttribute('type','button');
         goBtn.setAttribute('value','click');
-        goBtn.setAttribute('id','go');
+        goBtn.setAttribute('id','goo');
         goBtn.innerHTML = "Go";
         var resetBtn = L.DomUtil.create('button','button',container);
         resetBtn.setAttribute('type','button');
@@ -22,30 +22,15 @@ var NavControl =  L.Control.extend({
         resetBtn.setAttribute('id','reset');
         resetBtn.innerHTML = "Reset Map";
         // ... initialize other DOM elements, add listeners, etc.
-
+        console.log($("#goo"));
+ $("#goo").on('click', function(){
+    alert("Clicked");
+    zoomTo($("#location").val(),10);
+  });
         return container;
     }
 });
- function collapseListener(event,idOfElement) {
-                 event.preventDefault();
-                // event.stopPropagation();
-                 //rotate the arrow next to the police categories based on whether we collapse it or not
-                //check if it is collapsed
-                var name = "#"+idOfElement;
-                console.log(name);
-                var classes = $(name).attr('class').split(' ');
-                if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
-                    
-                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
-                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
-                } else{
-                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-right');
-                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
-                }
-                return true;
-
-};
-
+*/
 var PanelControl = L.Control.extend({
     options: {
     
@@ -75,7 +60,27 @@ var PanelControl = L.Control.extend({
         
        return c;
     }
+
 }); 
+ function collapseListener(event,idOfElement) {
+                 event.preventDefault();
+                // event.stopPropagation();
+                 //rotate the arrow next to the police categories based on whether we collapse it or not
+                //check if it is collapsed
+                var name = "#"+idOfElement;
+                console.log(name);
+                var classes = $(name).attr('class').split(' ');
+                if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
+                    
+                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
+                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
+                } else{
+                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-right');
+                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
+                }
+                return true;
+
+};
 
 function addPoliceCategories(){
     var server_json = $('#map').data('fromserver');
@@ -145,4 +150,8 @@ function checkIfDataHasExpired(name){
     $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
     $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
  }
+
+
+
+
 

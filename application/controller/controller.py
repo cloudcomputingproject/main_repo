@@ -13,7 +13,7 @@ from application import app
 
 from servers import police
 from servers import geocoding
-# from application.parsr import parser
+from application.parser import parser
 from class_definitions import Boundaries
 from datetime import date
 
@@ -21,7 +21,6 @@ from datetime import date
 featuresOptions = {"police" : lambda arg: processPolice(arg),
 					"weather" : lambda arg: processWeather(arg),
 					"restaurant" : lambda arg: processRestaurants(arg)}
-
 def getCategoriesAPI():
 	keys = featuresOptions.keys()
 	keys.sort()
@@ -29,7 +28,7 @@ def getCategoriesAPI():
 
 def getPoliceCategories():
 	json = police.getCategories()
-	# parsed_json = parser.parsePoliceCategories()
+	parsed_json = parser.parsePoliceCategories(json)
 	return parsed_json
 
 
@@ -86,8 +85,8 @@ def processFeatures(features):
 		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		'''
 		
-		print parsed
-		return parsed
+		print response
+		return response
 
 def processPolice(policeArgs):
 	print policeArgs
@@ -101,7 +100,8 @@ def processPolice(policeArgs):
 	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
 	crimesArea = police.getCrimesInArea(category, [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], someDate).read()
 	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
-	return crimesArea
+	parsed = parser.parseCrimes(crimesArea)
+	return parsed
 
 def processWeather(policeArgs):
 	print policeArgs
