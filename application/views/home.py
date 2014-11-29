@@ -30,9 +30,11 @@ home = Blueprint('home', __name__)
 
 @home.route('/')
 def homepage():
+	#we send this to the template engine so the client receives some data straight 
+	#away, without having to make consequetive requests 
 	dataToSend = {
 		'categoriesAPI': controller.getCategoriesAPI(),
-		'policeCategories': ['street crime', 'domestic crimes']
+		'policeCategories': controller.getPoliceCategories()
 	}
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
 	return render_template('home/home.html', dataToSend=dataToSend)
