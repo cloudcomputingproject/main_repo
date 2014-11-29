@@ -19,7 +19,7 @@ from application import app
 
 url = 'http://data.police.uk/api/'
 
-
+#private
 def getData():
     global url
     #json object
@@ -29,7 +29,11 @@ def getData():
     #print json.load(data)
     
     url = 'http://data.police.uk/api/'
-    return data.read()
+
+    result = data.read()
+    data.close()
+
+    return result
 
 def getCategories():
     global url
@@ -47,6 +51,7 @@ def getBoundaryData(county, nhood):
     url += county + '/' + getNeighbourhoodID(county, nhood) + '/boundary'
     return getData()
 
+#private
 def getNeighbourhoodID(county, nhooed):
     global url
     url+= county + '/neighbourhoods'

@@ -22,6 +22,7 @@ from application import app
 url = 'http://ratings.food.gov.uk/'
 format = 'json'
 
+#private
 def getData():
     global url, format
 
@@ -48,8 +49,11 @@ def getData():
 
     #reseting the url
     url = 'http://ratings.food.gov.uk/search/'
-    return data.read()
+    
+    result = data.read()
+    data.close()
 
+    return result
 
 #IMPORTANT!
 #
