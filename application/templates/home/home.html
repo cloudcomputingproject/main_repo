@@ -2,34 +2,67 @@
 
 {% block style_block %}
     <style type="text/css">
-        #map { height: 100vh; }
+
+        #map_wrapper {
+            width: 100%;
+            height: auto;
+            position: relative;
+            border: 1px solid white;
+        }
+
+        #map { 
+            width: 100%;
+            height: 80vh; 
+        }
+
+        #buttons_wrapper {
+            position: absolute;
+            top: 75px;
+            left: 10px;
+            width: 100%;
+        }
+
+        #maincontent {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            max-height: 100%;
+        }
 
     </style>
 {% endblock %}
 
 {% block content %}
 	
-    <h1 id="">THIS IS HOME</h1>
+    <h1><center>THIS IS HOME</center></h1>
 
     <div>&nbsp;</div>
 
-    <input id='location' type='test' value='England' />
+    <!--<input id='location' type='test' value='England' />
     <button type='button' value='Click' id='go' > Go </button>
     <button type='button' value='Click' id='reset'> Reset Map </button>
   	
-    <div>&nbsp;</div>
+    <div>&nbsp;</div>-->
 
-    <div id="map" data-fromserver ="{{dataToSend}}"></div>
+    <div id="map_wrapper">
+        <div id="map" data-fromserver ="{{dataToSend}}"></div>
+        <div id="buttons_wrapper">
+            <input id='location' type='name' value='United Kingdom'/>
+            <button type='button' value='Click' id='go'> Go </button>
+            <button type='button' value='Click' id='reset'> Reset Map </button>
+        </div>
+    </div>
 
-    <div>&nbsp;</div>s
+    
+
 
 
 {% endblock content %}
  
 
 {% block tail_script %}
-<script type="text/javascript" src="/static/js/controls.js"></script>
+<!--<script type="text/javascript" src="/static/js/controls.js"></script>-->
 <script type="text/javascript" src="/static/js/sample_data.js"></script>
 <script type="text/javascript" src="/static/js/data_process.js"></script>
-<script src="/static/js/home.js"></script>
+<script type="text/javascript" src="/static/js/home.js"></script>
 {% endblock tail_script %}
