@@ -3,11 +3,9 @@ var DEFAULT_LOCATION = "United Kingdom";
 var DEFAULT_ZOOM = 5;
 
 var map;
-<<<<<<< HEAD
 var availableLayers = new Object();
 
-=======
->>>>>>> feature/map_fix
+
 
 var domain = document.location.origin;
 
@@ -48,17 +46,13 @@ function init(locationName, zoomLevel){
                                 }).addTo(map);
 
         //after the request has been made draw controls
-<<<<<<< HEAD
-        map.addControl(new NavControl());
+
+        //map.addControl(new NavControl());
         map.addControl(new PanelControl());
         initLayers();  
       }
         
-=======
-        //map.addControl(new NavControl());
-        }
 
->>>>>>> feature/map_fix
     });
 
   }
