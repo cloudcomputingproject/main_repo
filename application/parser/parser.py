@@ -1,9 +1,26 @@
 from flask import json, jsonify
+from geojson import Feature, Point
 
 def parsePoliceCategories(categStr):
-	catArr = json.load()
+	catArr = json.load(categStr)
 	categories = []
 	for holder in catArr:
-		categories.push(holder["name"])
-	return json.dump(categories)
+		categories.append(holder["name"])	
 
+	return categories#json.dumps(categories, separators=(',',':'))
+
+def parseCrimes(json):
+	crimesOld = json.load(json)
+	features = [];
+	for crime in crimesOld:
+		lat =  crime["location"]["latitude"]
+		lng =  crime["location"]["longtitude"]
+		point = Point((lat,lng))
+		category = crime["category"]
+		context = crime["context"]
+		out_stat = crime["outcome_status"]
+		properties = json.dumps({'category':category,'context':context,'outcome_status':out_stat})
+		feature = Feature(geometry=point,properties=properties)
+		features.append(feature)
+	fc = FeatureCollection(features)
+	return fc	
