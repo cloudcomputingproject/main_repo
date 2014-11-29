@@ -13,7 +13,7 @@ from application import app
 
 from servers import police
 from servers import geocoding
-from application.parsr import parser
+# from application.parsr import parser
 from class_definitions import Boundaries
 from datetime import date
 
@@ -21,6 +21,7 @@ from datetime import date
 featuresOptions = {"police" : lambda arg: processPolice(arg),
 					"weather" : lambda arg: processWeather(arg),
 					"restaurant" : lambda arg: processRestaurants(arg)}
+
 def getCategoriesAPI():
 	keys = featuresOptions.keys()
 	keys.sort()
@@ -28,7 +29,7 @@ def getCategoriesAPI():
 
 def getPoliceCategories():
 	json = police.getCategories()
-	parsed_json = parser.parsePoliceCategories()
+	# parsed_json = parser.parsePoliceCategories()
 	return parsed_json
 
 

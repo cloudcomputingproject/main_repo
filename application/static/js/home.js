@@ -4,6 +4,8 @@ var DEFAULT_ZOOM = 6;
 
 var map;
 var availableLayers = new Object();
+var MAX_CACHE_AGE = 600; //600sec = 10minutes
+var cache = new Object();
 
 
 var domain = document.location.origin;
@@ -57,29 +59,43 @@ function init(locationName, zoomLevel){
 function initLayers(){
   var serverData = getServerData();
   var layerData = serverData['categoriesAPI'];
+  // var layerData = [data, data2];
   console.log(layerData);
         //create layers
       //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
 
       for (var i = 0; i < layerData.length; i++) {
+
         availableLayers[layerData[i]] = L.geoJson(false, {
         style: function (feature) {
               return feature.properties && feature.properties.style;
               },
             onEachFeature: onEachFeature,
             pointToLayer: drawFeature
-          }
-            ).addTo(map);
-          };
+          }).addTo(map);
+
+
+        cache[layerData[i]] = -1; //init the cache for each layer
+
+      }
           //add to map
-        L.control.layers(null, availableLayers).addTo(map); 
+        // L.control.layer
+        console.log(cache);
+        // L.control.layers(null, availableLayers).addTo(map); 
+        //make a request for the default data to be displayer
+        //TO-DO make a request for the police data
+        //add the data to the layer 
+        displayData([data], availableLayers);
+
+ 
+
 }
 //this function gets the data which is passed from the controller trhrouh the
 //template engine.
 //the data is attached to an html element attribute( the #map <div> in our case)
 function getServerData(){
   var data = $('#map').data("fromserver");
-  console.log(data);
+  // console.log(x);
   return data;
 }
 var zoomTo = function(locationName, zoomLevel) {
@@ -133,7 +149,6 @@ var zoomTo = function(locationName, zoomLevel) {
 $(document).ready(function(){
 
   init(DEFAULT_LOCATION, DEFAULT_ZOOM);
- 
 
   $("#go").on('click', function(){
     alert("Clicked");

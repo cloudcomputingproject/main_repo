@@ -3,6 +3,9 @@
     #control_container{
         background: rgba(0, 0, 0, 0.6);
     }
+    .right-side-panel-dropdown{
+        font-size: 7pt;
+    }
 </style>
 <div class="panel-group" id="accordion_main" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
@@ -20,7 +23,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" >
+                                        <input type="checkbox" id='police_checkbox'> <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" >
                                         Police
                                         </a>
                                     </h4>
@@ -31,8 +34,8 @@
                                             <div class="panel panel-default">
                                                 <div class="panel-heading" role="tab" id="headingPoliceCategories">
                                                     <h4 class="panel-title">
-                                                        <span id='span_arrow' class='glyphicon glyphicon-chevron-down'></span><a data-toggle="collapse" data-parent="#accordion_police_categories" href="#collapsePoliceCategories" aria-expanded="true" aria-controls="collapsePoliceCategories" id ="police_categories">
-                                                        Categories        </a>
+                                                        <a data-toggle="collapse" data-parent="#accordion_police_categories" href="#collapsePoliceCategories" aria-expanded="true" aria-controls="collapsePoliceCategories" id ="police_categories">
+                                                        <span id='span_arrow_collapsePoliceCategories' class='glyphicon glyphicon-chevron-down right-side-panel-dropdown'></span> Categories </a>
                                                     </h4>
                                                 </div>
                                                 <div id="collapsePoliceCategories" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoliceCategories">
@@ -49,7 +52,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingTwo">
                                     <h4 class="panel-title">
-                                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <input type="checkbox" id='restaurant_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Restaurants
                                         </a>
                                     </h4>
@@ -63,7 +66,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingThree">
                                     <h4 class="panel-title">
-                                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <input type="checkbox" id='weather_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                         Weather
                                         </a>
                                     </h4>

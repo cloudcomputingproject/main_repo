@@ -20,15 +20,15 @@ var data = { "type": "FeatureCollection",
 var data2 = { "type": "FeatureCollection",
     "features": [
       { "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [0.388799,52.35]},
+        "geometry": {"type": "Point", "coordinates": [4.488799,52.35]},
         "properties": {"type": "restaurant"}
         },
      { "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [0.487521,52.333833]},
+        "geometry": {"type": "Point", "coordinates": [4.587521,52.333833]},
         "properties": {"type": "restaurant"}
         },
      { "type": "Feature",
-        "geometry": {"type": "Point", "coordinates": [0.481811, 52.371837]},
+        "geometry": {"type": "Point", "coordinates": [4.581811, 52.371837]},
         "properties": {"type": "restaurant"}
         }
          

@@ -8,10 +8,16 @@ var displayData = function(data,layers){
 		var fcName = fc.properties.type;
 		//alert("Name:"+fcName);
 		var layer = layers[fcName];
+		console.log("name:",fcName);
 		console.log("layer:",layer);
 		console.log("data:",data);
-		if(layer)
-		layer.addData(data); 
+		if(layer){
+			layer.addData(data[i]); 
+
+			//update the timestamp of the layer
+			cache[fcName] = Math.round(new Date().getTime() / 1000);
+		}
+
 		// var layer =	L.geoJson(fc, {
 		// 	style: function (feature) {
 	 //        	return feature.properties && feature.properties.style;

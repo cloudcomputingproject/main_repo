@@ -35,6 +35,12 @@ def homepage():
 	dataToSend = {
 		'categoriesAPI': controller.getCategoriesAPI(),
 		'policeCategories': controller.getPoliceCategories()
+		# 'policeCategories': controller.getPoliceCategories()
+	}
+	dataToSend = {
+		categoriesAPI: {
+
+		}
 	}
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
 	return render_template('home/home.html', dataToSend=dataToSend)

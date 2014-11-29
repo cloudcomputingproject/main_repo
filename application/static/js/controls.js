@@ -26,6 +26,26 @@ var NavControl =  L.Control.extend({
         return container;
     }
 });
+ function collapseListener(event,idOfElement) {
+                 event.preventDefault();
+                // event.stopPropagation();
+                 //rotate the arrow next to the police categories based on whether we collapse it or not
+                //check if it is collapsed
+                var name = "#"+idOfElement;
+                console.log(name);
+                var classes = $(name).attr('class').split(' ');
+                if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
+                    
+                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
+                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
+                } else{
+                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-right');
+                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
+                }
+                return true;
+
+};
+
 var PanelControl = L.Control.extend({
     options: {
     
@@ -38,33 +58,91 @@ var PanelControl = L.Control.extend({
         container.setAttribute('id', 'control_panel');
         $.get( "static/includes/control_panel.html", function( data ) {
             $( "#control_panel" ).html( data ); //set the content of control_panel to this html
-            var server_json = $('#map').data('fromserver');
 
-             var categories = server_json.policeCategories;  
-            categories.forEach(function(el){
-                var str = '<input type="checkbox" id="'+el+'"/>'+ el+ '<br/>';
-                $('#police_categories_checkboxes').append(str);
-            });
-            $("#police_categories").click(function(event){
-                event.preventDefault();
-            
-                //rotate the arrow next to the police categories based on wheter we collapse it or not
-                //check if it is collapsed
-                var classes = $('#collapsePoliceCategories').attr('class').split(' ');
-                if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
-                    
-                    $('#span_arrow').removeClass('glyphicon-chevron-down');
-                    $('#span_arrow').addClass('glyphicon-chevron-right');
-                } else{
-                    $('#span_arrow').removeClass('glyphicon-chevron-right');
-                    $('#span_arrow').addClass('glyphicon-chevron-down');
-                }
-                return true;
+            //append the categories of crimes under Police.
+            addPoliceCategories();
 
-            });
+             //these listeners will show/hide map layers
+             //they depend that the id attributes of the appropriate html elements are
+             //set with accordance with the names of the data categories we support.
+            $("#police_checkbox").prop('checked', true);
+            addCheckBoxListeners();
+
+
+            //set the default data category  to be visualised
         });
       
         
        return c;
     }
-});
+}); 
+
+function addPoliceCategories(){
+    var server_json = $('#map').data('fromserver');
+
+    var categories = server_json.policeCategories;  
+    categories.forEach(function(el){
+        var str = '<input type="checkbox" id="'+el+'"/>'+ el+ '<br/>';
+        $('#police_categories_checkboxes').append(str);
+    });
+    $("#police_categories").click(function(event){collapseListener(event, 'collapsePoliceCategories')});
+
+}
+ //police_checkbox   ----> police
+function stripName(nameWithHashtag){
+
+    if(nameWithHashtag.indexOf('_') === -1){
+        console.log('the id of a checkbox is not set properly');
+        return '';
+    }
+    var temp1 = nameWithHashtag.split("_"); //temp1 = ['#police', "_checkbox"]
+    return temp1[0];
+ }
+ //name - name of the layer
+function checkIfDataHasExpired(name){
+    //check if the data was set x minutes ago or less
+    var lastSet = cache[name]; //when the cache was last updated.
+    console.log('cache:' + lastSet);
+    if(lastSet < 0)  { //true if cache was never set
+        return true;
+    }
+    var now = Math.round(new Date().getTime() / 1000); // SECONDS since 1970
+    var ageOfData = now - lastSet;
+    //if the data is older than the maximum time we allow the data to be cached for
+    if(ageOfData <= MAX_CACHE_AGE){
+        return false;
+    } else{
+        return true;
+    }
+
+}
+//name - name of the layer
+
+ function checkBoxHandler(event, $this) {
+    var name = stripName($this.attr('id'));
+    console.log(name);
+    var layer = availableLayers[name];
+    if(!layer){
+        console.log('no layer with this name');
+        return; 
+    }
+
+    if($this.is(':checked')){
+         //check if we have the data AND it is not expired
+        if(checkIfDataHasExpired(name)){
+            //make a request which will update the availableLayers
+            console.log('expired')
+        }
+        layer = availableLayers[name];
+        map.addLayer(layer);
+
+
+    }else {
+         map.removeLayer(layer);
+    }
+ }
+ function addCheckBoxListeners(){
+    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
+    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
+ }
+
