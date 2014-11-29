@@ -28,7 +28,7 @@ def getCategoriesAPI():
 
 def getPoliceCategories():
 	json = police.getCategories()
-	parsed_json = parser.parsePoliceCategories()
+	parsed_json = parser.parsePoliceCategories(json)
 	return parsed_json
 
 
