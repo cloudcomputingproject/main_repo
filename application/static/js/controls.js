@@ -31,56 +31,78 @@
     }
 });
 */
+function addControlPanel(){
+    //initialise the Panel control - this would
+    //create the DOM elements.
+    map.addControl(new PanelControl());
+    //after the DOM elements are created, we add listeners to them,
+    //and append another elements
+        $.ajax({
+             url: 'static/includes/control_panel.html',
+             success: function(data) {
+                console.log(data);
+                $("#control_panel").html( data ); //set the content of control_panel to this html
+                // $("#police_checkbox").prop('checked', true); //by default police is checked
+                //append the categories of crimes under Police.
+                addPoliceCategories();
+
+                //these listeners will show/hide map layers
+                //they depend that the id attributes of the corresponding html elements(checkboxes) are
+                //set with accordance to the names of the data categories we support
+                //so in the html of the control panel, the id of the checkbox for the police layer
+                //will be  police_checkbox
+                //the 'police' bit is also the name of the layer for this data. it is also
+                //equal to the data type that the server supports.
+                addCheckBoxListeners();
+                 //set the default data category  to be visualised
+            },
+            //we want sync. request, so the html is loaded before we call setCheckboxes()
+            async: false
+        }); 
+}
+
 var PanelControl = L.Control.extend({
     options: {
-    
         position: 'topright'
     },
     onAdd: function (map) {
+        //c is the main container for the control panel
         var c = L.DomUtil.create('div', 'navigation-control');
         c.setAttribute('id', 'control_container');
+        L.DomEvent.disableClickPropagation(c); //if click/drag/zoom on the panel, the map won't react
         var container = L.DomUtil.create('div', 'navv', c);
         container.setAttribute('id', 'control_panel');
-        $.get( "static/includes/control_panel.html", function( data ) {
-            $( "#control_panel" ).html( data ); //set the content of control_panel to this html
+        return c;
+    }
+}); 
 
-            //append the categories of crimes under Police.
-            addPoliceCategories();
+function addCheckBoxListeners(){
+    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
+    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
+ }
 
-             //these listeners will show/hide map layers
-             //they depend that the id attributes of the appropriate html elements are
-             //set with accordance with the names of the data categories we support.
-            $("#police_checkbox").prop('checked', true);
-            addCheckBoxListeners();
-
-
-            //set the default data category  to be visualised
-        });
-      
-        
-       return c;
+function checkBoxHandler(event, $this) {
+    var name = stripName($this.attr('id'));
+    console.log(name);
+    var layer = availableLayers[name];
+    if(!layer){
+        console.log('no layer with this name');
+        return; 
     }
 
-}); 
- function collapseListener(event,idOfElement) {
-                 event.preventDefault();
-                // event.stopPropagation();
-                 //rotate the arrow next to the police categories based on whether we collapse it or not
-                //check if it is collapsed
-                var name = "#"+idOfElement;
-                console.log(name);
-                var classes = $(name).attr('class').split(' ');
-                if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
-                    
-                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
-                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
-                } else{
-                    $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-right');
-                    $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
-                }
-                return true;
-
-};
+    if($this.is(':checked')){
+         //check if we have the data AND it is not expired
+        if(checkIfDataHasExpired(name)){
+            //make a request which will update the availableLayers
+            //TO-DO
+            console.log('expired')
+        }
+        layer = availableLayers[name];
+        map.addLayer(layer);
+    }else {
+         map.removeLayer(layer);
+    }
+}
 
 function addPoliceCategories(){
     var server_json = $('#map').data('fromserver');
@@ -95,7 +117,6 @@ function addPoliceCategories(){
 }
  //police_checkbox   ----> police
 function stripName(nameWithHashtag){
-
     if(nameWithHashtag.indexOf('_') === -1){
         console.log('the id of a checkbox is not set properly');
         return '';
@@ -121,37 +142,22 @@ function checkIfDataHasExpired(name){
     }
 
 }
-//name - name of the layer
 
- function checkBoxHandler(event, $this) {
-    var name = stripName($this.attr('id'));
+//when collapsing elements, this handles rotating the arrow
+ function collapseListener(event,idOfElement) {
+    event.preventDefault();
+    //rotate the arrow next to the police categories based on whether we collapse it or not
+    //check if it is collapsed
+    var name = "#"+idOfElement;
     console.log(name);
-    var layer = availableLayers[name];
-    if(!layer){
-        console.log('no layer with this name');
-        return; 
+    var classes = $(name).attr('class').split(' ');
+    if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
+        $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
+        $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
+    } else{
+        $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-right');
+        $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
     }
+    return true;
 
-    if($this.is(':checked')){
-         //check if we have the data AND it is not expired
-        if(checkIfDataHasExpired(name)){
-            //make a request which will update the availableLayers
-            console.log('expired')
-        }
-        layer = availableLayers[name];
-        map.addLayer(layer);
-
-
-    }else {
-         map.removeLayer(layer);
-    }
- }
- function addCheckBoxListeners(){
-    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
-    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
- }
-
-
-
-
-
+};
