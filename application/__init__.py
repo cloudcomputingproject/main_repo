@@ -17,6 +17,7 @@ import all blueprint modules
 """
 from views.home import home
 from views.landing.landing import landing
+from views.glogin.glogintest import googleLogin
 # from api.external_api import external_api
 from request_handler.handler import handler
 
@@ -48,5 +49,6 @@ app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 # Pull in URL dispatch routes - here all blueprints are registered
 app.register_blueprint(home)
 app.register_blueprint(landing)
+app.register_blueprint(googleLogin)
 # app.register_blueprint(external_api)
 app.register_blueprint(handler)
