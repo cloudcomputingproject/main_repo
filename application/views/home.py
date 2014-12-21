@@ -1,10 +1,6 @@
 """
 home.py
-
 URL route handlers
-
-
-
 """
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
@@ -28,7 +24,7 @@ cache = Cache(app)
 
 home = Blueprint('home', __name__)
 
-@home.route('/')
+@home.route('/app')
 def homepage():
 	#we send this to the template engine so the client receives some data straight 
 	#away, without having to make consequetive requests 
