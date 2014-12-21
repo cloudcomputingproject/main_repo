@@ -26,7 +26,7 @@
 <body>
 
         {% include 'includes/nav.html' %} {# pull in navbar #}
-
+    <img id="preloader" style='display:none' src={{ url_for('static', filename='img/preloader.gif')}}>    
     <div class="container" id="maincontent">
         {% include 'includes/flash_message.html' %} {# page-level feedback notices #}
         <div id="body_content">
@@ -42,6 +42,7 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/{{ bootstrap_version }}/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/{{ parsley_version }}/parsley-standalone.min.js"></script>
     <script src="/static/js/main.js"></script>
+    <script src="/static/js/jquery.blockUI.js"></script>
     {% block tail_script %}{# defer-capable JS block #}{% endblock %}
     {{ profiler_includes|safe }}
 </body>
