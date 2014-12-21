@@ -143,6 +143,8 @@ var zoomTo = function(locationName, zoomLevel) {
           map.setView(centerLocation);       
         }
         // displayData([data,data2],availableLayers);
+        disable_preloader();
+
     }
    });
 
@@ -153,6 +155,8 @@ $(document).ready(function(){
 
   $("#go").on('click', function(){
     //alert("Clicked");
+    enable_preloader();
+ 
     zoomTo($("#location").val(),10);
   });
 
