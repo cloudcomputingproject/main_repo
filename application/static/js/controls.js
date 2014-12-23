@@ -161,3 +161,22 @@ function checkIfDataHasExpired(name){
     return true;
 
 };
+
+//Sets the checkboxes of the Control panel based on the
+//types of the Features passed as @feature_col. the names of the types
+//should match the names in the html
+//@feature_col is the default feature collections being showed
+function setCheckboxes(feature_col){
+    //get the categories of data used
+    var cats = [];
+    for (var i = 0; i < feature_col.length; i++) {
+        cats[i] = feature_col[i]['properties']['type'];
+    };
+    //set the checkbox value
+    for (var i = 0; i < cats.length; i++) {
+        //match the id's from the html of the Control panel
+        var name = "#" + cats[i] + "_checkbox"; 
+ 
+        $(name).prop("checked", true);
+    };
+}

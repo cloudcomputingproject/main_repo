@@ -11,7 +11,8 @@
 	$(document).ready(function(){
 	
 		$(".banner-image").backstretch('static/landing/images/banner.jpg');
-		
+		// L.mapbox.accessToken = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
+// var map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([0, 0], 3);
 		// Fixed header
 		//-----------------------------------------------
 		$(window).scroll(function() {

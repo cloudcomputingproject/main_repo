@@ -1,6 +1,11 @@
+ /*
+Initialise the map and all of its components
+The control panel is initialised here.
+ */
  // global variables
 var DEFAULT_LOCATION = "United Kingdom";
 var DEFAULT_ZOOM = 5;
+var mapbox_access_token = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
 
 var map;
 var availableLayers = new Object();
@@ -9,6 +14,20 @@ var cache = new Object();
 
 var domain = document.location.origin;
 
+//entry point for the front end logic
+$(document).ready(function() {
+	
+	init(DEFAULT_LOCATION, DEFAULT_ZOOM);
+
+	attachButtonListeners();
+
+});
+
+//get the coordinates for the initial location
+//and then using them, set up the map,
+//add it's ControlPanel,
+//initialise the layers on the map,
+//	and add default content to them(this is done by initLayer)
 function init(locationName, zoomLevel){
 
 	if (!map){
@@ -32,23 +51,33 @@ function init(locationName, zoomLevel){
 	        	bounds = L.latLngBounds(southWest, northEast);
 	        
 				//set up MapBox
-	        	L.mapbox.accessToken = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
-				map = L.mapbox.map('map').setView(centerLocation, zoomLevel);
+				var options  = {
+					centerLocation: centerLocation, 
+					zoomLevel: zoomLevel					
+				};
+	        	setMap(options);
 
-	        	var mapLink1 = "tile.openstreetmap.org";
-	        	var mapLink2 = "tiles.mapbox.com/v3/{id}"
-	        	var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
-	                                maxZoom: 18,
-	                                id : 'examples.map-20v6611k'
-	       		}).addTo(map);
-
-	        	// the Control Panle showing the different layers
-	        	//(the method is implemented in controls.js)
+	        	// the Control Panel showing the different layers
+	        	//(the method is defined in controls.js)
 	        	addControlPanel(); 
-	        	initLayers();  
+
+	        	initLayers();
+	        	testHeat() ;
 	      	}
 	    });
 	}
+}
+function setMap(options){
+	L.mapbox.accessToken = mapbox_access_token;
+	map = L.mapbox.map('map').setView(options.centerLocation, options.zoomLevel);
+
+	var mapLink1 = "tile.openstreetmap.org";
+	var mapLink2 = "tiles.mapbox.com/v3/{id}"
+	var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                        id : 'examples.map-20v6611k'
+		}).addTo(map);
+
 }
 //add to the map the layers based on the categories available(this comes from the server)
 //then add the default content to the map and set the checkboxes on the control panel.
@@ -79,23 +108,7 @@ function initLayers(){
     setCheckboxes([data,data2]);
 }
 
-//sets the checkboxes of the Control panel 
-//@arr is the default feature collections being showed
-function setCheckboxes(arr){
-    //get the categories of data used
-    var cats = [];
-    for (var i = 0; i < arr.length; i++) {
-        cats[i] = arr[i]['properties']['type'];
-    };
-    //set the checkbox value
-    for (var i = 0; i < cats.length; i++) {
-    	//match the id's from the html of the Control panel
-        var name = "#" + cats[i] + "_checkbox"; 
-        console.log($(name));
 
-        $(name).prop("checked", true);
-    };
-}
 //this function gets the data which is passed from the controller trhrouh the
 //template engine.
 //the data is attached to an html element attribute( the #map <div> in our case)
@@ -144,30 +157,37 @@ var zoomTo = function(locationName, zoomLevel) {
         }
         // displayData([data,data2],availableLayers);
         disable_preloader();
-
     }
    });
 
 };
-$(document).ready(function(){
-
-  init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-
-  $("#go").on('click', function(){
-    //alert("Clicked");
-    enable_preloader();
- 
-    zoomTo($("#location").val(),10);
-  });
-
-  $("#location").keypress(function(event){
-    if ( event.which == 13 ) {
-     $('#go').click();
-  }
-  });
-
-  $("#reset").on('click', function(){
-    zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
-  });
-
+//create a heatlayer using the leaflet plugin.
+//create a FeaturesLayer from sample data
+//add each feature to the heat layer.
+function testHeat(){
+ 	heat = L.heatLayer([], { maxZoom: 12 }).addTo(map);
+	var layer = L.mapbox.featureLayer(data);
+     // Zoom the map to the bounds of the markers.
+    // map.fitBounds(layer.getBounds());
+    // Add each marker point to the heatmap.
+    layer.eachLayer(function(l) {
+        heat.addLatLng(l.getLatLng());
 });
+}
+
+function attachButtonListeners(){
+	$("#go").on('click', function(){
+	    enable_preloader();
+	    zoomTo($("#location").val(),10);
+	});
+
+	$("#location").keypress(function(event){
+		if ( event.which == 13 ) {
+			$('#go').click();
+		}
+	});
+
+	$("#reset").on('click', function(){
+		zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
+	});
+}
