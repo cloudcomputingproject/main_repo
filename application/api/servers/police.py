@@ -19,6 +19,7 @@ from application import app
 
 url = 'http://data.police.uk/api/'
 
+#private
 def getData():
     global url
     #json object
@@ -28,7 +29,11 @@ def getData():
     #print json.load(data)
     
     url = 'http://data.police.uk/api/'
-    return data
+
+    result = data.read()
+    data.close()
+
+    return result
 
 def getCategories():
     global url
@@ -46,7 +51,8 @@ def getBoundaryData(county, nhood):
     url += county + '/' + getNeighbourhoodID(county, nhood) + '/boundary'
     return getData()
 
-def getNeighbourhoodID(county, nhood):
+#private
+def getNeighbourhoodID(county, nhooed):
     global url
     url+= county + '/neighbourhoods'
     data = json.load(urllib2.urlopen(url))
@@ -54,6 +60,7 @@ def getNeighbourhoodID(county, nhood):
     for j in xrange(0, len(data)):
         if data[j]["name"] == nhood:
             return data[j]["id"]
+            
 #date must be in the format yyyy-mm
 def getCrimesData(category, lat, lng, date):
     global url
@@ -69,9 +76,10 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
     url+='&date=' + date
     return getData()
 
-
-#getCategories()
-#getNeighbourhoods('hampshire')
-#getBoundary('hampshire', 'Fair Oak')
-#getCrimes('all-crimes', 52.629729, -1.131592, '2014-09')
-#getCrimesInArea('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
+"""
+getCategories()
+getNeighbourhoodsData('hampshire')
+getBoundaryData('hampshire', 'Fair Oak')
+getCrimesData('all-crimes', 52.629729, -1.131592, '2014-09')
+getCrimesInAreaData('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
+"""
