@@ -16,20 +16,3 @@ var Utils = {
 };
 
 /* Your custom JavaScript here */
-function enable_preloader(){
-$.blockUI({
-    message: $('#preloader'),
-     css:  {
-            border: 'none', 
-            padding: '15px', 
-            backgroundColor: '#000', 
-            '-webkit-border-radius': '10px', 
-            '-moz-border-radius': '10px', 
-            opacity: .5, 
-            color: '#fff' 
-        } }); 
-  }
-  function disable_preloader(){
-    console.log("wliza");
-            setTimeout($.unblockUI, 100); 
-  }
