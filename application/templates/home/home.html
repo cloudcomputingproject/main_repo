@@ -35,7 +35,7 @@
 {% block content %}
 	
     <h1><center>THIS IS HOME</center></h1>
-
+    
     <div>&nbsp;</div>
 
     <!--<input id='location' type='test' value='England' />
@@ -45,7 +45,8 @@
     <div>&nbsp;</div>-->
 
     <div id="map_wrapper">
-        <div id="map"></div>
+        <div id="map" data-fromserver ="{{dataToSend}}"></div>
+       
         <div id="buttons_wrapper">
             <input id='location' type='name' value='United Kingdom'/>
             <button type='button' value='Click' id='go'> Go </button>
@@ -56,14 +57,16 @@
     <div id="map" data-fromserver ="{{dataToSend}}"></div>
 
 
+ 
     <div>&nbsp;</div>
+
 
 
 {% endblock content %}
  
 
 {% block tail_script %}
-<!--<script type="text/javascript" src="/static/js/controls.js"></script>-->
+<script type="text/javascript" src="/static/js/controls.js"></script>
 <script type="text/javascript" src="/static/js/sample_data.js"></script>
 <script type="text/javascript" src="/static/js/data_process.js"></script>
 <script type="text/javascript" src="/static/js/home.js"></script>

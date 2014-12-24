@@ -1,25 +1,35 @@
-//map to store feature type : layers, which will later be used to filter information
-var layers = new Object();
+
 //accepts array of Feature collections
-var displayData = function(data){
+var displayData = function(data,layers){
 
 	//alert(JSON.stringify(data));
 	for (var i = 0; i < data.length; i++) {
 		var fc = data[i];
 		var fcName = fc.properties.type;
 		//alert("Name:"+fcName);
+		var layer = layers[fcName];
+		console.log("name:",fcName);
+		console.log("layer:",layer);
+		console.log("data:",data);
+		if(layer){
+			layer.addData(data[i]); 
+
+			//update the timestamp of the layer
+			cache[fcName] = Math.round(new Date().getTime() / 1000);
+		}
+
+		// var layer =	L.geoJson(fc, {
+		// 	style: function (feature) {
+	 //        	return feature.properties && feature.properties.style;
+	 //        	},
+	 //        onEachFeature: onEachFeature,
+	 //        pointToLayer: drawFeature
+		//     }
+	 //        ).addTo(map);
+
 		
-		var layer =	L.geoJson(fc, {
-			style: function (feature) {
-	        	return feature.properties && feature.properties.style;
-	        	},
-	        onEachFeature: onEachFeature,
-	        pointToLayer: drawFeature
-		    }
-	        ).addTo(map);
-		layers[fcName] = layer;
 	}
-	return layers;	
+		
 };
 	//additional processing of features
 	function onEachFeature(feature, layer) {
