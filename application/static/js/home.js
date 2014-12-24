@@ -64,53 +64,84 @@ function getServerData(){
   return data;
 }
 var zoomTo = function(locationName, zoomLevel) {
-
-
-
 	$.ajax({
       type: "POST",
-      url: domain+'/app/geo',
+      url: domain+'/app/allData',
       dataType: "json",
       contentType: "application/json",
-      data: JSON.stringify({"name": encodeURIComponent(locationName)}),//locationName.replace(/\s/g, '%20')}),
-      
-      success:  function(json){
-    
-        var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-                         json["results"][0]["geometry"]["location"]["lng"]);
+      data: JSON.stringify(sampleRequest3),//locationName.replace(/\s/g, '%20')}),
+      error: function(){
+        console.log("fail >><< ");
+      },
+      success:  function(json){        
+        bigJson = json;
+        json = bigJson["geoCoding"];
+        geoJSON = bigJson["geoJSON"];
 
-        // Bounds
+        if (json){
+          console.log("1:");
+          console.log(json);
+          console.log("2:");
+          console.log(geoJSON);
+          var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
+                           json["results"][0]["geometry"]["location"]["lng"]);
 
-        if (L.latLng(json["results"][0]["geometry"]["bounds"])){
-          var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-                       json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-          var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-                         json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+          // Bounds
 
-          bounds = L.latLngBounds(southWest, northEast);
-        }
+          if (L.latLng(json["results"][0]["geometry"]["bounds"])){
+            var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
+                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
+            var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
+                           json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+
+            bounds = L.latLngBounds(southWest, northEast);
+          }
 
         // Map not inialized
-        if (!map){
-          init(DEFAULT_LOCATION, DEFAULT_ZOOM);
+          if (!map){
+            init(DEFAULT_LOCATION, DEFAULT_ZOOM);
+          }
+
+          // Map initialised  
+          else{   
+            map.setZoom(200);      
+            map.panTo(centerLocation);
+            //map.setMaxBounds(bounds);
+            map.setZoom(zoomLevel);      
+            map.setView(centerLocation);       
+          }
+        }
+        /*
+        $.ajax({
+          type: "POST",
+          url: domain+'/app/',
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify(sampleRequest1),//locationName.replace(/\s/g, '%20')}),
+      
+            success:  function(json){              
+              console.log("---");
+              console.log(json);
+              //console.log(json);
+              //displayData([dataX1,dataX2],availableLayers);              
+              var availableLayers = displayData(json["features"]);
+              L.control.layers(null, availableLayers).addTo(map);
+            }
+        });
+        */
+        if (geoJSON){
+          var availableLayers = displayData(geoJSON["features"]);
+          L.control.layers(null, availableLayers).addTo(map);
         }
 
-        // Map initialised  
-        else{   
-          map.setZoom(200);      
-          map.panTo(centerLocation);
-          //map.setMaxBounds(bounds);
-          map.setZoom(zoomLevel);      
-          map.setView(centerLocation);       
-        }
-        var availableLayers = displayData([data,data2]);
-        L.control.layers(null, availableLayers).addTo(map);
-
-    }
+      }
 
    });
 
 };
+
+
+
 $(document).ready(function(){
 
   init(DEFAULT_LOCATION, DEFAULT_ZOOM);

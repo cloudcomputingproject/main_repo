@@ -35,3 +35,125 @@ var data2 = { "type": "FeatureCollection",
        ],
        "properties" :{"type":"restaurant"}
      };
+
+
+var sampleRequest1 = {
+    "location": {
+        "bounds": {
+            "NorthEast": [
+                0,
+                52
+            ],
+            "SouthWest": [
+                1,
+                54
+            ]
+        },
+        "name": "Southampton"
+    },
+    "features": [
+        {
+            "name": "police",
+            "args": {
+                "category": "all-crimes"
+            }
+        },
+        {
+            "name": "restaurants",
+            "args": {
+                "arg_name": "value"
+            }
+        },
+        {
+            "name": "weather",
+            "args": {
+                "arg_name": "value"
+            }
+        }
+    ]
+}
+
+
+
+var sampleRequest2 = {
+    "geoCoding":{
+        "name": "London"
+    },
+
+    "geoJSON":{
+        "location": {
+            "bounds": {
+                "NorthEast": [
+                 0,
+                 52
+                ],
+                "SouthWest": [
+                1,
+                54
+               ]
+            },
+            "name": "Southampton"
+         },
+
+        "features": [
+            {
+                "name": "police",
+                "args": {
+                    "category": "all-crimes"
+                }
+            },
+            {
+                "name": "restaurants",
+                "args": {
+                    "arg_name": "value"
+                }
+            },
+            {
+                "name": "weather",
+                "args": {
+                    "arg_name": "value"
+                }
+            }
+        ]
+    }
+}
+
+
+var sampleRequest3 = {
+    "geoJSON":{
+        "location": {
+            "bounds": {
+                "NorthEast": [
+                 0,
+                 52
+                ],
+                "SouthWest": [
+                1,
+                54
+               ]
+            },
+            "name": "Southampton"
+         },
+
+        "features": [
+            {
+                "name": "police",
+                "args": {
+                    "category": "all-crimes"
+                }
+            },
+            {
+                "name": "restaurants",
+                "args": {
+                    "arg_name": "value"
+                }
+            },
+            {
+                "name": "weather",
+                "args": {
+                    "arg_name": "value"
+                }
+            }
+        ]
+    }
+}

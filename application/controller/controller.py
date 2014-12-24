@@ -31,6 +31,28 @@ def getGeoCoding(location):
 	return geocoding.getData(name)
 #takes python object representation of the received JSON object
 def main(data):
+	print "inside main method controller"	
+	location = data["location"]
+	if location:
+		actualLocation = processLocation(location)
+	features = data["features"]
+	if features:
+		return processFeatures(features)
+	#test response will be the response from
+	#the module taking care of a communication 
+	#with some external API
+	#we parse that response with the PARSER
+	#and return it to the request handler
+	print actualLocation.locationName
+	print "Latitude: " + str(actualLocation.southWest[0]) + ", Longitude: " + str(actualLocation.southWest[1])
+	print actualLocation.northEast
+	test_response = police.getCategories()
+	
+	temp = test_response.read()
+
+	return temp
+
+def main2(data):
 	print "inside main method controller"
 	location = data["location"]
 	print location
