@@ -1,4 +1,4 @@
-var NavControl =  L.Control.extend({
+/*var NavControl =  L.Control.extend({
     options: {
         position: 'topleft'
     },
@@ -26,3 +26,4 @@ var NavControl =  L.Control.extend({
         return container;
     }
 });
+*/
