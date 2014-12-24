@@ -2,16 +2,16 @@ var data = { "type": "FeatureCollection",
     "features": [
       { "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [0.388799,53]},
-        "properties": {"type": "police", "value": "1"}
+        "properties": {"type": "police", 'value':'15'}
         },
      { "type": "Feature",
-        "geometry": {"type": "LineString", "coordinates": [[0.388799,53], [0.481811, 52.371837], [0.388799,52.35]]},
-        "properties": {"type": "police", "value": "2"}
+        "geometry": {"type": "Point", "coordinates": [0.487521,52.333833]},
+        "properties": {"type": "police", 'value':'10'}
         },
      { "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [0.481811, 52.371837]},
-        "properties": {"type": "police", "value": "10"}
-         }
+        "properties": {"type": "police","value":"5"}
+        }
          
        ],
        "properties" : {"type":"police"}
@@ -20,23 +20,21 @@ var data = { "type": "FeatureCollection",
 var data2 = { "type": "FeatureCollection",
     "features": [
       { "type": "Feature",
- 
         "geometry": {"type": "Point", "coordinates": [4.488799,52.35]},
-        "properties": {"type": "restaurant"}
+        "properties": {"type": "restaurant", 'value':'12'}
         },
      { "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [4.587521,52.333833]},
-        "properties": {"type": "restaurant"}
+        "properties": {"type": "restaurant", 'value':'14'}
         },
      { "type": "Feature",
         "geometry": {"type": "Point", "coordinates": [4.581811, 52.371837]},
-        "properties": {"type": "restaurant"}
-         }
+        "properties": {"type": "restaurant", 'value':'10'}
+        }
          
        ],
        "properties" :{"type":"restaurant"}
      };
-
 
 var sampleRequest1 = {
     "location": {
