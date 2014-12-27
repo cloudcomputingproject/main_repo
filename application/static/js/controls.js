@@ -39,13 +39,15 @@ function addControlPanel(){
     //and append another elements
         $.ajax({
              url: 'static/includes/control_panel.html',
-             success: function(data) {
-                console.log(data);
-                $("#control_panel").html( data ); //set the content of control_panel to this html
-                // $("#police_checkbox").prop('checked', true); //by default police is checked
-                //append the categories of crimes under Police.
-                addPoliceCategories();
+             success: function(response) {
+                 $("#control_panel").html( response ); //set the content of control_panel to this html
+                //add the API's we support to the Control panel
+                addPolice();
+                addRestaurants();
+                addWeather();
 
+                setDefaultData();
+                
                 //these listeners will show/hide map layers
                 //they depend that the id attributes of the corresponding html elements(checkboxes) are
                 //set with accordance to the names of the data categories we support
@@ -54,36 +56,52 @@ function addControlPanel(){
                 //the 'police' bit is also the name of the layer for this data. it is also
                 //equal to the data type that the server supports.
                 addCheckBoxListeners();
+
                  //set the default data category  to be visualised
             },
-            //we want sync. request, so the html is loaded before we call setCheckboxes()
-            async: false
         }); 
 }
 
-var PanelControl = L.Control.extend({
-    options: {
-        position: 'topright'
-    },
-    onAdd: function (map) {
-        //c is the main container for the control panel
-        var c = L.DomUtil.create('div', 'navigation-control');
-        c.setAttribute('id', 'control_container');
-        L.DomEvent.disableClickPropagation(c); //if click/drag/zoom on the panel, the map won't react
-        var container = L.DomUtil.create('div', 'navv', c);
-        container.setAttribute('id', 'control_panel');
-        return c;
-    }
-}); 
 
+function setDefaultData(){
+  setDefaultCheckboxes();
+  PoliceHandler.handle(); //this will load and show the default data
+}
+//add all fields associated with the Police API
+function addPolice(){
+    addPoliceCategories();
+
+    //attach the listener for the Update button
+    $('#police_update_map').on('click', function(){PoliceHandler.handle();});
+}
+function addRestaurants(){
+    //TO DO add the restaurants fields
+
+    //attach the listener for the Update button
+    $('#restaurant_update_map').on('click', function(){RestaurantHandler.handle();});
+}
+function addWeather(){
+    //TO DO add the weather fields
+
+    //attach the listener for the Update button
+    $('#weather_update_map').on('click', function(){WeatherHandler.handle();});
+}
+
+
+//handles when a checkbox of an API category is clicked.
 function addCheckBoxListeners(){
-    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
-    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
+    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this, PoliceHandler.handle);});
+    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, RestaurantHandler.handle)});
+    $('#weather_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, WeatherHandler.handle)});
  }
 
-function checkBoxHandler(event, $this) {
+//handles when a checkbox of an API category is clicked.
+//each layer this handler is addin/removing to the map
+//is the layer for the API category. Theses layers are 
+//added to availableLayers on page load by initLayers();    
+function checkBoxHandler(event, $this, update) {
     var name = stripName($this.attr('id'));
-    console.log(name);
+
     var layer = availableLayers[name];
     if(!layer){
         console.log('no layer with this name');
@@ -91,25 +109,23 @@ function checkBoxHandler(event, $this) {
     }
 
     if($this.is(':checked')){
-         //check if we have the data AND it is not expired
-        if(checkIfDataHasExpired(name)){
-            //make a request which will update the availableLayers
-            //TO-DO
-            console.log('expired')
-        }
+        //update() acts as if the user has pressed the update button on the particular API cateogory.
+        //update will make a request to the server(if necessery), and update the particular layer in
+        //availableLayers.
+        update();
+
         layer = availableLayers[name];
         map.addLayer(layer);
     }else {
-         map.removeLayer(layer);
+        map.removeLayer(layer);
     }
 }
-
 function addPoliceCategories(){
     var server_json = $('#map').data('fromserver');
 
     var categories = server_json.policeCategories;  
     categories.forEach(function(el){
-        var str = '<input type="checkbox" id="'+el+'"/>'+ el+ '<br/>';
+        var str = '<input type="checkbox" class="police_category" id="'+el+'"/>'+ el+ '<br/>';
         $('#police_categories_checkboxes').append(str);
     });
     $("#police_categories").click(function(event){collapseListener(event, 'collapsePoliceCategories')});
@@ -125,23 +141,7 @@ function stripName(nameWithHashtag){
     return temp1[0];
  }
  //name - name of the layer
-function checkIfDataHasExpired(name){
-    //check if the data was set x minutes ago or less
-    var lastSet = cache[name]; //when the cache was last updated.
-    console.log('cache:' + lastSet);
-    if(lastSet < 0)  { //true if cache was never set
-        return true;
-    }
-    var now = Math.round(new Date().getTime() / 1000); // SECONDS since 1970
-    var ageOfData = now - lastSet;
-    //if the data is older than the maximum time we allow the data to be cached for
-    if(ageOfData <= MAX_CACHE_AGE){
-        return false;
-    } else{
-        return true;
-    }
 
-}
 
 //when collapsing elements, this handles rotating the arrow
  function collapseListener(event,idOfElement) {
@@ -149,7 +149,6 @@ function checkIfDataHasExpired(name){
     //rotate the arrow next to the police categories based on whether we collapse it or not
     //check if it is collapsed
     var name = "#"+idOfElement;
-    console.log(name);
     var classes = $(name).attr('class').split(' ');
     if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
         $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
@@ -162,21 +161,30 @@ function checkIfDataHasExpired(name){
 
 };
 
-//Sets the checkboxes of the Control panel based on the
-//types of the Features passed as @feature_col. the names of the types
-//should match the names in the html
-//@feature_col is the default feature collections being showed
-function setCheckboxes(feature_col){
-    //get the categories of data used
-    var cats = [];
-    for (var i = 0; i < feature_col.length; i++) {
-        cats[i] = feature_col[i]['properties']['type'];
-    };
-    //set the checkbox value
-    for (var i = 0; i < cats.length; i++) {
-        //match the id's from the html of the Control panel
-        var name = "#" + cats[i] + "_checkbox"; 
- 
-        $(name).prop("checked", true);
-    };
+
+//the default data to be displayed on page load is police all crimes
+function setDefaultCheckboxes(){
+    $('.police_category').each(function(index){
+        if(index === 0){
+            $(this).prop('checked', true);
+        }
+    });
+    $("#police_checkbox").prop('checked', true);
 }
+
+//consturct the Control panel main DOM elements
+var PanelControl = L.Control.extend({
+    options: {
+        position: 'topright'
+    },
+    onAdd: function (map) {
+        //c is the main container for the control panel
+        var c = L.DomUtil.create('div', 'navigation-control');
+        c.setAttribute('id', 'control_container');
+        L.DomEvent.disableClickPropagation(c); //if click/drag on the panel, the map won't react
+   
+        var container = L.DomUtil.create('div', 'navv', c);
+        container.setAttribute('id', 'control_panel');
+        return c;
+    }
+}); 

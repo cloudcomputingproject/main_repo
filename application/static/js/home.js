@@ -102,10 +102,9 @@ function initLayers(){
     //make a request for the default data to be displayed
     //TO-DO make a request for the police data
     //add the data to the layers and show it
-    displayData([data, data2], availableLayers);
+ 
     //set the value of the checkboxes based on what data is initially visualised
     //so basically set the default checkboxes
-    setCheckboxes([data,data2]);
 }
 
 
