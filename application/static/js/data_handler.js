@@ -3,6 +3,13 @@
 //use this to make the request to the server
 //the code below uses the Module Pattern (http://toddmotto.com/mastering-the-module-pattern/)
 
+//register all data handlers here, the keys should match the
+//api categories coming from the server
+var DataHandlerMapper = {
+	'police': PoliceHandler,
+	'restaurant': RestaurantHandler,
+	'weather': WeatherHandler
+};
 
 var DataHandler = (function(){
 	//make a request to the server and gets the response
@@ -194,8 +201,3 @@ var WeatherHandler = (function(DataHandler){
 
 
 
-var DataHandlerMapper = {
-	'police': PoliceHandler,
-	'restaurant': RestaurantHandler,
-	'weather': WeatherHandler
-};

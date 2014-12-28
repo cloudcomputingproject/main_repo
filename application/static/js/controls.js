@@ -1,36 +1,3 @@
-/*var NavControl =  L.Control.extend({
-    options: {
-        position: 'topleft'
-    },
-
-    onAdd: function (map) {
-        // create the control container with a particular class name
-        //(tag,class-name,container) returns HTML element
-        var container = L.DomUtil.create('div', 'navigation-control');
-        var textBox = L.DomUtil.create('input','textBox',container);
-        textBox.setAttribute("id","location");
-        textBox.setAttribute("value","London");
-        //make the go Btn
-        var goBtn = L.DomUtil.create('button','button',container);
-        goBtn.setAttribute('type','button');
-        goBtn.setAttribute('value','click');
-        goBtn.setAttribute('id','goo');
-        goBtn.innerHTML = "Go";
-        var resetBtn = L.DomUtil.create('button','button',container);
-        resetBtn.setAttribute('type','button');
-        resetBtn.setAttribute('value','click');
-        resetBtn.setAttribute('id','reset');
-        resetBtn.innerHTML = "Reset Map";
-        // ... initialize other DOM elements, add listeners, etc.
-        console.log($("#goo"));
- $("#goo").on('click', function(){
-    alert("Clicked");
-    zoomTo($("#location").val(),10);
-  });
-        return container;
-    }
-});
-*/
 function addControlPanel(){
     //initialise the Panel control - this would
     //create the DOM elements.
@@ -40,73 +7,42 @@ function addControlPanel(){
         $.ajax({
              url: 'app/control_panel',
              success: function(response) {
-                 $("#control_panel").html( response ); //set the content of control_panel to this html
-                //add the API's we support to the Control panel
-                // addPolice();
-                addRestaurants();
-                addWeather();
-
-                addUpdateButtonListeners();
+                $("#control_panel").html( response ); //set the content of control_panel to this html
+             
+                addDataHandlerListeners();
                 addCollapseListeners();
+
                 setDefaultData();
                 
-                //these listeners will show/hide map layers
-                //they depend that the id attributes of the corresponding html elements(checkboxes) are
-                //set with accordance to the names of the data categories we support
-                //so in the html of the control panel, the id of the checkbox for the police layer
-                //will be  police_checkbox
-                //the 'police' bit is also the name of the layer for this data. it is also
-                //equal to the data type that the server supports.
-                addCheckBoxListeners();
-
-                 //set the default data category  to be visualised
             },
         }); 
 }
-
-//add all fields associated with the Police API
-function addPolice(){
- 
- }
- //add all fields associated with the Restaurants API
-
-function addRestaurants(){
-    //TO DO add the restaurants fields
-
+function addDataHandlerListeners(){
+    addUpdateButtonListeners();
+    addCheckBoxListeners();
 }
-//add all fields associated with the Weather API
-function addWeather(){
-    //TO DO add the weather fields
-
-}
-
 //listener for the Update button
 function addUpdateButtonListeners(){
-    $(".update_map_btn").each(function(index){
+    helperAddDataHandlerListeners('update_map_btn');
+}
+
+//handles when a checkbox of an API category is clicked.
+function addCheckBoxListeners(){
+    helperAddDataHandlerListeners('main_api_category');
+ }
+ //for each element with class (@klass because class is JS reserved keyword)
+ //get the element api, and assign the appropriate data handler to it.
+function helperAddDataHandlerListeners(klass){
+       $("." + klass).each(function(index){
         var api  = $(this).attr('api');
         var handler = DataHandlerMapper[api];
         if(!handler || !handler.handle){
             console.log('cannot find handler');
             return;
         }
-        $(this).on('click', function(){handler.handle();});
+        $(this).click(function(event){ checkBoxHandler(event, $(this), handler.handle);});
     });
 }
-
-//handles when a checkbox of an API category is clicked.
-function addCheckBoxListeners(){
-    $(".main_api_category").each(function(index){
-        var api_category = $(this).attr('api');
-        var handler = DataHandlerMapper[api_category];
-        if(!handler || !handler.handle){
-            console.log('cannot find handler for the specified API cateogry');
-            return;
-        }
-        $(this).click(function(event){var $this = $(this); checkBoxHandler(event, $this, handler.handle);});
-        // $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, RestaurantHandler.handle)});
-        // $('#weather_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, WeatherHandler.handle)});
-    });
- }
 
 //handles when a checkbox of an API category is clicked.
 //each layer this handler is addin/removing to the map
@@ -176,21 +112,9 @@ function stripName(nameWithHashtag){
 function setDefaultData(){
   setDefaultCheckboxes();
   PoliceHandler.handle(); //this will load and show the default data
-  // var police_layer = availableLayers['police'];
-  // var heat = L.heatLayer([ [0.388799,53, '10'], [0.487521,52.333833, '5'], [0.481811, 52.371837,'15']], {radius: 25}).addTo(map);
-  // police_layer.eachLayer(function(l){
-  //   console.log(l);
-  //   heat.add
-  // });
-
  }
 //the default data to be displayed on page load is police all crimes
 function setDefaultCheckboxes(){
-    $('.police_category').each(function(index){
-        if(index === 0){
-            $(this).prop('checked', true);
-        }
-    });
     $("#police_checkbox").prop('checked', true);
 }
 
