@@ -5,7 +5,7 @@
 
 
 var DataHandler = (function(){
-	//make a request to the server and gets the reponse
+	//make a request to the server and gets the response
 	var getResponse = function (post_data){
 		//TO DO send the actual request.
 		console.log('sending the data');
@@ -16,10 +16,14 @@ var DataHandler = (function(){
 	var handle_response = function(layer, data){
 		addDataToMap(layer, data);
 	}
-	var addDataToMap = function (layer, d){
+	var addDataToMap = function (layer, data){
 		layer = availableLayers[layer]; //get the MapBox layer
 		if(!layer){
 			console.log('layer not existing');
+			return;
+		}
+		if(!data){
+			console.log("data from server is empty");
 			return;
 		}
 		layer.clearLayers();
@@ -60,6 +64,10 @@ var DataHandler = (function(){
  	//get the data and send it
 	var handle = function(){
 		var data = constructRequestObject();
+		if(data === undefined) {
+			console.log('cannot construct request data object');
+			return;
+		}
 		var response = DataHandler.getResponse(data); //this sends the data to the server and receives the response
 
 		//handle server response
@@ -84,6 +92,10 @@ var DataHandler = (function(){
 		var data = new Object();
 
 		data.crime_categories = getCrimeCategory();
+		if(data.crime_categories.length === 0){
+			alert('Please select Police Crime category');
+			return undefined;
+		}
 		data.location = DataHandler.getMapBoundaries();
 		return data;
 	};
@@ -121,12 +133,12 @@ var RestaurantHandler = (function(DataHandler){
 		var data = constructRequestObject();
 		console.log(DataHandler);
 		var response = DataHandler.getResponse(data);
-		handle_restaurant_reponse(reponse);
+		handle_restaurant_response(response);
 	}
 	//private methods to RestaurantHandler
 
-	var handle_restaurant_reponse = function(response){
-		DataHandler.handle_response('restaurant',reponse);
+	var handle_restaurant_response = function(response){
+		DataHandler.handle_response('restaurant',data2);
 		//weather specific handling
 	}
 
@@ -154,12 +166,12 @@ var WeatherHandler = (function(DataHandler){
 	var handle = function(){
 		var data = constructRequestObject();
 		var response = DataHandler.getResponse(data);
-		handle_weather_response(reponse);
+		handle_weather_response(response);
 	};
 	//private methods to WeatherHandler
 
 	var handle_weather_response = function(response){
-		DataHandler.handle_response('weather' , reponse);
+		DataHandler.handle_response('weather' , response);
 
 		//weather specific handling
 	};
@@ -182,3 +194,8 @@ var WeatherHandler = (function(DataHandler){
 
 
 
+var DataHandlerMapper = {
+	'police': PoliceHandler,
+	'restaurant': RestaurantHandler,
+	'weather': WeatherHandler
+};

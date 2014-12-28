@@ -1,11 +1,11 @@
 <!-- html for the panel on the right of the Leaflet map  -->
 <style type="text/css">
     #control_container{
-        background: rgba(0, 0, 0, 0.6);
-        color: white;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
     }
     .right-side-panel-dropdown{
-        font-size: 7pt;
+    font-size: 7pt;
     }
 </style>
 <div class="panel-group" id="accordion_main" role="tablist" aria-multiselectable="true">
@@ -18,13 +18,22 @@
         </div>
         <div id="collapseZero" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingZero">
             <div class="panel-body">
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                    <input type="checkbox" name="options" id="option1" autocomplete="off" checked> Markers
+                    </label>
+                    <label class="btn btn-primary">
+                    <input type="checkbox" name="options" id="option2" autocomplete="off"> Heatmap
+                    </label>
+                
+                </div>
                 <div class="panel panel-default">
                     <div class = 'panel-body'>
                         <div class="panel-group " id="accordion" role="tablist" aria-multiselectable="true">
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h4 class="panel-title">
-                                        <input type="checkbox" id='police_checkbox'> <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" >
+                                        <input type="checkbox" id='police_checkbox' api='police' class="main_api_category"> <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" >
                                         Police
                                         </a>
                                     </h4>
@@ -47,20 +56,18 @@
                                                 </div>
                                             </div>
                                             <input type="checkbox" id='police_map_selection_checkbox'> <a  href="#"  >
-                                        Draw Area Boundaries?
-                                        </a>
+                                            Draw Area Boundaries?
+                                            </a>
                                         </div>
                                         <br>
-                                <button id='police_update_map' class="btn btn-primary btn-sm" type="submit">Update Map</button>
+                                        <button id='police_update_map' api="police" class="update_map_btn btn btn-primary btn-sm" type="submit">Update Map</button>
                                     </div>
-
                                 </div>
-
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingTwo">
                                     <h4 class="panel-title">
-                                        <input type="checkbox" id='restaurant_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <input type="checkbox" api='restaurant' class='main_api_category' id='restaurant_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Restaurants
                                         </a>
                                     </h4>
@@ -69,14 +76,13 @@
                                     <div class="panel-body">
                                         Anim pariatur cliche 
                                     </div>
-                                  <button id='restaurant_update_map' class="btn btn-primary btn-sm" type="submit">Update Map</button>
-
+                                    <button id='restaurant_update_map' api="restaurant" class="update_map_btn btn btn-primary btn-sm" type="submit">Update Map</button>
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingThree">
                                     <h4 class="panel-title">
-                                        <input type="checkbox" id='weather_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <input type="checkbox" class='main_api_category' api="weather" id='weather_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                         Weather
                                         </a>
                                     </h4>
@@ -85,8 +91,7 @@
                                     <div class="panel-body">
                                         Anim pariatur 
                                     </div>
-                                 <button id='weather_update_map' class="btn btn-primary btn-sm" type="submit">Update Map</button>
-
+                                    <button id='weather_update_map' api='weather' class="update_map_btn btn btn-primary btn-sm" type="submit">Update Map</button>
                                 </div>
                             </div>
                         </div>

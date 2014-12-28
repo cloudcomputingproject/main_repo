@@ -33,15 +33,15 @@ var displayData = function(data,layers){
 };
 	//additional processing of features
 	function onEachFeature(feature, layer) {
-		//adding pop-up
-			// var popupContent = "<p>I started out as a GeoJSON " +
-			// 		feature.geometry.type + ", but now I'm a Leaflet vector!</p>";
+		
+			var popupContent = "<p>Type " +
+					feature.properties.type + "<br> value:" + feature.properties.value + "</p>";
 
-			// if (feature.properties && feature.properties.popupContent) {
-			// 	popupContent += feature.properties.popupContent;
-			// }
+			if (feature.properties && feature.properties.popupContent) {
+				popupContent += feature.properties.popupContent;
+			}
 
-			// layer.bindPopup(popupContent);
+			layer.bindPopup(popupContent);
 		
 		
 	}

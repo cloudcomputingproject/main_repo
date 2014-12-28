@@ -46,6 +46,8 @@ function addControlPanel(){
                 addRestaurants();
                 addWeather();
 
+                addUpdateButtonListeners();
+
                 setDefaultData();
                 
                 //these listeners will show/hide map layers
@@ -62,43 +64,57 @@ function addControlPanel(){
         }); 
 }
 
-
-function setDefaultData(){
-  setDefaultCheckboxes();
-  PoliceHandler.handle(); //this will load and show the default data
-}
 //add all fields associated with the Police API
 function addPolice(){
     addPoliceCategories();
 
-    //attach the listener for the Update button
-    $('#police_update_map').on('click', function(){PoliceHandler.handle();});
-}
+ }
+ //add all fields associated with the Restaurants API
+
 function addRestaurants(){
     //TO DO add the restaurants fields
 
-    //attach the listener for the Update button
-    $('#restaurant_update_map').on('click', function(){RestaurantHandler.handle();});
 }
+//add all fields associated with the Weather API
 function addWeather(){
     //TO DO add the weather fields
 
-    //attach the listener for the Update button
-    $('#weather_update_map').on('click', function(){WeatherHandler.handle();});
 }
 
+//listener for the Update button
+function addUpdateButtonListeners(){
+    $(".update_map_btn").each(function(index){
+        var api  = $(this).attr('api');
+        var handler = DataHandlerMapper[api];
+        if(!handler || !handler.handle){
+            console.log('cannot find handler');
+            return;
+        }
+        $(this).on('click', function(){handler.handle();});
+    });
+}
 
 //handles when a checkbox of an API category is clicked.
 function addCheckBoxListeners(){
-    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this, PoliceHandler.handle);});
-    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, RestaurantHandler.handle)});
-    $('#weather_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, WeatherHandler.handle)});
+    $(".main_api_category").each(function(index){
+        var api_category = $(this).attr('api');
+        var handler = DataHandlerMapper[api_category];
+        if(!handler || !handler.handle){
+            console.log('cannot find handler for the specified API cateogry');
+            return;
+        }
+        $(this).click(function(event){var $this = $(this); checkBoxHandler(event, $this, handler.handle);});
+        // $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, RestaurantHandler.handle)});
+        // $('#weather_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this, WeatherHandler.handle)});
+    });
  }
 
 //handles when a checkbox of an API category is clicked.
 //each layer this handler is addin/removing to the map
 //is the layer for the API category. Theses layers are 
-//added to availableLayers on page load by initLayers();    
+//added to availableLayers on page load by initLayers();   
+//update is the handle() function comming from the 
+//appropriate instance of DataHandler 
 function checkBoxHandler(event, $this, update) {
     var name = stripName($this.attr('id'));
 
@@ -109,7 +125,6 @@ function checkBoxHandler(event, $this, update) {
     }
 
     if($this.is(':checked')){
-        //update() acts as if the user has pressed the update button on the particular API cateogory.
         //update will make a request to the server(if necessery), and update the particular layer in
         //availableLayers.
         update();
@@ -161,7 +176,17 @@ function stripName(nameWithHashtag){
 
 };
 
+function setDefaultData(){
+  setDefaultCheckboxes();
+  PoliceHandler.handle(); //this will load and show the default data
+  // var police_layer = availableLayers['police'];
+  // var heat = L.heatLayer([ [0.388799,53, '10'], [0.487521,52.333833, '5'], [0.481811, 52.371837,'15']], {radius: 25}).addTo(map);
+  // police_layer.eachLayer(function(l){
+  //   console.log(l);
+  //   heat.add
+  // });
 
+ }
 //the default data to be displayed on page load is police all crimes
 function setDefaultCheckboxes(){
     $('.police_category').each(function(index){
@@ -182,7 +207,7 @@ var PanelControl = L.Control.extend({
         var c = L.DomUtil.create('div', 'navigation-control');
         c.setAttribute('id', 'control_container');
         L.DomEvent.disableClickPropagation(c); //if click/drag on the panel, the map won't react
-   
+
         var container = L.DomUtil.create('div', 'navv', c);
         container.setAttribute('id', 'control_panel');
         return c;

@@ -98,6 +98,8 @@ function initLayers(){
         }).addTo(map);
         cache[layerData[i]] = -1; //init the cache for each layer
     }
+
+
  
     //make a request for the default data to be displayed
     //TO-DO make a request for the police data
@@ -203,7 +205,7 @@ var zoomTo = function(locationName, zoomLevel) {
 //add each feature to the heat layer.
 function testHeat(){
  	heat = L.heatLayer([], { maxZoom: 12 }).addTo(map);
-	var layer = L.mapbox.featureLayer(data);
+	var layer = L.geoJson(data);
      // Zoom the map to the bounds of the markers.
     // map.fitBounds(layer.getBounds());
     // Add each marker point to the heatmap.
