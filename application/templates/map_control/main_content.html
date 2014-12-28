@@ -1,0 +1,24 @@
+{# all main api categories with checkboxes before them #}
+{# the categories are collapsable(using bootstrap) #}
+
+{% for main_api_category in template_data.all_api_categories %}
+
+    <div class="panel panel-default">
+       <div class="panel-heading" role="tab" id="heading{{loop.index}}">
+          <h4 class="panel-title">
+             <input type="checkbox" class='main_api_category' api="{{main_api_category}}" id='{{main_api_category}}_checkbox'><a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{loop.index}}" aria-expanded="false" aria-controls="collapse{{loop.index}}">
+             {# the name displayed in the control panel #}
+            {{main_api_category}}
+             </a>
+          </h4>
+       </div>
+       <div id="collapse{{loop.index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{loop.index}}">
+          <div class="panel-body">
+          {# use 'ignore missing' so the application doesn't crash if there isn't a specific template for the API#}
+             {% include '/map_control/api/'~main_api_category~'.html' ignore missing %} 
+          </div>
+          <button id='{{main_api_category}}_update_map' api='{{main_api_category}}' class="update_map_btn btn btn-primary btn-sm" type="submit">Update Map</button>
+       </div>
+    </div>
+
+{% endfor %}

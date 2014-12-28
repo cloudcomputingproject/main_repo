@@ -16,7 +16,7 @@ var DataHandler = (function(){
 	var handle_response = function(layer, data){
 		addDataToMap(layer, data);
 	}
-	var addDataToMap = function (layer, data){
+	var addDataToMap = function (layer, data){	
 		layer = availableLayers[layer]; //get the MapBox layer
 		if(!layer){
 			console.log('layer not existing');
@@ -104,7 +104,7 @@ var DataHandler = (function(){
 	//returns the selected categories of crime
 	 var  getCrimeCategory = function(){
 	 	var cats = [];
-	 	$(".police_category").each(function(index){
+	 	$(".police_collapsable_1").each(function(index){
 	 		if($(this).is(':checked')){
 	 			cats[index] = $(this).attr('id');
 	 		}

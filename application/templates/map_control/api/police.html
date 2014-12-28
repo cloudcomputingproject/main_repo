@@ -1,0 +1,26 @@
+{#import macros#}
+{% import '/map_control/misc/collapsable.html' as c %}
+{#end import macros#}
+
+{{c.collapsable('Crime categories', 'police',1, template_data.policeCategories, true	)}}
+{{c.collapsable('Crime categories', 'police',2, template_data.policeCategories	)}}
+
+<!-- <div class="panel-group" id="accordion_police_categories" role="tablist" aria-multiselectable="true">
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="headingPoliceCategories">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion_police_categories" href="#collapsePoliceCategories" aria-expanded="true" aria-controls="collapsePoliceCategories" id ="police_categories">
+				<span id='span_arrow_collapsePoliceCategories' class='glyphicon glyphicon-chevron-down right-side-panel-dropdown'></span> Categories </a>
+			</h4>
+		</div>
+		<div id="collapsePoliceCategories" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingPoliceCategories">
+			<div class="panel-body">
+				<div id="police_categories_checkboxes">
+				</div>
+			</div>
+		</div>
+	</div>
+</div> -->
+	<input type="checkbox" id='police_map_selection_checkbox'> <a  href="#"  >
+	Draw Area Boundaries?
+	</a>

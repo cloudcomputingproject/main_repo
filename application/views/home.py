@@ -36,6 +36,17 @@ def homepage():
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
 	return render_template('home/home.html', dataToSend=dataToSend)
 
+# this returns the html for the Control of the map
+@home.route('/app/control_panel')
+def control_panel():
+	policeCategories = controller.getPoliceCategories()
+	newList = [x.replace(' ', '_') for x in policeCategories]
+ 	template_data = {
+	'all_api_categories':controller.getCategoriesAPI(),
+	'policeCategories': policeCategories
+	}
+	return render_template('map_control/main.html', template_data = template_data)
+
 @home.route('/<page_name>')
 def renderPage(page_name):
     return render_template(page_name+'.html')

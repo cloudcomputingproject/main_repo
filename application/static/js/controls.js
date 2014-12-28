@@ -38,16 +38,16 @@ function addControlPanel(){
     //after the DOM elements are created, we add listeners to them,
     //and append another elements
         $.ajax({
-             url: 'static/includes/control_panel.html',
+             url: 'app/control_panel',
              success: function(response) {
                  $("#control_panel").html( response ); //set the content of control_panel to this html
                 //add the API's we support to the Control panel
-                addPolice();
+                // addPolice();
                 addRestaurants();
                 addWeather();
 
                 addUpdateButtonListeners();
-
+                addCollapseListeners();
                 setDefaultData();
                 
                 //these listeners will show/hide map layers
@@ -66,8 +66,7 @@ function addControlPanel(){
 
 //add all fields associated with the Police API
 function addPolice(){
-    addPoliceCategories();
-
+ 
  }
  //add all fields associated with the Restaurants API
 
@@ -135,17 +134,15 @@ function checkBoxHandler(event, $this, update) {
         map.removeLayer(layer);
     }
 }
-function addPoliceCategories(){
-    var server_json = $('#map').data('fromserver');
-
-    var categories = server_json.policeCategories;  
-    categories.forEach(function(el){
-        var str = '<input type="checkbox" class="police_category" id="'+el+'"/>'+ el+ '<br/>';
-        $('#police_categories_checkboxes').append(str);
+function addCollapseListeners(){
+     $(".api_accordion").each(function(index){
+        $(this).click(function(event){
+            var idOfCollapsable = $(this).attr('aria-controls');
+            collapseListener(event, idOfCollapsable);
+        });
     });
-    $("#police_categories").click(function(event){collapseListener(event, 'collapsePoliceCategories')});
-
 }
+ 
  //police_checkbox   ----> police
 function stripName(nameWithHashtag){
     if(nameWithHashtag.indexOf('_') === -1){
