@@ -37,6 +37,7 @@ function helperAddDataHandlerListeners(klass){
         var api  = $(this).attr('api');
         var handler = DataHandlerMapper[api];
         if(!handler || !handler.handle){
+            console.log(api);
             console.log('cannot find handler');
             return;
         }

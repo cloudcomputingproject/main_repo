@@ -69,7 +69,7 @@ function init(locationName, zoomLevel){
 }
 function setMap(options){
 	L.mapbox.accessToken = mapbox_access_token;
-	map = L.mapbox.map('map').setView(options.centerLocation, options.zoomLevel);
+	map = L.mapbox.map('map',  null, { zoomControl:false }).setView(options.centerLocation, options.zoomLevel);
 
 	var mapLink1 = "tile.openstreetmap.org";
 	var mapLink2 = "tiles.mapbox.com/v3/{id}"
@@ -77,7 +77,7 @@ function setMap(options){
                         maxZoom: 18,
                         id : 'examples.map-20v6611k'
 		}).addTo(map);
-
+  new L.control.zoom({position:'bottomleft'}).addTo(map);
 }
 //add to the map the layers based on the categories available(this comes from the server)
 //then add the default content to the map and set the checkboxes on the control panel.
@@ -216,6 +216,10 @@ function testHeat(){
 }
 
 function attachButtonListeners(){
+  $("#toggle_nav").on('click', function(){
+    // $('#main_nav').toggle({easing :'easeOutCubic'});
+    $('#main_nav').toggle({duration: 600});
+  });
 	$("#go").on('click', function(){
 	    enable_preloader();
 	    zoomTo($("#location").val(),10);

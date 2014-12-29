@@ -23,7 +23,7 @@ http://getbootstrap.com/javascript/#collapse
 			<div class="panel-body">
 				<div id="{{api}}_checkboxes_{{occurance}}">
 				{% for item in values%}
- 					<input type="checkbox" class="{{api}}_collapsable_{{occurance}}" id="{{loop.index}}" {%- if loop.index==1  and check_first %}checked{% endif %}>{{item}}<br/>
+ 					<input type="checkbox" class="{{api}}_collapsable_{{occurance}}" id="{{loop.index}}" {%- if loop.index==1  and check_first %}checked{% endif %}> {{item}}<br/>
 				{% endfor %}
 				</div>
 			</div>

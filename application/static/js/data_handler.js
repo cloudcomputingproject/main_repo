@@ -5,11 +5,7 @@
 
 //register all data handlers here, the keys should match the
 //api categories coming from the server
-var DataHandlerMapper = {
-	'police': PoliceHandler,
-	'restaurant': RestaurantHandler,
-	'weather': WeatherHandler
-};
+
 
 var DataHandler = (function(){
 	//make a request to the server and gets the response
@@ -138,7 +134,6 @@ var RestaurantHandler = (function(DataHandler){
  	//get the data and send it
 	var handle = function() {
 		var data = constructRequestObject();
-		console.log(DataHandler);
 		var response = DataHandler.getResponse(data);
 		handle_restaurant_response(response);
 	}
@@ -199,5 +194,8 @@ var WeatherHandler = (function(DataHandler){
 	return module;
 })(DataHandler);
 
-
-
+var DataHandlerMapper = {
+	'police': PoliceHandler,
+	'restaurant': RestaurantHandler,
+	'weather': WeatherHandler
+};
