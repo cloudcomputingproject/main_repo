@@ -38,25 +38,28 @@ body of the request has to contain JSON object with the following schema:
 @handler.route('/app/allData', methods=['POST'])
 def handleAllDataReq():
 	response = "There was an error"
+	print "***************"
+	print "*** REQUEST ***"
+	print "***************"
 	try:
 		input_data = request.data
-		input_data = json.loads(input_data)	
-		
+		input_data = json.loads(input_data)			
 
-		if ('geoCoding' in input_data) & ('geoJSON' in input_data):
-			response1 = controller.getGeoCoding(input_data["geoCoding"])
-			response2 = controller.main(input_data["geoJSON"])
-			response = "{ \"geoCoding\": %s, \"geoJSON\": %s}" % (response1,response2)
-		elif 'geoCoding' in input_data :
-			response1 = controller.getGeoCoding(input_data["geoCoding"])
-			response = "{ \"geoCoding\": %s}" % (response1)
-		elif  'geoJSON' in input_data:
-			response2 = controller.main(input_data["geoJSON"])
-			response = "{\"geoJSON\": %s}" % (response2)
+		# if ('geoCoding' in input_data) & ('geoJSON' in input_data):
+		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
+		# 	response2 = controller.main(input_data["geoJSON"])
+		# 	response = "{ \"geoCoding\": %s, \"geoJSON\": %s}" % (response1,response2)
+		# elif 'geoCoding' in input_data :
+		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
+		# 	response = "{ \"geoCoding\": %s}" % (response1)
+		# elif  'geoJSON' in input_data:
+		# 	response2 = controller.main(input_data["geoJSON"])
+		# 	response = "{\"geoJSON\": %s}" % (response2)
 
+		response = controller.main(input_data);
 
 		print "****"
-		
+		print "****"
 		print "****"		
 		#response["geoCoding"] = response1
 		#response["geoJSON"] = response2

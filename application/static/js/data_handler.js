@@ -8,11 +8,31 @@
 
 
 var DataHandler = (function(){
+
 	//make a request to the server and gets the response
-	var getResponse = function (post_data){
-		//TO DO send the actual request.
+	var getResponse = function (post_data, succ){
 		console.log('sending the data');
 		console.log(post_data);
+		//TO DO send the actual request.
+		$.ajax({
+	      type: "POST",
+	      url: domain+'/app/allData',
+	      dataType: "json",
+	      contentType: "application/json",
+	      data: JSON.stringify(post_data),
+
+	      error: function(){
+	        console.log("fail >><< ");
+	        //disable_preloader();
+	        //fail();
+	      },
+
+	      success:  function(json){ 
+	      	console.log('reciving the data');
+			console.log(json);
+	      	succ(json);
+	      }
+   		});
 	};
 	//TO DO change d to data so we use the data from the server
 	//and not the default one	
@@ -194,8 +214,92 @@ var WeatherHandler = (function(DataHandler){
 	return module;
 })(DataHandler);
 
+
+// ----------
+// ----------
+// ----------
+
+var GeoCodingHandler = (function(DataHandler){
+ 
+ 	//get the data and send it
+	var handle = function(){
+		var data = constructRequestObject();
+		if(data === undefined) {
+			console.log('cannot construct request data object');
+			return;
+		}
+		DataHandler.getResponse(data,handle_geoCoding_response); //this sends the data to the server and receives the response
+		//handle server response
+		//console.log(response);
+		//handle_geoCoding_response(response);
+	}
+	
+	//private methods
+
+	//this method is called when the server has returned the data
+	var handle_geoCoding_response = function(response){
+		//this is the default action
+		if (true) {
+			if (map){
+				zoomTo(getCenter(response["geoCoding"]),DEFAULT_ZOOM+5);      
+			}else{
+				init();
+			}
+		}
+	}
+
+ 	//this method gets the input
+	//and adds it to the data object 
+	var constructRequestObject = function() {
+		//add all the data to the object
+		var locationName = $("#location").val();
+		//console.log(locationName);
+		//locationName = JSON.stringify(locationName);
+		var data = {
+			"geoCoding":{
+        		"name": locationName
+    		}
+		}
+		//data["deoCoding"].name=getZoomLocationName
+		return data;
+	};
+
+	var getCenter = function(json){
+	 	var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
+                           json["results"][0]["geometry"]["location"]["lng"]);
+	 	return centerLocation;
+	};
+
+	var getBounds = function(json){
+		bounds = undefined;
+	 	if (L.latLng(json["results"][0]["geometry"]["bounds"])){
+            var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
+                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
+            var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
+                           json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+            bounds = L.latLngBounds(southWest, northEast);
+        }
+        return bounds;
+	};
+	
+	var getZoomLocationName = function(){
+	 	var name = $("#location").val();
+	 	return name;
+	};
+
+	var module = {handle: handle};
+	return module;
+})(DataHandler);
+
+// ----------
+// ----------
+// ----------
+
+
+
 var DataHandlerMapper = {
 	'police': PoliceHandler,
 	'restaurant': RestaurantHandler,
-	'weather': WeatherHandler
+	'weather': WeatherHandler,
+	'geoCoding': GeoCodingHandler
 };
