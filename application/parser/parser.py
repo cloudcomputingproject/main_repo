@@ -25,7 +25,7 @@ def parseCrimes(jsondata):
 	fc = FeatureCollection(features)
 	return fc
 
-def parseAirQuality(jsondata)
+def parseAirQuality(jsondata):
 	data = json.loads(jsondata)
 	features = [];
 
@@ -73,26 +73,26 @@ def parseAirQuality(jsondata)
 	fc = FeatureCollection(features)
 	return fc
 
-def parseFSA(jsondata)
+def parseFSA(jsondata):
 	data = json.loads(jsondata)
 	features = [];
 
-    for item in data:
-	    name = item['BusinessName']
-	    lat = item['Geocode']['Latitude']
-	    lng = item['Geocode']['Longitude']
-	    hygiene = item['Scores']['Hygiene']
-	    mang = item['Scores']['ConfidenceInManagement']
-	    structural = item['Scores']['Structural']
+	for item in data:
+		name = item['BusinessName']
+		lat = item['Geocode']['Latitude']
+		lng = item['Geocode']['Longitude']
+		hygiene = item['Scores']['Hygiene']
+		mang = item['Scores']['ConfidenceInManagement']
+		structural = item['Scores']['Structural']
 
-	    point = Point((lat,lng))
-	    properties = json.dumps({'name':name,'hygiene':hygiene,'management':mang,'structural':structural})
-	    feature = Feature(geometry=point,properties=properties)
+		point = Point((lat,lng))
+		properties = json.dumps({'name':name,'hygiene':hygiene,'management':mang,'structural':structural})
+		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
 	return fc
 
-def parseHouseListing(jsondata)
+def parseHouseListing(jsondata):
 	data = json.loads(jsondata)
 	data = data['listings']
 	features = [];
@@ -107,8 +107,8 @@ def parseHouseListing(jsondata)
 		lastUpdated = item['updated_in_days']
 
 		point = Point((lat,lng))
-	    properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
-	    feature = Feature(geometry=point,properties=properties)
-		features.append(feature)
+	properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
+	feature = Feature(geometry=point,properties=properties)
+	features.append(feature)
 	fc = FeatureCollection(features)
 	return fc
