@@ -33,25 +33,20 @@ def getData():
 
 	#obtaining the data in order to get the number of entries
     data = json.load(urllib2.urlopen(url + '/' + format))
-    
-    #for testing purposes
-    #print data['FHRSEstablishment']['Header']['ItemCount']
-    #print url
-    #print url + '/1/' + str(data['FHRSEstablishment']['Header']['ItemCount']) + '/' + format
 
     #building the new url setting the parameter PageSize to be equal to the number of entries
     url += '/1/' + data['FHRSEstablishment']['Header']['ItemCount'] + '/' + format
-    
+
     data = urllib2.urlopen(url)
 
     #for testing purposes
+    #print url
     #print json.load(data)
 
     #reseting the url
-    url = 'http://ratings.food.gov.uk/search/'
-    
-    result = data.read()
-    data.close()
+    url = 'http://ratings.food.gov.uk/'
+    result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
+    result = json.dumps(result)
 
     return result
 
@@ -69,6 +64,7 @@ def searchNameLoc(name, location):
 
 def searchName(name):
 	global url
+
 	if name == 'all':
 		name = '^'
 	url += 'search-name/' + name
@@ -81,6 +77,6 @@ def searchLoc(location):
 	url += 'search-address/' + location
 	return getData()	
 
-#searchNameLoc('tesco','southampton');
-#searchName('parfait');
-#searchLoc('southampton');
+#searchNameLoc('tesco','southampton')
+#searchName('parfait')
+#searchLoc('southampton')
