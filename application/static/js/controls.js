@@ -20,6 +20,7 @@ function addControlPanel(){
 function addDataHandlerListeners(){
     addUpdateButtonListeners();
     addCheckBoxListeners();
+    addTabsListener();
 }
 //listener for the Update button
 function addUpdateButtonListeners(){
@@ -41,7 +42,7 @@ function helperAddDataHandlerListeners(klass){
             console.log('cannot find handler');
             return;
         }
-        $(this).click(function(event){ checkBoxHandler(event, $(this), handler.handle);});
+        $(this).click(function(event){ checkBoxHandler(event, api, handler.handle);});
     });
 }
 
@@ -51,8 +52,8 @@ function helperAddDataHandlerListeners(klass){
 //added to availableLayers on page load by initLayers();   
 //update is the handle() function comming from the 
 //appropriate instance of DataHandler 
-function checkBoxHandler(event, $this, update) {
-    var name = stripName($this.attr('id'));
+function checkBoxHandler(event, api, update) {
+    var name = api;
 
     var layer = availableLayers[name];
     if(!layer){
@@ -60,7 +61,7 @@ function checkBoxHandler(event, $this, update) {
         return; 
     }
 
-    if($this.is(':checked')){
+    if($('#'+api+'_checkbox').is(':checked')){
         //update will make a request to the server(if necessery), and update the particular layer in
         //availableLayers.
         update();
@@ -71,6 +72,19 @@ function checkBoxHandler(event, $this, update) {
         map.removeLayer(layer);
     }
 }
+//when switiching between the Search by city name tab and the Draw area tab
+function addTabsListener(){
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var action = $(e.target).attr('action') ;
+    if(action === 'draw'){
+        enableDrawing();
+    } else{
+        disableDrawing();
+    }
+
+});
+}
+
 function addCollapseListeners(){
      $(".api_accordion").each(function(index){
         $(this).click(function(event){
@@ -98,8 +112,7 @@ function stripName(nameWithHashtag){
     //rotate the arrow next to the police categories based on whether we collapse it or not
     //check if it is collapsed
     var name = "#"+idOfElement;
-    var classes = $(name).attr('class').split(' ');
-    if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
+    if($(name).hasClass('in')){ //contains 'in' - not collapsed
         $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
         $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
     } else{
@@ -117,6 +130,43 @@ function setDefaultData(){
 //the default data to be displayed on page load is police all crimes
 function setDefaultCheckboxes(){
     $("#police_checkbox").prop('checked', true);
+}
+
+
+/*Helper functions */
+//find the Search city tab for the given API 
+//and check if it is visible
+function isSearchCityTabActive(api){
+
+    var id_of_tab = '#search_api_tab_heading_'+api;
+    console.log(id_of_tab);
+    if($(id_of_tab).length === 0){ //element doesnt exist
+
+        return false;
+    }
+    return $(id_of_tab).hasClass('active');
+}
+function isDrawAreaTabActive(api){
+    var id_of_tab = '#draw_api_tab_heading_'+api;
+    if($(id_of_tab).length === 0){ //element doesnt exist
+        return false;
+    }
+    return $(id_of_tab).hasClass('active');
+}
+
+function getSearchCityText(api){
+    var id_of_input = '#search_city_'+api;
+    if($(id_of_input).length === 0){
+        return '';
+    }
+    return $(id_of_input).val();
+}
+//returns an object containt the coordinates of the centre of the map
+//and the current zoom
+function getDrawCoordinates(){
+    var result = getDrawnAreaBounds();
+
+    return result;
 }
 
 //consturct the Control panel main DOM elements

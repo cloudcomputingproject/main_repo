@@ -30,3 +30,22 @@
 .label_delete :active {
     color: red;
 }
+
+.leaflet-draw {
+	margin-top: 100px !important;
+}
+.leaflet-draw-actions li a{
+	color:white !important;
+}
+
+.custom_alert{
+position: fixed;
+    /* center the element */
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    /* give it dimensions */
+    min-height: 10em;
+    width: 50%;
+}

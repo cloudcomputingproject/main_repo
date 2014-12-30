@@ -10,6 +10,10 @@
 var DataHandler = (function(){
 	//make a request to the server and gets the response
 	var getResponse = function (post_data){
+		if(post_data === undefined){
+			$('#alert_empty_draw').show();
+			return;
+		}
 		//TO DO send the actual request.
 		console.log('sending the data');
 		console.log(post_data);
@@ -32,8 +36,23 @@ var DataHandler = (function(){
 		layer.clearLayers();
 		layer.addData(data); //add data to the layer
 	}
-	var getMapBoundaries = function(){
-		return 0;
+	var getLocation = function(api){
+		//check if we are in Search city mode or Draw area mode
+		var result ={};
+		if(isSearchCityTabActive(api)){
+			result.name = getSearchCityText(api)
+			return result;
+		}
+		else if(isDrawAreaTabActive(api)){
+			var coord = getDrawCoordinates();
+			if (coord === undefined){
+				return undefined;
+			}
+			result.area = coord;
+			return result;
+		}else{
+			return undefined;
+		}
 	};
 	var  checkIfDataHasExpired = function(name){
 	    //check if the data was set x minutes ago or less
@@ -54,7 +73,7 @@ var DataHandler = (function(){
 	var module = {
 		getResponse: getResponse, 
 		handle_response: handle_response,
-		getMapBoundaries: getMapBoundaries, 
+		getLocation: getLocation, 
 		checkIfDataHasExpired: checkIfDataHasExpired
 	};
 	return module;
@@ -65,12 +84,13 @@ var DataHandler = (function(){
  var PoliceHandler = (function(DataHandler){
  
  	//get the data and send it
+ 	var api  = 'police';
 	var handle = function(){
 		var data = constructRequestObject();
-		if(data === undefined) {
-			console.log('cannot construct request data object');
-			return;
-		}
+		// if(data === undefined) {
+		// 	console.log('cannot construct request data object');
+		// 	return;
+		// }
 		var response = DataHandler.getResponse(data); //this sends the data to the server and receives the response
 
 		//handle server response
@@ -99,7 +119,8 @@ var DataHandler = (function(){
 			alert('Please select Police Crime category');
 			return undefined;
 		}
-		data.location = DataHandler.getMapBoundaries();
+		data.location = DataHandler.getLocation(api);
+		if(data.location === undefined) return undefined;
 		return data;
 	};
 
@@ -115,14 +136,8 @@ var DataHandler = (function(){
 	 	});
 	 	return cats;
 	};
-	//get the boundaries of the map
-	var   getMapBoundaries = function(){
-
-	};
-	//get the coordinates of a user specified path
-	var   getUserSpecifiedBoundaries = function(){
-
-	};
+ 
+	 
 	
 	var module = {handle: handle};
 	return module;
@@ -131,6 +146,8 @@ var DataHandler = (function(){
 
 var RestaurantHandler = (function(DataHandler){
  
+ 	var api  = 'restaurant';
+
  	//get the data and send it
 	var handle = function() {
 		var data = constructRequestObject();
@@ -150,7 +167,7 @@ var RestaurantHandler = (function(DataHandler){
 		//add all the data to the object
 		var data = new Object();
 
-		data.location = DataHandler.getMapBoundaries();
+		data.location = DataHandler.getLocation(api);
 		return data;
 	};
 
@@ -163,7 +180,9 @@ var RestaurantHandler = (function(DataHandler){
 })(DataHandler);
 
 var WeatherHandler = (function(DataHandler){
- 
+  	
+  	var api  = 'weather';
+
  	//get the data and send it
 	var handle = function(){
 		var data = constructRequestObject();
@@ -185,7 +204,7 @@ var WeatherHandler = (function(DataHandler){
 		//add all the data to the object
 		var data = new Object();
 
-		data.location = DataHandler.getMapBoundaries();
+		data.location = DataHandler.getLocation(api);
 		return data;
 	};
 
