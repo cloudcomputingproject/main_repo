@@ -1,7 +1,6 @@
-
 import urllib2
 import json
-
+"""
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 
@@ -16,7 +15,7 @@ from application.forms import ExampleForm
 from application.models import ExampleModel
 
 from application import app
-
+"""
 url = 'http://data.police.uk/api/'
 
 #private
@@ -24,20 +23,25 @@ def getData():
     global url
     #json object
     data = urllib2.urlopen(url)
-    
-    #for testing purposes
-    #print json.load(data)
-    
-    url = 'http://data.police.uk/api/'
 
-    result = data.read()
-    data.close()
+    #for testing purposes
+    #print url
+    url = 'http://data.police.uk/api/'
+    data = json.load(data)
+
+    result = json.dumps(data)
 
     return result
 
+
 def getCategories():
     global url
-    url += 'crime-categories?date=2011-08'
+
+    lastUpdated = urllib2.urlopen('http://data.police.uk/api/crime-last-updated')
+    lastUpdated = json.load(lastUpdated)
+    lastUpdated = lastUpdated['date'][:7]
+
+    url += 'crime-categories?date='+lastUpdated
     return getData()
 
 #Neighbourhoods must be lower case and the white spaces replaced with '-'
@@ -52,7 +56,7 @@ def getBoundaryData(county, nhood):
     return getData()
 
 #private
-def getNeighbourhoodID(county, nhooed):
+def getNeighbourhoodID(county, nhood):
     global url
     url+= county + '/neighbourhoods'
     data = json.load(urllib2.urlopen(url))
@@ -76,10 +80,9 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
     url+='&date=' + date
     return getData()
 
-"""
+
 getCategories()
-getNeighbourhoodsData('hampshire')
-getBoundaryData('hampshire', 'Fair Oak')
-getCrimesData('all-crimes', 52.629729, -1.131592, '2014-09')
-getCrimesInAreaData('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
-"""
+#getNeighbourhoodsData('hampshire')
+#getBoundaryData('hampshire', 'Fair Oak')
+#getCrimesData('all-crimes', 52.629729, -1.131592, '2014-09')
+#getCrimesInAreaData('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
