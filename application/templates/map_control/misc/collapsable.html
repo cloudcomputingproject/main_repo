@@ -11,7 +11,7 @@ http://getbootstrap.com/javascript/#collapse
 	returns - div element which can be collapsed, with content <li> checkboxes(the first checkbox is always preselected)
 #}
 {% macro collapsable(name, api,occurance, values, check_first) -%}
-<div class="panel-group" id="accordion_{{api}}_{{occurance}}" role="tablist" aria-multiselectable="true">
+<div class="panel-group" id="accordion_{{api}}_{{occurance}}" role="tablist" aria-multiselectable="true" style="margin-top:15px">
 	<div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="heading{{api}}{{occurance}}">
 			<h4 class="panel-title">

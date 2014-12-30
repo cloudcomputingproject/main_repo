@@ -6,3 +6,27 @@
 .nowrap { white-space: nowrap; }
 
 /* Your customizations here */
+/*the X on the labels of cities in the Conrol of the Map*/
+
+.label_delete strong{  
+	color:red;
+}
+/* unvisited link */
+.label_delete :link {
+    color: red;
+}
+
+/* visited link */
+.label_delete :visited {
+    color: red;
+}
+
+/* mouse over link */
+.label_delete :hover {
+    color: red;
+}
+
+/* selected link */
+.label_delete :active {
+    color: red;
+}

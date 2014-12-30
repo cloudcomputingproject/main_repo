@@ -1,0 +1,32 @@
+{% macro select_location(api) -%}
+
+<div id='select_location_{{api}}' role="tabpanel">
+
+  <!-- Nav tabs -->
+
+  <!-- Tab panes -->
+ <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="search_api_tab_{{api}} active"><a href="#search_api_tab_{{api}}"  id="draw_api_tab_heading_{{api}}" aria-controls="search_api_tab_{{api}}" role="tab" data-toggle="tab">Search by city name</a></li>
+    <li class="draw_api_tab_{{api}}" role="presentation"><a href="#draw_api_tab_{{api}}" id="draw_api_tab_heading_{{api}}" aria-controls="draw_api_tab_{{api}}" role="tab" data-toggle="tab">Draw area with mouse</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="draw_area_tab tab-pane active fade in" id="search_api_tab_{{api}}" api={{api}}>
+        <br>
+        <input type="text" class="form-control" placeholder="Type city name here..." id="search_city_{{api}}">
+    </div>
+    <div role="tabpanel" class="draw_area_tab tab-pane fade" id="draw_api_tab_{{api}}" api={{api}}>
+        Draw on the map the area you want using your mouse
+    </div>
+
+  </div>
+  <br>
+  <label>
+      <input id="checkbox_entire_data_{{api}}" class="checkbox_entire_data" type="checkbox"> Check here if you want data for the entire UK
+  </label>
+<hr>
+</div>
+
+{%- endmacro %}
