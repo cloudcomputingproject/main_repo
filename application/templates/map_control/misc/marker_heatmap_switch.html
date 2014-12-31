@@ -1,14 +1,12 @@
 {% macro marker_heatmap(api) -%}
-<div  >
  <div class="btn-group" data-toggle="buttons">
                     <label class="btn btn-primary active">
                     <input type="checkbox" name="options" class="heatmap_marker_checkbox" api={{api}} id="heatmap_marker_checkbox_{{api}}" autocomplete="off" checked> Markers
                     </label>
                     <label class="btn btn-primary">
                     <input type="checkbox" name="options" class="heatmap_marker_checkbox"  api={{api}}  id="heatmap_marker_checkbox_{{api}}" autocomplete="off"> Heatmap
-                    </label>
- 
-                
+                    </label>                
 </div>
-</div>
+<br>
+<hr>
 {%- endmacro %}

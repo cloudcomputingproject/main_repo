@@ -49,3 +49,24 @@ position: fixed;
     min-height: 10em;
     width: 50%;
 }
+
+.no_select_text{
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+ 
+}
+
+#accordion_main{
+    overflow: auto;
+    max-height: 95vh;
+    margin-right: 5px;
+}
+.glyphicon-lg{
+    font-size: 18px;
+  line-height: 1.33;
+}

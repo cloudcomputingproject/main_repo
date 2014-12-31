@@ -1,6 +1,13 @@
 {#import macros#}
 {% import '/map_control/misc/collapsable.html' as c %}
+{% import '/map_control/misc/date_picker.html' as d %}
+{% import '/map_control/misc/all_uk_checkbox.html' as a %}
+{% import '/map_control/misc/select_location.html' as s %}
 {#end import macros#}
+{# Name of the collapsabe, api, number of collapsable element, dict with data,  whether or not to check the checkbox of the first entry#}
+{{c.collapsable('Crime categories', 'police',1, template_data.policeCategories,true 	)}}
+{{d.date_picker('Please select month for which data will be retrieved','police')}}
+{# checkbox asking whether to get the data for the whole uk #}
+{# the tabs asking for selecting the location #}
+{{s.select_location(main_api_category, ['polygon'])}} {# shapes should be non_space delimited#}
 
-{{c.collapsable('Crime categories', 'police',1, template_data.policeCategories, true	)}}
- 
