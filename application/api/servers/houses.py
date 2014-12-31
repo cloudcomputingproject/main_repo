@@ -23,8 +23,8 @@ def getData():
 	data = urllib2.urlopen(url)
 
 	#for testing purposes
-	#print url
-	#print json.load(data)
+	# print url
+	# print json.load(data)
 
 	url = 'http://api.nestoria.co.uk/api?'
 
@@ -80,7 +80,7 @@ def getListing(name, array):
 	urlBuild(name, array)
 
 	url += 'encoding=' + format + '&action=search_listings&country=' + country
-	getData()
+	return getData()
 
 def getMetadata(name, array):
 	global url

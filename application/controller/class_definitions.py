@@ -16,3 +16,7 @@ class CircleArea:
 		self.center = center
 		self.radius = radius
 		self.radiusFormat = radiusFormat
+
+	def formattedOutput(self):
+		output = [self.center[0], self.center[1], radius, radiusFormat]
+		return output

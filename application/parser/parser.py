@@ -1,5 +1,5 @@
 from flask import json, jsonify
-from geojson import Feature, Point
+from geojson import Feature, Point, FeatureCollection
 
 def parsePoliceCategories(categStr):
 	catArr = json.load(categStr)

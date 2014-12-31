@@ -46,7 +46,6 @@ def handleAllDataReq():
 	try:
 		input_data = request.data
 		input_data = json.loads(input_data)	
-		
 
 		if 'geoCoding' in input_data : 
 			response1 = controller.getGeoCoding(input_data["geoCoding"])
@@ -79,8 +78,8 @@ def handleAllDataReq():
 		response = str(e),400
 		print response
 	except ValueError as e:
-		response = str(e),400
-		print response	
+		response = str(e),200
+		print response 
 	finally:
 		print "****"
 		print response

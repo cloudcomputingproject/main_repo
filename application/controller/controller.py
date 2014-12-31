@@ -12,6 +12,9 @@ from application.forms import ExampleForm
 from application import app
 
 from servers import police, geocoding, houselisting
+
+from application.api.servers import houses
+
 from application.parser import parser
 from class_definitions import Boundaries
 from datetime import date
@@ -49,18 +52,42 @@ def getGeoCoding(location):
 #takes python object representation of the received JSON object
 '''
 body of the request has to contain JSON object with the following schema:
-{ "selection" : "name"
-  "features" : {"name" : "feature_name"},
-  "location" : "Some location name or null",
-  "area" : [coordinates in here],
-  "radius" : {"lat" : "1", "long": "1", "radius": "1", "format": "km/mi"}
- }
+ 	{
+        "selection": "house",
+        "features": {
+            "name": "feature_name"
+        },
+        "location":  {
+            "name": "hedge-end",
+            "bounds": {
+            	"northEast": 1,
+            	"southWest": 1
+            }
+        },
+        "area": "test",
+        "radius": {
+            "lat": "1",
+            "long": "1",
+            "radius": "1",
+            "format": "km/mi"
+        },
+        "format": "markers"
+    }
 '''
 def main(data):	
+
+	coordinateSet = None
+	circle = None
+	location = None
+
 	# Location set up, all the information required will be stored inside location (coordinates and name)
-	location = data["location"]
-	coordinateSet = data["area"]
-	circle = data["radius"]
+	if 'location' in data:
+		location = data["location"]
+	if 'area' in data:
+		coordinateSet = data["area"]
+	if 'radius' in data:
+		circle = data["radius"]
+
 	if location:
 		actualLocation = processLocation(location)
 	elif coordinateSet:
@@ -70,11 +97,12 @@ def main(data):
 	else:
 		raise 'A location argument is required'
 
-	selection = data["selection"]
-	features = data["features"]
+	if 'selection' in data:
+		selection = data["selection"]
+	if 'features' in data:
+		features = data["features"]
 
 	featuresOptions[selection](features, actualLocation)
-
 	return 'stub'
 
 '''
@@ -119,8 +147,12 @@ def main2(data):
 	return temp
 
 def processLocation(location):
-	nEast = location["bounds"]["NorthEast"]
-	sWest = location["bounds"]["SouthWest"]
+	nEast = None
+	sWest = None
+	if 'bounds' in location:
+		nEast = location["bounds"]["NorthEast"]
+	if 'bounds' in location:
+		sWest = location["bounds"]["SouthWest"]
 	place = location["name"]
 	return Boundaries(nEast, sWest, place)
 
@@ -179,6 +211,11 @@ def processAirquality(airqualityArgs, location):
 	print airqualityArgs
 
 def processHouseListing(houseArgs, location):
-	jsonData = houselisting.getData(location)
-	collection = parser.parseHouseListing(jsonData)
+	jsonData = ''
+	if isinstance(location, Boundaries):
+		jsonData = houses.getListing(location.locationName, None)
+	elif isinstance(location, CircleArea):
+		jsonData = houses.getListing(None, location.formattedOutput())
+
+	collection = parser.parseHouseListing(jsonData) 
 	return 'JSON result'
