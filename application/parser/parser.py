@@ -107,7 +107,7 @@ def parseHouseListing(jsondata):
 	data = json.loads(jsondata)
 	data = data['listings']
 	features = [];
-
+	
 	for item in data:
 		lat = item['latitude']
 		lng = item['longitude']

@@ -32,13 +32,17 @@ body of the request has to contain JSON object with the following schema:
 { "selection" : "name"
   "features" : {"name" : "feature_name"},
   "location" : "Some location name or null",
-  "area" : [coordinates in here]
- }
+  "area" : [coordinates in here],
+  "radius" : {"lat" : "1", "long": "1", "radius": "in kilometers"}
+}
 '''
 
 @handler.route('/app/allData', methods=['POST'])
 def handleAllDataReq():
 	response = "There was an error"
+	print "***************"
+	print "*** REQUEST ***"
+	print "***************"
 	try:
 		input_data = request.data
 		input_data = json.loads(input_data)	
@@ -62,9 +66,10 @@ def handleAllDataReq():
 		# 	response2 = controller.main(input_data["geoJSON"])
 		# 	response = "{\"geoJSON\": %s}" % (response2)
 
+		#response = controller.main(input_data);
 
 		print "****"
-		
+		print "****"
 		print "****"		
 		#response["geoCoding"] = response1
 		#response["geoJSON"] = response2

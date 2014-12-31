@@ -17,10 +17,11 @@ from class_definitions import Boundaries
 from datetime import date
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
-featuresOptions = {"police" : lambda arg: processPolice(arg),
-					"weather" : lambda arg: processWeather(arg),
-					"restaurant" : lambda arg: processRestaurants(arg),
-					"house" : lambda arg: processHouseListing(arg)}
+featuresOptions = {"police" : lambda arg1, arg2: processPolice(arg1, arg2),
+					"weather" : lambda arg1, arg2: processWeather(arg1, arg2),
+					"restaurant" : lambda arg1, arg2: processRestaurants(arg1, arg2),
+					"house" : lambda arg1, arg2: processHouseListing(arg1, arg2),
+					"airquality": lambda arg:processAirquality(arg)}
 
 #### Not sure if used at all
 def getCategoriesAPI():
@@ -31,6 +32,11 @@ def getCategoriesAPI():
 def getPoliceCategories():
 	json = police.getCategories()
 	parsed_json = parser.parsePoliceCategories(json)
+	return parsed_json
+
+def getPoliceCategoriesWithUrl():
+	json = police.getCategories()
+	parsed_json = parser.parsePoliceCategoriesWithUrlName(json)
 	return parsed_json
 #####
 
@@ -46,25 +52,48 @@ body of the request has to contain JSON object with the following schema:
 { "selection" : "name"
   "features" : {"name" : "feature_name"},
   "location" : "Some location name or null",
-  "area" : [coordinates in here]
+  "area" : [coordinates in here],
+  "radius" : {"lat" : "1", "long": "1", "radius": "1", "format": "km/mi"}
  }
 '''
 def main(data):	
 	# Location set up, all the information required will be stored inside location (coordinates and name)
 	location = data["location"]
+	coordinateSet = data["area"]
+	circle = data["radius"]
 	if location:
 		actualLocation = processLocation(location)
-
-	coordinates = data["area"]
-	if coordinates:
-		pass #here the coordinates will be processed in an useful way for the server, still to determine
+	elif coordinateSet:
+		actualLocation = processCoordinates(coordinateSet) #here the coordinates will be processed in an useful way for the server, still to determine
+	elif circle:
+		actualLocation = processRadius(circle)
+	else:
+		raise 'A location argument is required'
 
 	selection = data["selection"]
 	features = data["features"]
 
-	featuresOptions[selection](features)
+	featuresOptions[selection](features, actualLocation)
 
 	return 'stub'
+
+'''
+def main(data):
+	print ">> Inside main method controller"	
+
+	if 'geoCoding' in data :
+		result = getGeoCoding(data["geoCoding"])
+		return "{ \"geoCoding\": %s}" % (result)
+	elif 'geoJSON' in data:
+		test_response = police.getCategories()
+		temp = test_response.read()
+		result = temp
+		return "{\"geoJSON\": %s}" % (result)
+
+	raise NameError('UnknownRequest: geoCoding or geoJSON was not found.')
+
+	return "This is impossible.."
+'''
 
 def main2(data):
 	print "inside main method controller"
@@ -95,6 +124,16 @@ def processLocation(location):
 	place = location["name"]
 	return Boundaries(nEast, sWest, place)
 
+def processCoordinates(coordinateSet):
+	return "nothing"
+
+def processRadius(circle):
+	center[0] = circle["lat"]
+	center[1] = circle["long"]
+	radius = circle["radius"]
+	radiusFormat = circle["format"]
+	return CircleArea(center, radius, radiusFormat)
+
 #takes array of features
 def processFeatures(features):
 	print "processFeatures"
@@ -115,7 +154,7 @@ def processFeatures(features):
 		print response
 		return response
 
-def processPolice(policeArgs):
+def processPolice(policeArgs, location):
 	print policeArgs
 	category = policeArgs["category"]
 	someDate = date.today()
@@ -130,12 +169,16 @@ def processPolice(policeArgs):
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
-def processWeather(policeArgs):
-	print policeArgs
+def processWeather(weatherArgs, location):
+	print processHouses
 
-def processRestaurants(policeArgs):
-	print policeArgs
+def processRestaurants(restaurantArgs, location):
+	print restaurantArgs
 
-def processHouseListing(houseArgs) :
-	
+def processAirquality(airqualityArgs, location):
+	print airqualityArgs
+
+def processHouseListing(houseArgs, location):
+	jsonData = houselisting.getData(location)
+	collection = parser.parseHouseListing(jsonData)
 	return 'JSON result'

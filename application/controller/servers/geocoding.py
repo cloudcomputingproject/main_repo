@@ -41,10 +41,3 @@ def getData(address):
 	#result = json.load(request)
 	
 	return request.read()
-
-
-
-
-
-
-
