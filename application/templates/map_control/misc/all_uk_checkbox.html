@@ -1,0 +1,8 @@
+ {% macro all_uk(api) -%}
+ <br>
+<label for="checkbox_entire_data_{{api}}" class='no_select_text'>
+	<input id="checkbox_entire_data_{{api}}" class="checkbox_entire_data" type="checkbox"> Check here if you want the data for the entire UK
+</label>
+<br>
+{{caller()}}
+{%- endmacro %}

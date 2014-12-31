@@ -3,14 +3,25 @@ from geojson import Feature, Point
 
 def parsePoliceCategories(categStr):
 	catArr = json.load(categStr)
+	print catArr
 	categories = []
 	for holder in catArr:
 		categories.append(holder["name"])	
 
 	return categories#json.dumps(categories, separators=(',',':'))
 
-def parseCrimes(jsondata):
-	crimesOld = json.loads(jsondata)
+
+def parsePoliceCategoriesWithUrlName(categStr):
+	catArr = json.load(categStr)
+	categories = []
+	for holder in catArr:
+		categories.append([holder['url'], holder['name']])
+
+	return categories
+
+def parseCrimes(json):
+	crimesOld = json.load(json)
+	feature/dynamic_map_control
 	features = [];
 	for crime in crimesOld:
 		lat =  crime["location"]["latitude"]
