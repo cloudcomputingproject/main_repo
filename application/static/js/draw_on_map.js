@@ -2,7 +2,24 @@
 var drawControl;
 var featureGroup;
 var area;
- function enableDrawing(){
+function enableDrawing(allowedShapes){
+	
+	//hide if existing and then show it again
+	if(drawControl){
+		disableDrawing();
+	}
+ 	var draw = {
+ 		polygon: 0,
+	    polyline: 0,
+	    rectangle: 0,
+	    circle: 0,
+	    marker: 0
+	};
+	allowedShapes.forEach(function(el){
+	 	if (draw[el] === 0){
+	 		draw[el] = true;
+	 	}
+	});
 
  featureGroup = L.featureGroup().addTo(map);
 
@@ -10,24 +27,18 @@ var area;
 	  edit: {
 	    featureGroup: featureGroup
 	  },
-	  draw: {
-	    polygon: true,
-	    polyline: false,
-	    rectangle: true,
-	    circle: true,
-	    marker: false
-	  }
+	  draw: draw
 	}).addTo(map);
  	
  	 //there is extra styling on the Draw control in main.css
 	map.on('draw:created', showPolygonArea);
 	map.on('draw:edited', showPolygonAreaEdited);
+ 
 }
 function disableDrawing(){
 	if(drawControl !== undefined ){
 		drawControl.removeFrom(map);
 		featureGroup.clearLayers();
-		console.log(getAreaBounds())
 		area = undefined;
 	}
 	drawControl = undefined;

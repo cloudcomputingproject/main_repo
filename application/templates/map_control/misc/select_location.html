@@ -7,7 +7,7 @@
 <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" id="search_api_tab_heading_{{api}}" class="search_api_tab_{{api}} active"><a href="#search_api_tab_{{api}}"   aria-controls="search_api_tab_{{api}}" role="tab" action='search' data-toggle="tab">Search by city name</a></li>
-    <li class="draw_api_tab_{{api}}" id="draw_api_tab_heading_{{api}}" role="presentation"><a href="#draw_api_tab_{{api}}" action='draw' aria-controls="draw_api_tab_{{api}}" role="tab" data-toggle="tab">Draw area with mouse</a></li>
+    <li class="draw_api_tab_{{api}}" id="draw_api_tab_heading_{{api}}" role="presentation"><a href="#draw_api_tab_{{api}}" action='draw' aria-controls="draw_api_tab_{{api}}" role="tab" data-toggle="tab" api="{{api}}">Draw area with mouse</a></li>
     {# include any custom Location selection ways, if available #}
     {% include '/map_control/misc/location/'~api~'_tab.html' ignore missing %}
   </ul>

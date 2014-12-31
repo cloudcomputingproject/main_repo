@@ -6,44 +6,53 @@
 //register all data handlers here, the keys should match the
 //api categories coming from the server
 
-
-var DataHandler = (function(){
-
-	//make a request to the server and gets the response
-
-	var getResponse = function (post_data, succ){
-		if(post_data === undefined){
-			$('#alert_empty_draw').show();
-			return;
-		}
-		//TO DO send the actual request.
-
-		console.log('sending the data');
-		console.log(post_data);
-		//TO DO send the actual request.
-		$.ajax({
+function makeRequest(data, cb){
+	enable_preloader();
+	$.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
 	      dataType: "json",
 	      contentType: "application/json",
-	      data: JSON.stringify(post_data),
+	      data: JSON.stringify(data),
 
-	      error: function(){
-	        console.log("fail >><< ");
-	        //disable_preloader();
-	        //fail();
+	      error: function(err){
+	        console.log("Status: "+err.status + " " + err.statusText + ", Response: " + err.responseText);
+	        disable_preloader();
+
 	      },
 
 	      success:  function(json){ 
 	      	console.log('reciving the data');
 			console.log(json);
-	      	succ(json);
+			if(cb){
+		      	cb(json);
+			}
+	      	disable_preloader();
 	      }
-   		});
+	});
+}
+var DataHandler = (function(){
+
+	//make a request to the server and gets the response
+
+	var getResponse = function (post_data, cb){
+		if(post_data === undefined){
+			// $('#alert_empty_draw').show();
+			console.log('empty request object - cannot make request.');
+			return;
+		}
+		//TO DO send the actual request.
+		console.log('sending the data');
+		console.log(post_data);
+		makeRequest(data, cb);
+		//TO DO send the actual request.
+
 	};
 	//TO DO change d to data so we use the data from the server
 	//and not the default one	
 	var handle_response = function(layer, data){
+		//set the checkbox to checked for the given api
+		setMainApiCategoryCheckbox(layer, true); //layer is the same as the name of the api so safe to use it.
 		addDataToMap(layer, data);
 	}
 	var addDataToMap = function (layer, data){	
@@ -62,22 +71,37 @@ var DataHandler = (function(){
 	var getLocation = function(api){
 		//check if we are in Search city mode or Draw area mode
 		var result ={};
-		if(isSearchCityTabActive(api)){
+		if (isSearchCityTabActive(api)) {
 			result.name = getSearchCityText(api)
-			return result;
-		}
-		else if(isDrawAreaTabActive(api)){
+			if(!result.name) {
+				console.log(api + " empty city name");
+				
+				return undefined;
+			}
+ 		}
+		else if (isDrawAreaTabActive(api)) {
 			var coord = getDrawCoordinates();
 			if (coord === undefined){
+				console.log(api + " empty draw coordinates");
 				return undefined;
 			}
 			result.area = coord;
-			return result;
-		}else{
+ 		} else if (isMixedSearchActive(api)) {
+			result.name = getMixedSearchText(api);
+			if (!result.name){
+				console.log(api + " empty mixed search field");
+
+				return undefined;
+			}
+		} else if (isAllUkTabActive(api)){
+			result.all = true;
+		}
+		else {
 			return undefined;
 		}
+		return result;
 	};
-	var  checkIfDataHasExpired = function(name){
+	var checkIfDataHasExpired = function(name){
 	    //check if the data was set x minutes ago or less
 	    var lastSet = cache[name]; //when the cache was last updated.
 	    console.log('cache:' + lastSet);
@@ -114,10 +138,8 @@ var DataHandler = (function(){
 		// 	console.log('cannot construct request data object');
 		// 	return;
 		// }
-		var response = DataHandler.getResponse(data); //this sends the data to the server and receives the response
+		DataHandler.getResponse(data, handle_police_response); //this sends the data to the server and receives the response
 
-		//handle server response
-		handle_police_response(response);
 	}
 	
 	//private methods to PoliceHandler
@@ -125,7 +147,8 @@ var DataHandler = (function(){
 	//this method is called when the server has returned the data to be visualised
 	var handle_police_response = function(response){
 		//this is the default action
-		DataHandler.handle_response('police', data);
+		//TO-DO change the sampple 'data' to 'response'
+		DataHandler.handle_response(api, data);
 		
 		//add police specific actions here
 		
@@ -142,6 +165,12 @@ var DataHandler = (function(){
 			alert('Please select Police Crime category');
 			return undefined;
 		}
+		var date = getApiDate(api);
+		if(!date){
+			alert("Please select Police date");
+			return undefined;
+		}
+		data.date = date;
 		data.location = DataHandler.getLocation(api);
 		if(data.location === undefined) return undefined;
 		return data;
@@ -174,13 +203,12 @@ var RestaurantHandler = (function(DataHandler){
  	//get the data and send it
 	var handle = function() {
 		var data = constructRequestObject();
-		var response = DataHandler.getResponse(data);
-		handle_restaurant_response(response);
+	 	DataHandler.getResponse(data, handle_restaurant_response);
 	}
 	//private methods to RestaurantHandler
 
 	var handle_restaurant_response = function(response){
-		DataHandler.handle_response('restaurant',data2);
+		DataHandler.handle_response(api, data2);
 		//weather specific handling
 	}
 
@@ -209,13 +237,13 @@ var WeatherHandler = (function(DataHandler){
  	//get the data and send it
 	var handle = function(){
 		var data = constructRequestObject();
-		var response = DataHandler.getResponse(data);
-		handle_weather_response(response);
+		DataHandler.getResponse(data,handle_weather_response);
+		
 	};
 	//private methods to WeatherHandler
 
 	var handle_weather_response = function(response){
-		DataHandler.handle_response('weather' , response);
+		DataHandler.handle_response(api , response);
 
 		//weather specific handling
 	};
@@ -232,6 +260,51 @@ var WeatherHandler = (function(DataHandler){
 	};
 
 
+	var module = {handle: handle};
+	return module;
+})(DataHandler);
+
+
+var AirqualityHandler = (function(DataHandler){
+	var api = 'airquality';
+	var handle = function (){
+		var data = constructRequestObject();
+		DataHandler.getResponse(data, handle_airquality_response);
+	}
+	var handle_airquality_response = function(response){
+		DataHandler.handle_response(api, response);
+	};
+
+	//no data is required for the weather api
+	var constructRequestObject = function(){
+		var data = new Object();
+		data.name = api;
+		return data;
+	}
+	var module = {handle: handle};
+	return module;
+})(DataHandler);
+
+var HousesHandler = (function(DataHandler){
+	var api = 'houses';
+	var handle = function (){
+		var data = constructRequestObject();
+		DataHandler.getResponse(data, handle_airquality_response);
+	}
+	var handle_airquality_response = function(response){
+		DataHandler.handle_response(api, response);
+	};
+
+	var constructRequestObject = function(){
+		var data = new Object();
+		data.name = api;
+		data.location = DataHandler.getLocation(api);
+		if(!data.location) {
+			
+			return undefined;
+		}
+		return data;
+	}
 	var module = {handle: handle};
 	return module;
 })(DataHandler);
@@ -275,6 +348,7 @@ var GeoCodingHandler = (function(DataHandler){
 	var constructRequestObject = function() {
 		//add all the data to the object
 		var locationName = $("#location").val();
+		if(locationName === "") return undefined;
 		//console.log(locationName);
 		//locationName = JSON.stringify(locationName);
 		var data = {
@@ -323,5 +397,8 @@ var DataHandlerMapper = {
 	'police': PoliceHandler,
 	'restaurant': RestaurantHandler,
 	'weather': WeatherHandler,
-	'geoCoding': GeoCodingHandler
+	'geoCoding': GeoCodingHandler,
+	'airquality': AirqualityHandler,
+	'houses': HousesHandler
+
 };

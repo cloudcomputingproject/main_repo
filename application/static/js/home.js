@@ -73,7 +73,7 @@ function initLayers(){
  
   	var serverData = getServerData(); //this is the data passed as a variable when rendering the template
   	var layerData = serverData['categoriesAPI']; //all the types of data we support
- 
+    console.log(layerData);
     //create layers
     //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
     for (var i = 0; i < layerData.length; i++) {

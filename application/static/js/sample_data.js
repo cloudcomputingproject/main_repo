@@ -176,7 +176,8 @@ var sampleFinalRequest_2 = {
                     "category": "all-crimes",
                     "location": {                        
                         "name": "CityName",
-                        "area": [[1,1]]
+                        "area": [[1,1]],
+                        "all": true
                     }
                 }
             }

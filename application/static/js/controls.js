@@ -54,7 +54,7 @@ function helperAddDataHandlerListeners(klass){
 //appropriate instance of DataHandler 
 function checkBoxHandler(event, api, update) {
     var name = api;
-
+console.log(api);
     var layer = availableLayers[name];
     if(!layer){
         console.log('no layer with this name');
@@ -77,7 +77,16 @@ function addTabsListener(){
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var action = $(e.target).attr('action') ;
     if(action === 'draw'){
-        enableDrawing();
+        var api = $(e.target).attr('api');
+        var allowedShapes = $('#draw_api_tab_'+api).attr('allowed_shapes');
+        console.log(allowedShapes)
+        if(allowedShapes){
+
+            allowedShapes = allowedShapes.split(' ');
+            enableDrawing(allowedShapes);    
+        } else{
+            console.log('no allowedShapes defined');
+        }
     } else{
         disableDrawing();
     }
@@ -132,28 +141,36 @@ function setDefaultCheckboxes(){
     $("#police_checkbox").prop('checked', true);
 }
 
-
+function isTabActive(id){
+    id = "#"+id;
+    if($(id).length === 0){
+        console.log("tab doesnt exist");
+        return false;
+    }
+    return ($(id).hasClass('active'));
+}
 /*Helper functions */
 //find the Search city tab for the given API 
 //and check if it is visible
 function isSearchCityTabActive(api){
 
-    var id_of_tab = '#search_api_tab_heading_'+api;
-    console.log(id_of_tab);
-    if($(id_of_tab).length === 0){ //element doesnt exist
-
-        return false;
-    }
-    return $(id_of_tab).hasClass('active');
+    var id_of_tab = 'search_api_tab_heading_'+api;
+    
+    return isTabActive(id_of_tab);
 }
 function isDrawAreaTabActive(api){
-    var id_of_tab = '#draw_api_tab_heading_'+api;
-    if($(id_of_tab).length === 0){ //element doesnt exist
-        return false;
-    }
-    return $(id_of_tab).hasClass('active');
+    var id_of_tab = 'draw_api_tab_heading_'+api;
+    
+    return isTabActive(id_of_tab);
 }
-
+function isMixedSearchActive(api){
+    var id_of_tab = 'mixed_api_tab_heading_'+api;
+    return isTabActive(id_of_tab);
+}
+function isAllUkTabActive(api){
+     var id_of_tab = 'entire_uk_api_tab_'+api;
+    return isTabActive(id_of_tab);
+}
 function getSearchCityText(api){
     var id_of_input = '#search_city_'+api;
     if($(id_of_input).length === 0){
@@ -167,6 +184,28 @@ function getDrawCoordinates(){
     var result = getDrawnAreaBounds();
 
     return result;
+}
+function getMixedSearchText(api){
+    var id = '#mixed_city_'+api;
+    if($(id).length === 0) {
+        console.log('cannot find mixed search');
+        return '';
+    }
+    return $(id).val();
+}
+
+function setMainApiCategoryCheckbox(api,bool){
+    var id = "#"+ api +"_checkbox";
+    $(id).prop(checked, bool);
+}
+
+function getApiDate(api){
+    console.log(api)
+    var id = "#date_selector_"+api;
+    console.log( $(id).val());
+    if ($(id).length === 0) return undefined;
+    return $(id).val();
+
 }
 
 //consturct the Control panel main DOM elements

@@ -30,6 +30,5 @@ $.blockUI({
         } }); 
   }
   function disable_preloader(){
-    console.log("wliza");
             setTimeout($.unblockUI, 100); 
   }
