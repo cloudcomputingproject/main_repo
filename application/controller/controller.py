@@ -20,9 +20,13 @@ from datetime import date
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {"police" : lambda arg: processPolice(arg),
 					"weather" : lambda arg: processWeather(arg),
-					"restaurant" : lambda arg: processRestaurants(arg)}
+					"restaurant" : lambda arg: processRestaurants(arg),
+					"houses": lambda arg:processHouses(arg),
+					"airquality": lambda arg:processAirquality(arg),
+					}
 def getCategoriesAPI():
 	keys = featuresOptions.keys()
+	#sort alphabetically
 	keys.sort()
 	return keys
 
@@ -30,7 +34,10 @@ def getPoliceCategories():
 	json = police.getCategories()
 	parsed_json = parser.parsePoliceCategories(json)
 	return parsed_json
-
+def getPoliceCategoriesWithUrl():
+	json = police.getCategories()
+	parsed_json = parser.parsePoliceCategoriesWithUrlName(json)
+	return parsed_json
 
 def getGeoCoding(location):
 	name = location["name"]
@@ -125,9 +132,14 @@ def processPolice(policeArgs):
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
-def processWeather(policeArgs):
-	print policeArgs
+def processWeather(weatherArgs):
+	print processHouses
 
-def processRestaurants(policeArgs):
-	print policeArgs
+def processRestaurants(restaurantArgs):
+	print restaurantArgs
 
+def processHouses(housesArgs):
+	print housesArgs
+
+def processAirquality(airqualityArgs):
+	print airqualityArgs

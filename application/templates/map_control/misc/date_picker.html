@@ -1,0 +1,5 @@
+{% macro date_picker(label, api) -%}
+<label class="no_select_text" for="date_selector_{{api}}">{{label}}</label>
+	<input type="month" id="date_selector_{{api}}" class="form-control select_date" api={{api}} placeholder="Text input">
+<hr>
+{%- endmacro %}
