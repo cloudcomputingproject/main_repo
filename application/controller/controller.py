@@ -11,8 +11,7 @@ from application.forms import ExampleForm
 
 from application import app
 
-from servers import police
-from servers import geocoding
+from servers import police, geocoding, houselisting
 from application.parser import parser
 from class_definitions import Boundaries
 from datetime import date
@@ -20,7 +19,10 @@ from datetime import date
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {"police" : lambda arg: processPolice(arg),
 					"weather" : lambda arg: processWeather(arg),
-					"restaurant" : lambda arg: processRestaurants(arg)}
+					"restaurant" : lambda arg: processRestaurants(arg),
+					"house" : lambda arg: processHouseListing(arg)}
+
+#### Not sure if used at all
 def getCategoriesAPI():
 	keys = featuresOptions.keys()
 	keys.sort()
@@ -30,34 +32,39 @@ def getPoliceCategories():
 	json = police.getCategories()
 	parsed_json = parser.parsePoliceCategories(json)
 	return parsed_json
-
+#####
 
 def getGeoCoding(location):
 	name = location["name"]
 	print name
 	return geocoding.getData(name)
+
+
 #takes python object representation of the received JSON object
-def main(data):
-	print "inside main method controller"	
+'''
+body of the request has to contain JSON object with the following schema:
+{ "selection" : "name"
+  "features" : {"name" : "feature_name"},
+  "location" : "Some location name or null",
+  "area" : [coordinates in here]
+ }
+'''
+def main(data):	
+	# Location set up, all the information required will be stored inside location (coordinates and name)
 	location = data["location"]
 	if location:
 		actualLocation = processLocation(location)
-	features = data["features"]
-	if features:
-		return processFeatures(features)
-	#test response will be the response from
-	#the module taking care of a communication 
-	#with some external API
-	#we parse that response with the PARSER
-	#and return it to the request handler
-	print actualLocation.locationName
-	print "Latitude: " + str(actualLocation.southWest[0]) + ", Longitude: " + str(actualLocation.southWest[1])
-	print actualLocation.northEast
-	test_response = police.getCategories()
-	
-	temp = test_response.read()
 
-	return temp
+	coordinates = data["area"]
+	if coordinates:
+		pass #here the coordinates will be processed in an useful way for the server, still to determine
+
+	selection = data["selection"]
+	features = data["features"]
+
+	featuresOptions[selection](features)
+
+	return 'stub'
 
 def main2(data):
 	print "inside main method controller"
@@ -83,11 +90,9 @@ def main2(data):
 	return temp
 
 def processLocation(location):
-	print "processLocation"
 	nEast = location["bounds"]["NorthEast"]
 	sWest = location["bounds"]["SouthWest"]
 	place = location["name"]
-	print nEast,sWest,place
 	return Boundaries(nEast, sWest, place)
 
 #takes array of features
@@ -131,3 +136,6 @@ def processWeather(policeArgs):
 def processRestaurants(policeArgs):
 	print policeArgs
 
+def processHouseListing(houseArgs) :
+	
+	return 'JSON result'

@@ -29,9 +29,10 @@ and then finally, send the result(the json) back to the client
 '''
 '''
 body of the request has to contain JSON object with the following schema:
-{ "location" : "Some location name or null",
-  "features" : [{"name" : "feature_name","args" : {"arg_name":"value"}}
-]
+{ "selection" : "name"
+  "features" : {"name" : "feature_name"},
+  "location" : "Some location name or null",
+  "area" : [coordinates in here]
  }
 '''
 
@@ -49,7 +50,7 @@ def handleAllDataReq():
 		elif  'geoJSON' in input_data:
 			response2 = controller.main(input_data["geoJSON"])
 			response = "{\"geoJSON\": %s}" % (response2)
-			
+
 		# if ('geoCoding' in input_data) & ('geoJSON' in input_data):
 		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
 		# 	response2 = controller.main(input_data["geoJSON"])
