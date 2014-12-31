@@ -30,7 +30,8 @@ def homepage():
 	#away, without having to make consequetive requests 
 	dataToSend = {
 		'categoriesAPI': controller.getCategoriesAPI(),
-		'policeCategories': controller.getPoliceCategories()
+		'policeCategories': controller.getPoliceCategoriesWithUrl()
+
 		# 'policeCategories': controller.getPoliceCategories()
 	}
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
@@ -39,9 +40,8 @@ def homepage():
 # this returns the html for the Control of the map
 @home.route('/app/control_panel')
 def control_panel():
-	policeCategories = controller.getPoliceCategories()
-	newList = [x.replace(' ', '_') for x in policeCategories]
- 	template_data = {
+	policeCategories = controller.getPoliceCategoriesWithUrl()
+  	template_data = {
 	'all_api_categories':controller.getCategoriesAPI(),
 	'policeCategories': policeCategories
 	}

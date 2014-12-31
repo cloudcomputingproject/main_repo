@@ -3,8 +3,12 @@ Initialise the map and all of its components
 The control panel is initialised here.
  */
  // global variables
-var DEFAULT_LOCATION = "United Kingdom";
+var DEFAULT_LOCATION_NAME = "United Kingdom";
+var DEFAULT_centerLocation = L.latLng(55.378051,-3.435973);
+var DEFAULT_northEast = L.latLng(60.8606697,33.916555);
+var DEFAULT_southWest = L.latLng(34.5625145,-8.649357199999999);
 var DEFAULT_ZOOM = 5;
+
 var mapbox_access_token = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
 
 var map;
@@ -16,57 +20,41 @@ var domain = document.location.origin;
 
 //entry point for the front end logic
 $(document).ready(function() {
-	
-	init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-
+	init();
 	attachButtonListeners();
-
 });
 
+function zoomTo(centerLoation, zoomLevel){
+  if (map){
+    map.setZoom(200);      
+    map.panTo(centerLoation);            
+    map.setZoom(zoomLevel);      
+    map.setView(centerLoation);    
+  }
+}
 //get the coordinates for the initial location
 //and then using them, set up the map,
 //add it's ControlPanel,
 //initialise the layers on the map,
 //	and add default content to them(this is done by initLayer)
-function init(locationName, zoomLevel){
-
-	if (!map){
-
-		$.ajax({
-	    	type: "POST",
-	    	url: domain+'/app/geo',
-	    	dataType: "json",
-	    	contentType: "application/json",
-	    	data: JSON.stringify({"name": encodeURIComponent(locationName)}),
-	    	success:  function(json){
-	    
-	        	// convert name to coordinates using /api/2/
-	        	var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-	                            json["results"][0]["geometry"]["location"]["lng"]);
-	        	// Sitting bounds
-	        	var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-	                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-	        	var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-	                         json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
-	        	bounds = L.latLngBounds(southWest, northEast);
-	        
-				//set up MapBox
-				var options  = {
-					centerLocation: centerLocation, 
-					zoomLevel: zoomLevel					
-				};
-	        	setMap(options);
-
-	        	// the Control Panel showing the different layers
-	        	//(the method is defined in controls.js)
-	        	addControlPanel(); 
-
-	        	initLayers();
-	        	testHeat() ;
-	      	}
-	    });
+function init(){
+	if (!map){	  
+    // Setting to UK values for initialisation      	
+	  bounds = L.latLngBounds(DEFAULT_southWest, DEFAULT_northEast);
+		//set up MapBox
+	  var options  = {
+		  centerLocation: DEFAULT_centerLocation, 
+		  zoomLevel: DEFAULT_ZOOM					
+		};
+    setMap(options);
+  	// the Control Panel showing the different layers
+  	//(the method is defined in controls.js)
+	  addControlPanel(); 
+	  initLayers();
+	  testHeat() ;
 	}
 }
+
 function setMap(options){
 	L.mapbox.accessToken = mapbox_access_token;
 	map = L.mapbox.map('map',  null, { zoomControl:false }).setView(options.centerLocation, options.zoomLevel);
@@ -98,9 +86,6 @@ function initLayers(){
         }).addTo(map);
         cache[layerData[i]] = -1; //init the cache for each layer
     }
-
-
- 
     //make a request for the default data to be displayed
     //TO-DO make a request for the police data
     //add the data to the layers and show it
@@ -118,84 +103,93 @@ function getServerData(){
   // console.log(x);
   return data;
 }
-var zoomTo = function(locationName, zoomLevel) {
 
-	$.ajax({
-      type: "POST",
-      url: domain+'/app/allData',
-      dataType: "json",
-      contentType: "application/json",
-      data: JSON.stringify(sampleRequest3),//locationName.replace(/\s/g, '%20')}),
-      error: function(){
-        console.log("fail >><< ");
-      },
-      success:  function(json){        
-        bigJson = json;
-        json = bigJson["geoCoding"];
-        geoJSON = bigJson["geoJSON"];
+// var zoom = function(locationName, zoomLevel) {
+//   var handler = DataHandlerMapper["geoCoding"];
+//   handler.handle();
+// };
 
-        if (json){
-          console.log("1:");
-          console.log(json);
-          console.log("2:");
-          console.log(geoJSON);
-          var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-                           json["results"][0]["geometry"]["location"]["lng"]);
+// var zoomTo = function(locationName, zoomLevel) {
 
-          // Bounds
+// 	$.ajax({
+//       type: "POST",
+//       url: domain+'/app/allData',
+//       dataType: "json",
+//       contentType: "application/json",
+//       data: JSON.stringify(sampleFinalRequest_1),//locationName.replace(/\s/g, '%20')}),
+//       error: function(){
 
-          if (L.latLng(json["results"][0]["geometry"]["bounds"])){
-            var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-            var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-                           json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+//         console.log("fail >><< ");
+//         disable_preloader();
 
-            bounds = L.latLngBounds(southWest, northEast);
-          }
+//       },
+//       success:  function(json){        
+//         bigJson = json;
+//         json = bigJson["geoCoding"];
+//         geoJSON = bigJson["geoJSON"];
 
-        // Map not inialized
-          if (!map){
-            init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-          }
+//         if (json){
+//           console.log("1:");
+//           console.log(json);
+//           console.log("2:");
+//           console.log(geoJSON);
+//           var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
+//                            json["results"][0]["geometry"]["location"]["lng"]);
 
-          // Map initialised  
-          else{   
-            map.setZoom(200);      
-            map.panTo(centerLocation);
-            //map.setMaxBounds(bounds);
-            map.setZoom(zoomLevel);      
-            map.setView(centerLocation);       
-          }
-        }
-        /*
-        $.ajax({
-          type: "POST",
-          url: domain+'/app/',
-          dataType: "json",
-          contentType: "application/json",
-          data: JSON.stringify(sampleRequest1),//locationName.replace(/\s/g, '%20')}),
+//           // Bounds
+
+//           if (L.latLng(json["results"][0]["geometry"]["bounds"])){
+//             var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
+//                          json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
+//             var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
+//                            json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+
+//             bounds = L.latLngBounds(southWest, northEast);
+//           }
+
+//         // Map not inialized
+//           if (!map){
+//             init(DEFAULT_LOCATION, DEFAULT_ZOOM);
+//           }
+
+//           // Map initialised  
+//           else{   
+//             map.setZoom(200);      
+//             map.panTo(centerLocation);
+//             //map.setMaxBounds(bounds);
+//             map.setZoom(zoomLevel);      
+//             map.setView(centerLocation);       
+//           }
+//         }
+//         /*
+//         $.ajax({
+//           type: "POST",
+//           url: domain+'/app/',
+//           dataType: "json",
+//           contentType: "application/json",
+//           data: JSON.stringify(sampleRequest1),//locationName.replace(/\s/g, '%20')}),
       
-            success:  function(json){              
-              console.log("---");
-              console.log(json);
-              //console.log(json);
-              //displayData([dataX1,dataX2],availableLayers);              
-              var availableLayers = displayData(json["features"]);
-              L.control.layers(null, availableLayers).addTo(map);
-            }
-        });
-        */
-        if (geoJSON){
-          var availableLayers = displayData(geoJSON["features"]);
-          L.control.layers(null, availableLayers).addTo(map);
-        }
-        disable_preloader();
+//             success:  function(json){              
+//               console.log("---");
+//               console.log(json);
+//               //console.log(json);
+//               //displayData([dataX1,dataX2],availableLayers);              
+//               var availableLayers = displayData(json["features"]);
+//               L.control.layers(null, availableLayers).addTo(map);
+//             }
+//         });
+//         */
+//         if (geoJSON){
+//           var availableLayers = displayData(geoJSON["features"]);
+//           L.control.layers(null, availableLayers).addTo(map);
+//         }
+//         disable_preloader();
 
-      }
+//       }
 
-   });
+//    });
 
-};
+// };
 
 
 
@@ -222,7 +216,10 @@ function attachButtonListeners(){
   });
 	$("#go").on('click', function(){
 	    enable_preloader();
-	    zoomTo($("#location").val(),10);
+      var handler = DataHandlerMapper["geoCoding"];
+      handler.handle();
+      disable_preloader();
+	    
 	});
 
 	$("#location").keypress(function(event){
@@ -232,6 +229,7 @@ function attachButtonListeners(){
 	});
 
 	$("#reset").on('click', function(){
-		zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
+		zoomTo(DEFAULT_centerLocation, DEFAULT_ZOOM);
+
 	});
 }

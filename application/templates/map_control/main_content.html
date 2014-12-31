@@ -26,8 +26,6 @@
             {{switch.marker_heatmap(main_api_category)}}
             {# use 'ignore missing' so the application doesn't crash if there isn't a specific template for the API#}
             {% include '/map_control/api/'~main_api_category~'.html' ignore missing %} 
-            <br />
-            {{s.select_location(main_api_category)}}
           <button id='{{main_api_category}}_update_map' api='{{main_api_category}}' class="update_map_btn btn btn-primary btn-sm" type="submit">Update Map</button>
         </div>
        </div>
