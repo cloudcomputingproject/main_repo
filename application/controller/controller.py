@@ -20,12 +20,20 @@ from class_definitions import Boundaries
 from datetime import date
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
-featuresOptions = {"police" : lambda arg1, arg2: processPolice(arg1, arg2),
-					"weather" : lambda arg1, arg2: processWeather(arg1, arg2),
-					"restaurant" : lambda arg1, arg2: processRestaurants(arg1, arg2),
-					"house" : lambda arg1, arg2: processHouseListing(arg1, arg2),
-					"airquality": lambda arg:processAirquality(arg)}
+featuresOptions = {
+	"police" : lambda arg: processPolice(arg),
+	"weather" : lambda arg: processWeather(arg),
+	"restaurant" : lambda arg: processRestaurants(arg),
+	"house" : lambda arg: processHouseListing(arg),
+	"airquality": lambda arg:processAirquality(arg),
+	"geocoding" : lambda arg: getGeoCoding(arg)
+}
 
+locationOptions = {
+	"place" : lambda arg: processPlace(arg),
+	"polygon" : lambda arg: processPolygon(arg),
+	"area" : lambda arg: processArea(arg)
+}
 #### Not sure if used at all
 def getCategoriesAPI():
 	keys = featuresOptions.keys()
@@ -70,66 +78,87 @@ body of the request has to contain JSON object with the following schema:
             "long": "1",
             "radius": "1",
             "format": "km/mi"
-        },
-        "format": "markers"
+        }
+    }
+Request
+    {
+    	"name": "geocoding/api",
+    	"args": {
+    		"category": "all-crimes",
+            "location": {
+            	"type": "place",
+                "name": "CityName",
+                "bounds": {
+	            	"northEast": 1,
+	            	"southWest": 1
+	            }
+            },
+            "location": {
+            	"type": "polygon",
+                "points": [[1,1], [0,0], [0,2]]
+            },
+            "location": {
+            	"type": "area",
+                "lat": 1,
+                "long": 1,
+                "radius": 2,
+                "format": "km/mi"
+            },
+            "any-other-parameter": "value"
+    	}
+    }
+Response
+    {
+    	"api" : "police/house/etc",
+    	"data" : {
+				    "features": [
+				        {
+				            "geometry": {
+				                "coordinates": [
+				                    -1.3485599756240845,
+				                    50.907440185546875
+				                ],
+				                "type": "Point"
+				            },
+				            "id": null,
+				            "properties": {
+				                "bathNumber": 1,
+				                "bedroomNumber": 2,
+				                "currency": "GBP",
+				                "lastUpdated": 286.5,
+				                "price": 229950
+				            },
+				            "type": "Feature"
+				        }
+				    ],
+				    "type": "FeatureCollection"
+				}
     }
 '''
 def main(data):	
 
-	coordinateSet = None
-	circle = None
-	location = None
-
-	# Location set up, all the information required will be stored inside location (coordinates and name)
-	if 'location' in data:
-		location = data["location"]
-	if 'area' in data:
-		coordinateSet = data["area"]
-	if 'radius' in data:
-		circle = data["radius"]
-
-	if location:
-		actualLocation = processLocation(location)
-	elif coordinateSet:
-		actualLocation = processCoordinates(coordinateSet) #here the coordinates will be processed in an useful way for the server, still to determine
-	elif circle:
-		actualLocation = processRadius(circle)
-	else:
-		raise 'A location argument is required'
-
-	if 'selection' in data:
-		selection = data["selection"]
-	else:
-		raise "The request must incl"
-	if 'features' in data:
-		features = data["features"]
-
 	jsonResult = 'There was some error retrieving the data...'
+
+	if 'name' in data:
+		name = data["name"]
+	else:
+		raise "The request must include the name of the API requested"
+
+	if 'args' in data:
+		args = data["args"]
+	else:
+		args = None
+
 	#If the feature has different calls or needs, they will be inside the features object in the JSON request
 	# The appropiate method will then strip it out and call the appropiate method of the server/parser
-	if selection in featuresOptions:
-		jsonResult = featuresOptions[selection](features, actualLocation) 
+	if name in featuresOptions:
+		jsonResult = featuresOptions[name](args) 
 	else: 
 		raise "Selection is not valid"
-	return jsonResult
 
-'''
-def main(data):
-	print ">> Inside main method controller"	
+	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
-	if 'geoCoding' in data :
-		result = getGeoCoding(data["geoCoding"])
-		return "{ \"geoCoding\": %s}" % (result)
-	elif 'geoJSON' in data:
-		test_response = police.getCategories()
-		temp = test_response.read()
-		result = temp
-		return "{\"geoJSON\": %s}" % (result)
-
-	raise NameError('UnknownRequest: geoCoding or geoJSON was not found.')
-
-	return "This is impossible.."
-'''
+	return response
 
 def main2(data):
 	print "inside main method controller"
@@ -154,24 +183,24 @@ def main2(data):
 
 	return temp
 
-def processLocation(location):
+def processPlace(placeArgs):
 	nEast = None
 	sWest = None
-	if 'bounds' in location:
-		nEast = location["bounds"]["northEast"]
-	if 'bounds' in location:
-		sWest = location["bounds"]["southWest"]
-	place = location["name"]
+	if 'bounds' in placeArgs:
+		nEast = placeArgs["bounds"]["northEast"]
+	if 'bounds' in placeArgs:
+		sWest = placeArgs["bounds"]["southWest"]
+	place = placeArgs["name"]
 	return Boundaries(nEast, sWest, place)
 
-def processCoordinates(coordinateSet):
+def processPolygon(polygonArgs):
 	return "nothing"
 
-def processRadius(circle):
-	center[0] = circle["lat"]
-	center[1] = circle["long"]
-	radius = circle["radius"]
-	radiusFormat = circle["format"]
+def processArea(areaArgs):
+	center[0] = areaArgs["lat"]
+	center[1] = areaArgs["long"]
+	radius = areaArgs["radius"]
+	radiusFormat = areaArgs["format"]
 	return CircleArea(center, radius, radiusFormat)
 
 #takes array of features
@@ -194,7 +223,7 @@ def processFeatures(features):
 		print response
 		return response
 
-def processPolice(policeArgs, location):
+def processPolice(policeArgs):
 	print policeArgs
 	category = policeArgs["category"]
 	someDate = date.today()
@@ -209,16 +238,21 @@ def processPolice(policeArgs, location):
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
-def processWeather(weatherArgs, location):
+def processWeather(weatherArgs):
 	print processHouses
 
-def processRestaurants(restaurantArgs, location):
+def processRestaurants(restaurantArgs):
 	print restaurantArgs
 
-def processAirquality(airqualityArgs, location):
+def processAirquality(airqualityArgs):
 	print airqualityArgs
 
-def processHouseListing(houseArgs, location):
+def processHouseListing(houseArgs):
+	if 'location' in houseArgs:
+		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
+	else:
+		raise "Location not specified"
+
 	jsonData = ''
 	if isinstance(location, Boundaries):
 		jsonData = houses.getListing(location.locationName, None)

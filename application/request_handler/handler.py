@@ -47,12 +47,13 @@ def handleAllDataReq():
 		input_data = request.data
 		input_data = json.loads(input_data)	
 
-		if 'geoCoding' in input_data : 
-			response1 = controller.getGeoCoding(input_data["geoCoding"])
-			response = "{ \"geoCoding\": %s}" % (response1)
-		elif  'geoJSON' in input_data:
-			response2 = controller.main(input_data["geoJSON"])
-			response = "{\"geoJSON\": %s}" % (response2)
+		response = controller.main(input_data)
+		# if 'geoCoding' in input_data : 
+		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
+		# 	response = "{ \"geoCoding\": %s}" % (response1)
+		# elif  'geoJSON' in input_data:
+		# 	response2 = controller.main(input_data["geoJSON"])
+		# 	response = "{\"geoJSON\": %s}" % (response2)
 
 		# if ('geoCoding' in input_data) & ('geoJSON' in input_data):
 		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
