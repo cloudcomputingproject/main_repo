@@ -30,7 +30,7 @@ def parseCrimes(json):
 		category = crime["category"]
 		context = crime["context"]
 		out_stat = crime["outcome_status"]
-		properties = json.dumps({'category':category,'context':context,'outcome_status':out_stat})
+		properties = {'category':category,'context':context,'outcome_status':out_stat}
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
@@ -78,7 +78,7 @@ def parseAirQuality(jsondata):
 			pollutionLevel = int(description[-1:])
 
 		point = Point((lng, lat))
-		properties = json.dumps({'title':title,'pollutionLevel':pollutionLevel})
+		properties = {'title':title,'pollutionLevel':pollutionLevel}
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
@@ -100,7 +100,7 @@ def parseFSA(jsondata):
 			point = Point((float(lng), float(lat)))
 		except:
 			continue
-		properties = json.dumps({'name':name,'hygiene':hygiene,'management':mang,'structural':structural})
+		properties = {'name':name,'hygiene':hygiene,'management':mang,'structural':structural}
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
