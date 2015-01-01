@@ -99,11 +99,19 @@ def main(data):
 
 	if 'selection' in data:
 		selection = data["selection"]
+	else:
+		raise "The request must incl"
 	if 'features' in data:
 		features = data["features"]
 
-	featuresOptions[selection](features, actualLocation)
-	return 'stub'
+	jsonResult = 'There was some error retrieving the data...'
+	#If the feature has different calls or needs, they will be inside the features object in the JSON request
+	# The appropiate method will then strip it out and call the appropiate method of the server/parser
+	if selection in featuresOptions:
+		jsonResult = featuresOptions[selection](features, actualLocation) 
+	else: 
+		raise "Selection is not valid"
+	return jsonResult
 
 '''
 def main(data):
@@ -150,9 +158,9 @@ def processLocation(location):
 	nEast = None
 	sWest = None
 	if 'bounds' in location:
-		nEast = location["bounds"]["NorthEast"]
+		nEast = location["bounds"]["northEast"]
 	if 'bounds' in location:
-		sWest = location["bounds"]["SouthWest"]
+		sWest = location["bounds"]["southWest"]
 	place = location["name"]
 	return Boundaries(nEast, sWest, place)
 
@@ -218,4 +226,5 @@ def processHouseListing(houseArgs, location):
 		jsonData = houses.getListing(None, location.formattedOutput())
 
 	collection = parser.parseHouseListing(jsonData) 
-	return 'JSON result'
+
+	return collection

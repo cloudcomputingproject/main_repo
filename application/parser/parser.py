@@ -77,7 +77,7 @@ def parseAirQuality(jsondata):
 		else:
 			pollutionLevel = int(description[-1:])
 
-		point = Point((lat,lng))
+		point = Point((lng, lat))
 		properties = json.dumps({'title':title,'pollutionLevel':pollutionLevel})
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
@@ -96,7 +96,7 @@ def parseFSA(jsondata):
 		mang = item['Scores']['ConfidenceInManagement']
 		structural = item['Scores']['Structural']
 
-		point = Point((lat,lng))
+		point = Point((lng, lat))
 		properties = json.dumps({'name':name,'hygiene':hygiene,'management':mang,'structural':structural})
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
@@ -116,10 +116,10 @@ def parseHouseListing(jsondata):
 		bedroomN = item['bedroom_number']
 		bathN = item['bathroom_number']
 		lastUpdated = item['updated_in_days']
-
-		point = Point((lat,lng))
-	properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
-	feature = Feature(geometry=point,properties=properties)
-	features.append(feature)
+		point = Point((lng, lat)) #this needs to be this way, the other way arround makes UK be Somalia, and we don't want that, do we?
+	#properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
+		properties = {'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated} #seems like Feature class is clever enough to turn the object into json itself ;)
+		feature = Feature(geometry=point,properties=properties)
+		features.append(feature)
 	fc = FeatureCollection(features)
 	return fc
