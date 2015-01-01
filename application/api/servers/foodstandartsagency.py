@@ -24,31 +24,31 @@ format = 'json'
 
 #private
 def getData():
-    global url, format
+	global url, format
 
-    """
-    #remove the headers, and only get the relevant info
+	"""
+	#remove the headers, and only get the relevant info
 	result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
 	"""
-
+	print url
 	#obtaining the data in order to get the number of entries
-    data = json.load(urllib2.urlopen(url + '/' + format))
+	data = json.load(urllib2.urlopen(url + '/' + format))
 
-    #building the new url setting the parameter PageSize to be equal to the number of entries
-    url += '/1/' + data['FHRSEstablishment']['Header']['ItemCount'] + '/' + format
+	#building the new url setting the parameter PageSize to be equal to the number of entries
+	url += '/1/' + data['FHRSEstablishment']['Header']['ItemCount'] + '/' + format
 
-    data = urllib2.urlopen(url)
+	data = urllib2.urlopen(url)
 
-    #for testing purposes
-    #print url
-    #print json.load(data)
+	#for testing purposes
+	#print url
+	#print json.load(data)
 
-    #reseting the url
-    url = 'http://ratings.food.gov.uk/'
-    result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
-    result = json.dumps(result)
+	#reseting the url
+	url = 'http://ratings.food.gov.uk/'
+	result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
+	result = json.dumps(result)
 
-    return result
+	return result
 
 #IMPORTANT!
 #

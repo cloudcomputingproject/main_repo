@@ -1,23 +1,15 @@
 import urllib2
 import json
-from google.appengine.api import users
-from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
-from flask import request, render_template, flash, url_for, redirect, Blueprint, json, jsonify
+
 from flask_cache import Cache
 from pprint import pprint
-
-from application.decorators import login_required, admin_required
-from application.forms import ExampleForm
+from datetime import date
 
 from application import app
-
-from servers import police, geocoding, houselisting
-
-from application.api.servers import houses
-
+from application.decorators import login_required, admin_required
+from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank #,airquality
 from application.parser import parser
-from class_definitions import Boundaries
-from datetime import date
+from class_definitions import Boundaries, CircleArea
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
@@ -59,28 +51,7 @@ def getGeoCoding(location):
 
 #takes python object representation of the received JSON object
 '''
-body of the request has to contain JSON object with the following schema:
- 	{
-        "selection": "house",
-        "features": {
-            "name": "feature_name"
-        },
-        "location":  {
-            "name": "hedge-end",
-            "bounds": {
-            	"northEast": 1,
-            	"southWest": 1
-            }
-        },
-        "area": "test",
-        "radius": {
-            "lat": "1",
-            "long": "1",
-            "radius": "1",
-            "format": "km/mi"
-        }
-    }
-Request
+Request (just one location depending on the format)
     {
     	"name": "geocoding/api",
     	"args": {
@@ -242,10 +213,31 @@ def processWeather(weatherArgs):
 	print processHouses
 
 def processRestaurants(restaurantArgs):
-	print restaurantArgs
+	if 'location' in restaurantArgs:
+		location = locationOptions[restaurantArgs["location"]["type"]](restaurantArgs["location"])
+	else:
+		location = None
+
+	if 'name' in restaurantArgs:
+		name = restaurantArgs["name"]
+	else:
+		name = None
+
+	if name is None:
+		jsonData = foodstandartsagency.searchLoc(location.locationName)
+	elif location is None:
+		jsonData = foodstandartsagency.searchName(name)
+	else:
+		jsonData = foodstandartsagency.searchNameLoc(name, location.locationName)
+
+	collection = parser.parseFSA(jsonData)
+	return collection
 
 def processAirquality(airqualityArgs):
-	print airqualityArgs
+	collection=None
+	# jsonData = airquality.getData()
+	# collection = parser.parseAirQuality(jsonData)
+	return collection
 
 def processHouseListing(houseArgs):
 	if 'location' in houseArgs:

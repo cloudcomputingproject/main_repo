@@ -95,8 +95,11 @@ def parseFSA(jsondata):
 		hygiene = item['Scores']['Hygiene']
 		mang = item['Scores']['ConfidenceInManagement']
 		structural = item['Scores']['Structural']
-
-		point = Point((lng, lat))
+		#took this approach for pragmatism, some of the data of FSA is corrupt and they send null fields, since there is no point keeping a place that we don't know where it is, I simply ignore it
+		try:
+			point = Point((float(lng), float(lat)))
+		except:
+			continue
 		properties = json.dumps({'name':name,'hygiene':hygiene,'management':mang,'structural':structural})
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
