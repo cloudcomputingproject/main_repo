@@ -11,6 +11,10 @@ class Boundaries:
 	def getYAxis(self):
 		return [self.northEast[1], self.southWest[1]]
 
+	def formattedOutput(self):
+		output = [self.northEast[0], self.northEast[1], self.southWest[0], self.southWest[1]]
+		return output
+
 class CircleArea:
 	def __init__(self, center=[0,0], radius=2, radiusFormat='km'):
 		self.center = center

@@ -23,6 +23,7 @@ featuresOptions = {
 
 locationOptions = {
 	"place" : lambda arg: processPlace(arg),
+	"rectangle" : lambda arg: processPlace(arg),
 	"polygon" : lambda arg: processPolygon(arg),
 	"area" : lambda arg: processArea(arg)
 }
@@ -157,11 +158,16 @@ def main2(data):
 def processPlace(placeArgs):
 	nEast = None
 	sWest = None
-	if 'bounds' in placeArgs:
-		nEast = placeArgs["bounds"]["northEast"]
-	if 'bounds' in placeArgs:
-		sWest = placeArgs["bounds"]["southWest"]
-	place = placeArgs["name"]
+	if placeArgs["type"] == "place":
+		if 'bounds' in placeArgs:
+			nEast = placeArgs["bounds"]["northEast"]
+		if 'bounds' in placeArgs:
+			sWest = placeArgs["bounds"]["southWest"]
+		place = placeArgs["name"]
+	else: 
+		nEast = placeArgs["northEast"]
+		sWest = placeArgs["southWest"]
+		place = None
 	return Boundaries(nEast, sWest, place)
 
 def processPolygon(polygonArgs):
@@ -247,7 +253,7 @@ def processHouseListing(houseArgs):
 
 	jsonData = ''
 	if isinstance(location, Boundaries):
-		jsonData = houses.getListing(location.locationName, None)
+		jsonData = houses.getListing(location.locationName, location.formattedOutput())
 	elif isinstance(location, CircleArea):
 		jsonData = houses.getListing(None, location.formattedOutput())
 
