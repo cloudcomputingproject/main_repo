@@ -45,10 +45,16 @@ def getPoliceCategoriesWithUrl():
 #####
 
 def getGeoCoding(location):
+	print 'G-C-============================================'
+	print '######'
+	print '> getGeoCoding'
+	print '######'
+	print 'name: '
 	name = location["location"]["name"]
 	print name
-	return geocoding.getData(name)
-
+	data = geocoding.getData(name)
+	print '> data retrieved from geocoding'
+	return data
 
 #takes python object representation of the received JSON object
 '''
