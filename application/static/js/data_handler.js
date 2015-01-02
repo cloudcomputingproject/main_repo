@@ -299,7 +299,9 @@ var HousesHandler = (function(DataHandler){
 // ----------
 
 var GeoCodingHandler = (function(DataHandler){
- 
+ 	
+ 	var api  = 'geocoding';
+
  	//get the data and send it
 	var handle = function(){
 		var data = constructRequestObject();
@@ -307,7 +309,7 @@ var GeoCodingHandler = (function(DataHandler){
 			console.log('cannot construct request data object');
 			return;
 		}
-		DataHandler.makeRequest(data,handle_geoCoding_response); //this sends the data to the server and receives the response
+		DataHandler.makeRequest(data,handle_geoCoding_response, DataHandler.defaultErrorCallback); //this sends the data to the server and receives the response
 		//handle server response
 		//console.log(response);
 		//handle_geoCoding_response(response);

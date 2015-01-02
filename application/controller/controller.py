@@ -45,7 +45,7 @@ def getPoliceCategoriesWithUrl():
 #####
 
 def getGeoCoding(location):
-	name = location["name"]
+	name = location["location"]
 	print name
 	return geocoding.getData(name)
 
