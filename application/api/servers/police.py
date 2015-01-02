@@ -73,11 +73,12 @@ def getCrimesData(category, lat, lng, date):
 
 def getCrimesInAreaData(category, latArr, lngArr, date):
     global url
-    url+='crimes-street/' + category + '?poly='
+    url+='crimes-street/' + category[0] + '?poly='
     for j in xrange(0, len(latArr)):
         url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
     url = url[:-1]
     url+='&date=' + date
+    print url
     return getData()
 
 

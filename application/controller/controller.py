@@ -205,14 +205,17 @@ def processFeatures(features):
 def processPolice(policeArgs):
 	print policeArgs
 	category = policeArgs["category"]
-	someDate = date.today()
+	if 'date' in policeArgs:
+		someDate = policeArgs["date"]
+	else:
+		someDate = date.today()
 	someDate = str(someDate.year)+"-"+str(someDate.month-2)
 	print category
 	print someDate
 	#neigh = police.getNeighbourhoods('hampshire').read()
 	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
 	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
-	crimesArea = police.getCrimesInArea(category, [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], someDate).read()
+	crimesArea = police.getCrimesInAreaData(category, [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], someDate).read()
 	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
