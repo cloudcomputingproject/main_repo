@@ -54,22 +54,21 @@ function helperAddDataHandlerListeners(klass){
 //appropriate instance of DataHandler 
 function checkBoxHandler(event, api, update) {
     var name = api;
-console.log(api);
-    var layer = availableLayers[name];
-    if(!layer){
+    console.log(api);
+    var layers = getLayers();
+    var layer = layers[api];
+    if(!(api in layers)){
         console.log('no layer with this name');
         return; 
     }
 
     if($('#'+api+'_checkbox').is(':checked')){
-        //update will make a request to the server(if necessery), and update the particular layer in
-        //availableLayers.
+        //update will invoke the data handler module
         update();
-
-        layer = availableLayers[name];
-        map.addLayer(layer);
     }else {
-        map.removeLayer(layer);
+        //delete the data in the MapBox layers.
+        removeDataFromLayer(api, 'heatmap' );
+        removeDataFromLayer(api, 'markers' );
     }
 }
 //when switiching between the Search by city name tab and the Draw area tab

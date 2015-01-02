@@ -40,7 +40,35 @@ function initLayers(api_names){
 	}
 	return result;
 }
+function getLayers(){
+	return layers;
+}
+function removeDataFromLayer(api,layer_type){
+	//check if layer exists 
+	if(!(api in layers)){
+		console.log('Trying to remove data from layer which is not in the layers collection ');
+		return false;
+	}
+	//check if layer type exists
+	if(!(layer_type in layers[api])){
+		console.log('Trying to remove data from non existing layer type');
+		return false;
+	}
 
+	if(layer_type === 'markers'){
+		var marker_layer = layers[api].markers;
+		marker_layer.clearLayers();
+		return true;
+	} else if (layer_type === 'heatmap'){
+		var heatmap_layer = layers[api].heatmap;
+		heatmap_layer.setLatLngs([]);
+		return true;
+	} else{
+		console.log("Non-supported layer type");
+		return false;
+	}
+
+}
 
 var initialiseView = function(){
 	if(View) return View; //singleton
@@ -60,6 +88,9 @@ var initialiseView = function(){
 	var defaultViewHandler = function(data, api){
 		var data_for_map= {};
 		var render_mode = getRenderMode(api);
+		//first wipe out the old data
+		removeDataFromLayer(api, 'markers');
+		removeDataFromLayer(api, 'heatmap');
 		render_mode.forEach(function(mode){
 			if(mode === 'markers'){
 				var getMarkersData = data.getMarkersData; // get the function
@@ -71,6 +102,7 @@ var initialiseView = function(){
 			} else if (mode === 'heatmap'){
 				var getHeatmapData = data.getHeatmapData;
 				data_for_map = getHeatmapData(data);
+				console.log(data_for_map)
 				renderHeatmapOnMap(data_for_map, api);
 			} else{
 				console.log('Render mode not specified');
@@ -85,9 +117,13 @@ var initialiseView = function(){
 		console.log('adding data to '+api+'\'s heatmap layer');
 
 		var heatmap = layers[api].heatmap;
-
 		heatmap.setLatLngs([]); //reset the state of the layer
-		heatmap.setLatLngs(data);
+		//add heatmap data. the heatmap will be colorod based 
+		//on the number of markers. For other visualising way,
+		//specify a custom view handler
+		data.eachLayer(function(l){
+			heatmap.addLatLng(l.getLatLng());
+		});
 		
 	};
 	var renderMarkersOnMap = function(data, api){
