@@ -29,7 +29,7 @@ var DataHandler = (function() {
 		//set the checkbox to checked for the given api
 		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
-		View.handle(response_data, response_api);
+		View.handle(data, response_api);
 		// setMainApiCategoryCheckbox(layer, true); //layer is the same as the name of the api so safe to use it.
 		// addDataToMap(layer, data);
 	};

@@ -31,8 +31,8 @@ function initLayers(api_names){
         style: function (feature) {
               return feature.properties && feature.properties.style;
               },
-            onEachFeature: onEachFeature,
-            pointToLayer: drawFeature
+            onEachFeature: onEachFeature
+            // pointToLayer: drawFeature
         }).addTo(map);
 	}
 	function createHeatmapEmptyLayer(){
@@ -64,6 +64,7 @@ var initialiseView = function(){
 			if(mode === 'markers'){
 				var getMarkersData = data.getMarkersData; // get the function
 				// use the Model method to retrieve the data suitable for Markers
+				console.log(data)
 				data_for_map = getMarkersData(data); 
 				renderMarkersOnMap(data_for_map, api);
 
@@ -71,6 +72,9 @@ var initialiseView = function(){
 				var getHeatmapData = data.getHeatmapData;
 				data_for_map = getHeatmapData(data);
 				renderHeatmapOnMap(data_for_map, api);
+			} else{
+				console.log('Render mode not specified');
+				return;
 			}
 		});
 
@@ -78,17 +82,18 @@ var initialiseView = function(){
 
 
 	var renderHeatmapOnMap = function(data, api){
-		console.log('adding date to '+api+'\'s heatmap layer');
+		console.log('adding data to '+api+'\'s heatmap layer');
 
-		var heatmap = layers.api.heatmap;
+		var heatmap = layers[api].heatmap;
 
 		heatmap.setLatLngs([]); //reset the state of the layer
 		heatmap.setLatLngs(data);
 		
 	};
 	var renderMarkersOnMap = function(data, api){
-		console.log('adding date to '+api+'\'s markers layer');
-		var layer = layers.api.markers;
+		console.log('adding data to '+api+'\'s markers layer');
+		console.log(layers)
+		var layer = layers[api].markers;
 		layer.clearLayers(); //reset the state of the layer
 		layer.addData(data); //
 	};

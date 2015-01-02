@@ -198,9 +198,11 @@ function getMixedSearchText(api){
 function getRenderMode(api){
     var result = [];
     $(".render_mode_"+api).each(function(el){
-        result.append($(this).attr('mode'));
+        if($(this).is(':checked')){
+            result.push($(this).attr('mode'));
+        }
     })
-
+    console.log(result)
     return result;
 }
 function setMainApiCategoryCheckbox(api,bool){

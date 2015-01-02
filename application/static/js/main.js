@@ -39,7 +39,7 @@ function ageOfTimestamp(timestamp){
     return now - timestamp;
 }
 function getAPIFromRequestObject(request_object){
-    console.log(request_object)
+    // console.log(request_object)
     if(request_object && request_object.name){
         return request_object.name
     }
@@ -48,7 +48,7 @@ function getAPIFromRequestObject(request_object){
 }
 //get the name of the api from the response from the server
 function getResponseApi(response){
-    console.log(response)
+    // console.log(response)
     if(response && response.data && response.data.api) {
         return response.data.api;
     }
