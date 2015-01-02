@@ -1,10 +1,11 @@
 from flask import json, jsonify
-from geojson import Feature, Point
+from geojson import Feature, Point, FeatureCollection
 from application.api import external_api
 import re
 
 
 def parsePoliceCategories(categStr):
+	print 'categ' + categStr
 	catArr = json.loads(categStr)
 	print catArr
 	categories = []
@@ -22,14 +23,16 @@ def parsePoliceCategoriesWithUrlName(categStr):
 
 	return categories
 
-def parseCrimes(json):
-	crimesOld = json.loads(json)
-	feature/dynamic_map_control
+def parseCrimes(jsondata):
+	print 'json' + jsondata
+	crimesOld = json.loads(jsondata)
+	print crimesOld
+	#feature/dynamic_map_control
 	features = [];
 	for crime in crimesOld:
 		lat =  crime["location"]["latitude"]
-		lng =  crime["location"]["longtitude"]
-		point = Point((lat,lng))
+		lng =  crime["location"]["longitude"]
+		point = Point((float(lng),float(lat)))
 		category = crime["category"]
 		context = crime["context"]
 		out_stat = crime["outcome_status"]
