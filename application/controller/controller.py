@@ -114,7 +114,9 @@ def main(data):
 	if 'name' in data:
 		name = data["name"]
 	else:
-		raise "The request must include the name of the API requested"
+		raise Exception("The request must include the name of the API requested")
+
+	print 'a'
 
 	if 'args' in data:
 		args = data["args"]
@@ -126,7 +128,7 @@ def main(data):
 	if name in featuresOptions:
 		jsonResult = featuresOptions[name](args) 
 	else: 
-		raise "Selection is not valid"
+		raise Exception( "Selection is not valid")
 
 	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
@@ -249,7 +251,7 @@ def processHouseListing(houseArgs):
 	if 'location' in houseArgs:
 		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
 	else:
-		raise "Location not specified"
+		raise Exception( "Location not specified")
 
 	jsonData = ''
 	if isinstance(location, Boundaries):
