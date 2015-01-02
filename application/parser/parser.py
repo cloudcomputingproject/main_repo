@@ -5,7 +5,7 @@ import re
 
 
 def parsePoliceCategories(categStr):
-	catArr = json.load(categStr)
+	catArr = json.loads(categStr)
 	print catArr
 	categories = []
 	for holder in catArr:
@@ -15,7 +15,7 @@ def parsePoliceCategories(categStr):
 
 
 def parsePoliceCategoriesWithUrlName(categStr):
-	catArr = json.load(categStr)
+	catArr = json.loads(categStr)
 	categories = []
 	for holder in catArr:
 		categories.append([holder['url'], holder['name']])
@@ -23,7 +23,7 @@ def parsePoliceCategoriesWithUrlName(categStr):
 	return categories
 
 def parseCrimes(json):
-	crimesOld = json.load(json)
+	crimesOld = json.loads(json)
 	feature/dynamic_map_control
 	features = [];
 	for crime in crimesOld:
@@ -137,7 +137,7 @@ def parseSchoolData(listdata):
 
 	# for each school
 	for item in listdata:
-		data = json.load(item)
+		data = json.loads(item)
 
 		# Because not every school provides all types of data, if some data is unavailable a blank space is used
 		name = ' '
