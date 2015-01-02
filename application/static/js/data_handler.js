@@ -383,6 +383,6 @@ var DataHandlerMapper = {
 	'weather': WeatherHandler,
 	'geoCoding': GeoCodingHandler,
 	'airquality': AirqualityHandler,
-	'houses': HousesHandler
+	'house': HousesHandler
 
 };
