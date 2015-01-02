@@ -152,7 +152,7 @@ var DataHandler = (function() {
 
 		request.args = data;
 
-		return data;
+		return request;
 	};
 
 
