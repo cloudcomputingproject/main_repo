@@ -39,18 +39,18 @@ function ageOfTimestamp(timestamp){
     return now - timestamp;
 }
 function getAPIFromRequestObject(request_object){
-    if(request_object['geoCoding']){
-        return 'geoCoding';
-    }   else if(request_object['geoJSON'] && request_object['geoJSON']['features']){
-        return request_object['geoJSON']['features']['name'];
-    } else{
-        return undefined;
+    console.log(request_object)
+    if(request_object && request_object.name){
+        return request_object.name
     }
+    return undefined;
+ 
 }
 //get the name of the api from the response from the server
 function getResponseApi(response){
-    if(response && response.api) {
-        return response.api;
+    console.log(response)
+    if(response && response.data && response.data.api) {
+        return response.data.api;
     }
     return undefined;
 }

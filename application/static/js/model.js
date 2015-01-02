@@ -58,14 +58,14 @@ var initialiseModel = function(api_names) {
 		} else{
 			//the cache gave back a cached response so we are using it
 			//instead of making an ajax call
-			cb(response);
+			modelResponseHandler(request_object,response, cb,err);
 		}
 	};
 
 	//change the response before sending it back to the caller.
-	var modelResponseHandler = function(response, cb, err){
+	var modelResponseHandler = function(request, response, cb, err){
 		//add it to the cache
-		Cache.addEntry(response);
+		Cache.addEntry(request, response);
 		//add getters to the response
 		var adjusted_response = (function(data){
 			var new_response = {};	
@@ -138,9 +138,9 @@ var initialiseModel = function(api_names) {
 		//adds request object to the cache
 		//the function checks if the api of the object is existing in the cache
 		//then makes md5 of the object 
-		//checks if the entry doesnt exist already
+		//checks if the entry doesn't exist already
 		//	adds it if it doesnt exist already
-		var addEntry = function(request_object){
+		var addEntry = function(request_object, response){
 			//check if there is defined field for the object
 			//(make sure to allow only valid apis)
 			var api = getAPIFromRequestObject(request_object);
@@ -157,7 +157,7 @@ var initialiseModel = function(api_names) {
 				//doesn't exist in the cache, so add it
 				var timestamp = Date.now();
 				var entry = {};
-				entry.data = request_object;
+				entry.data = response;
 				entry.timestamp = timestamp;
 				cache[api][md5_of_request] = entry;
 
@@ -205,17 +205,18 @@ var initialiseModel = function(api_names) {
 
 	return {query: query};
 };
+makeRequest(request_object,modelResponseHandler,err, cb);
 
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
-function makeRequest(data, modelResponseHandler, err, cb){
+function makeRequest( request_object, modelResponseHandler, err, cb){
 	enable_preloader();
 	$.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
 	      dataType: "json",
 	      contentType: "application/json",
-	      data: JSON.stringify(data),
+	      data: JSON.stringify(request_object),
 
 	      error: function(error){
 	        console.log("Status: "+error.status + " " + error.statusText + ", Response: " + error.responseText);
@@ -225,13 +226,14 @@ function makeRequest(data, modelResponseHandler, err, cb){
 	        	err(error);
 	        }
 	        disable_preloader();
+        	return;
 
 	      },
-	      success:  function(json){ 
+	      success:  function(response){ 
 	      	console.log('reciving the data');
-			console.log(json);
+			console.log(response);
 			if(modelResponseHandler && cb){
-		      	modelResponseHandler(json,cb,err);
+		      	modelResponseHandler(request_object,response,cb,err); //data is the request object
 			}else{
 				console.log('No callback was specified to handle the response!');
 			}

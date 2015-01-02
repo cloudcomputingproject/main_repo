@@ -10,16 +10,19 @@ var DataHandler = (function() {
 	//@cb -  callback, the APIHandler passes this function 
 	//@err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
-		console.log('controller sending request to the model');
+		console.log('controller sending request to the model, request data:');
 		console.log(post_data);
 		Model.query(post_data, cb, err);
 	};
 
 	var default_err = function(error){
 		//invoke default error action
+		console.log('Default error handler: Error message: ' +error)
 	};
 
 	var handle_response = function(data){
+		console.log('handle_respnse data:')
+		console.log(data)
 		//if this method is executed, it means the Model returned a valid response
 		//(containing valid data)
 		//so delegate to the view to handle
@@ -133,7 +136,7 @@ var DataHandler = (function() {
 	var constructRequestObject = function() {
 		//add all the data to the object
 		var request = {};
-		request.name = api;
+		request['name'] = api;
 
 		var data = {};
 		data.category = getCrimeCategory();

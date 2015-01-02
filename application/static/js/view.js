@@ -43,7 +43,8 @@ function initLayers(api_names){
 
 
 var initialiseView = function(){
-	if(View) return View;
+	if(View) return View; //singleton
+
 	var handle = function(response, api){
 		if(!api){
 			console.log("Unexpected - View cannot check for which API the data is");
