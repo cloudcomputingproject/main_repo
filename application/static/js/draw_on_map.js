@@ -2,6 +2,7 @@
 var drawControl;
 var featureGroup;
 var area;
+var rawLayer;
 function enableDrawing(allowedShapes){
 	
 	//hide if existing and then show it again
@@ -43,9 +44,13 @@ function disableDrawing(){
 	}
 	drawControl = undefined;
 }
-//returns geoJSON with the coordinates of the polygon
+//returns geoJSON with the coordinates of the shape
 function getDrawnAreaBounds(){
 	return area;
+}
+//return the object
+function getRawLayer(){
+	return rawLayer;
 }
 function showPolygonAreaEdited(e) {
   e.layers.eachLayer(function(layer) {
@@ -56,6 +61,9 @@ function showPolygonArea(e) {
   featureGroup.clearLayers();
   featureGroup.addLayer(e.layer);
   area = e.layer.toGeoJSON();
+  rawLayer = e.layer;
+  console.log(e.layer.getLatLngs())
+  console.log(area);
   e.layer.bindPopup((LGeo.area(e.layer) / 1000000).toFixed(2) + ' km<sup>2</sup>');
   e.layer.openPopup();
 }

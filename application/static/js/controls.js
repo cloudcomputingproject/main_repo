@@ -193,7 +193,16 @@ function getMixedSearchText(api){
     }
     return $(id).val();
 }
+//array of which Render modes the user has selected for the given api
+//The defaults are currently HeatMap and Markers
+function getRenderMode(api){
+    var result = [];
+    $(".render_mode_"+api).each(function(el){
+        result.append($(this).attr('mode'));
+    })
 
+    return result;
+}
 function setMainApiCategoryCheckbox(api,bool){
     var id = "#"+ api +"_checkbox";
     $(id).prop(checked, bool);

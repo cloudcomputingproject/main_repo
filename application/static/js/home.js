@@ -7,14 +7,15 @@ var DEFAULT_LOCATION_NAME = "United Kingdom";
 var DEFAULT_centerLocation = L.latLng(55.378051,-3.435973);
 var DEFAULT_northEast = L.latLng(60.8606697,33.916555);
 var DEFAULT_southWest = L.latLng(34.5625145,-8.649357199999999);
-var DEFAULT_ZOOM = 5;
+var DEFAULT_ZOOM = 6;
 
-var mapbox_access_token = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
-
+var map_init_options  = {
+    centerLocation: DEFAULT_centerLocation, 
+    zoomLevel: DEFAULT_ZOOM,
+    mapbox_access_token: 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg'        
+};
 var map;
-var availableLayers = new Object();
-var MAX_CACHE_AGE = 600; //600sec = 10minutes
-var cache = new Object();
+var availableLayers = {};
 
 var domain = document.location.origin;
 
@@ -38,26 +39,28 @@ function zoomTo(centerLoation, zoomLevel){
 //initialise the layers on the map,
 //	and add default content to them(this is done by initLayer)
 function init(){
-	if (!map){	  
-    // Setting to UK values for initialisation      	
-	  bounds = L.latLngBounds(DEFAULT_southWest, DEFAULT_northEast);
+     // Setting to UK values for initialisation      	
+	  // bounds = L.latLngBounds(DEFAULT_southWest, DEFAULT_northEast);
 		//set up MapBox
-	  var options  = {
-		  centerLocation: DEFAULT_centerLocation, 
-		  zoomLevel: DEFAULT_ZOOM					
-		};
-    setMap(options);
+	  
+    // setMap(map_init_options);
   	// the Control Panel showing the different layers
   	//(the method is defined in controls.js)
-	  addControlPanel(); 
-	  initLayers();
-	  testHeat() ;
-	}
+  if(!map){
+    setMap(map_init_options)
+  } 
+    initModel();
+    initView();
+    addControlPanel(); 
+    // testHeat() ;
+
+   
 }
 
-function setMap(options){
-	L.mapbox.accessToken = mapbox_access_token;
-	map = L.mapbox.map('map',  null, { zoomControl:false }).setView(options.centerLocation, options.zoomLevel);
+function setMap(map_init_options){
+
+	L.mapbox.accessToken = map_init_options.mapbox_access_token;
+	map = L.mapbox.map('map',  null, { zoomControl:false }).setView(map_init_options.centerLocation, map_init_options.zoomLevel);
 
 	var mapLink1 = "tile.openstreetmap.org";
 	var mapLink2 = "tiles.mapbox.com/v3/{id}"
@@ -66,33 +69,33 @@ function setMap(options){
                         id : 'examples.map-20v6611k'
 		}).addTo(map);
   new L.control.zoom({position:'bottomleft'}).addTo(map);
+  return map;
 }
 //add to the map the layers based on the categories available(this comes from the server)
 //then add the default content to the map and set the checkboxes on the control panel.
-function initLayers(){
+// function initLayers(){
  
-  	var serverData = getServerData(); //this is the data passed as a variable when rendering the template
-  	var layerData = serverData['categoriesAPI']; //all the types of data we support
-    console.log(layerData);
-    //create layers
-    //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
-    for (var i = 0; i < layerData.length; i++) {
-        availableLayers[layerData[i]] = L.geoJson(false, {
-        style: function (feature) {
-              return feature.properties && feature.properties.style;
-              },
-            onEachFeature: onEachFeature,
-            pointToLayer: drawFeature
-        }).addTo(map);
-        cache[layerData[i]] = -1; //init the cache for each layer
-    }
-    //make a request for the default data to be displayed
-    //TO-DO make a request for the police data
-    //add the data to the layers and show it
+//   	var serverData = getServerData(); //this is the data passed as a variable when rendering the template
+//   	var layerData = serverData['categoriesAPI']; //all the types of data we support
+//     console.log(layerData);
+//     //create layers
+//     //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
+//     for (var i = 0; i < layerData.length; i++) {
+//         availableLayers[layerData[i]] = L.geoJson(false, {
+//         style: function (feature) {
+//               return feature.properties && feature.properties.style;
+//               },
+//             onEachFeature: onEachFeature,
+//             pointToLayer: drawFeature
+//         }).addTo(map);
+//      }
+//     //make a request for the default data to be displayed
+//     //TO-DO make a request for the police data
+//     //add the data to the layers and show it
  
-    //set the value of the checkboxes based on what data is initially visualised
-    //so basically set the default checkboxes
-}
+//     //set the value of the checkboxes based on what data is initially visualised
+//     //so basically set the default checkboxes
+// }
 
 
 //this function gets the data which is passed from the controller trhrouh the
@@ -103,7 +106,10 @@ function getServerData(){
   // console.log(x);
   return data;
 }
-
+function getAPINames(){
+  var server_data = getServerData();
+  return server_data.categoriesAPI;
+}
 // var zoom = function(locationName, zoomLevel) {
 //   var handler = DataHandlerMapper["geoCoding"];
 //   handler.handle();
@@ -198,15 +204,36 @@ function getServerData(){
 //create a FeaturesLayer from sample data
 //add each feature to the heat layer.
 function testHeat(){
- 	heat = L.heatLayer([], { maxZoom: 12 }).addTo(map);
+  console.log(map)
+  console.log(data)
+    var heat = L.heatLayer([], { maxZoom: 12 }).addTo(map);
+ 	var heat2 = L.heatLayer([], { maxZoom: 12 }).addTo(map);
+    console.log(heat)
 	var layer = L.geoJson(data);
+  var heat_data = [];
+  layer.eachLayer(function(d){
+    console.log(d)
+    heat_data.push(d.getLatLng());
+    heat.addLatLng(d.getLatLng());
+  });
+    map.fitBounds(layer.getBounds())
      // Zoom the map to the bounds of the markers.
     // map.fitBounds(layer.getBounds());
     // Add each marker point to the heatmap.
-    layer.eachLayer(function(l) {
-        heat.addLatLng(l.getLatLng());
+     var resetData = function(){
+      heat2.setLatLngs(heat_data);
+                console.log('heatmap layer recreated')
 
-});
+    };
+     var delete_data = function(){
+       heat.setLatLngs([]);
+           console.log('heatmap layers cleared');
+
+    };
+     setTimeout(delete_data, 5000);
+    
+    setTimeout(resetData, 8000);
+
 }
 
 function attachButtonListeners(){
