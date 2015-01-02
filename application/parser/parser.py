@@ -1,5 +1,8 @@
 from flask import json, jsonify
-from geojson import Feature, Point, FeatureCollection
+from geojson import Feature, Point
+from application.api import external_api
+import re
+
 
 def parsePoliceCategories(categStr):
 	catArr = json.load(categStr)
@@ -38,7 +41,7 @@ def parseCrimes(json):
 
 def parseAirQuality(jsondata):
 	data = json.loads(jsondata)
-	features = [];
+	features = []
 
 	for item in data:
 		title = item['title']
@@ -86,7 +89,7 @@ def parseAirQuality(jsondata):
 
 def parseFSA(jsondata):
 	data = json.loads(jsondata)
-	features = [];
+	features = []
 
 	for item in data:
 		name = item['BusinessName']
@@ -109,8 +112,8 @@ def parseFSA(jsondata):
 def parseHouseListing(jsondata):
 	data = json.loads(jsondata)
 	data = data['listings']
-	features = [];
-	
+	features = []
+
 	for item in data:
 		lat = item['latitude']
 		lng = item['longitude']
@@ -126,3 +129,84 @@ def parseHouseListing(jsondata):
 		features.append(feature)
 	fc = FeatureCollection(features)
 	return fc
+'''
+Parses the received school data. Receives a list of JSON objects for each school
+'''
+def parseSchoolData(listdata):
+	features = []
+
+	# for each school
+	for item in listdata:
+		data = json.load(item)
+
+		# Because not every school provides all types of data, if some data is unavailable a blank space is used
+		name = ' '
+		if 'label' in item:
+			name = item['label']
+
+		typeOfEst = ' '
+		if 'typeOfEstablishment' in item:
+			typeOfEst = item['typeOfEstablishment']['label']
+
+		phase = ' '
+		if 'phaseOfEducation' in item:
+			phase = item['phaseOfEducation']
+
+		capacity = ' '
+		if 'schoolCapacity' in item:
+			capacity = item['schoolCapacity']
+
+		gender = ' '
+		if 'gender' in item:
+			gender = item['gender']['label']
+
+		religiousChar = ' '
+		if 'religiousChar' in item:
+			religiousChar = item['religiousCharacter']['label']
+
+		# each school's address in JSON format, uses a helper function to find the coordinates
+		coordinates = getSchoolCoordinate(item['address'])
+		lat = coordinates['lat']
+		lng = coordinates['lng']
+
+		prefEmail = ' '
+		if 'prefEmail' in item:
+			prefEmail = item['prefEmail']
+
+		altEmail = ' '
+		if 'altEmail' in item:
+			altEmail = item['altEmail']
+
+		point = Point((lat, lng))
+		props = json.dumps({'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail})
+		feature = Feature(geometry=point, properties=props)
+		features.append(feature)
+
+	fc = FeatureCollection(features)
+	return fc
+
+# Receives a JSON object with the address, builds a string from it and uses the geocoding API to get the coordinates
+def getSchoolCoordinate(jsonAddress):
+
+	#Again, not all keys are always given, so we need to check
+	address = ''
+
+	if 'address1' in jsonAddress:
+		address = address + jsonAddress['address1'] + " "
+
+	if 'address2' in jsonAddress:
+		address = address + jsonAddress['address2'] + " "
+	
+	if 'postcode' in jsonAddress:
+		address = address + jsonAddress['postcode'] + " "
+
+	if 'town' in jsonAddress:
+		address = address + jsonAddress['town']
+
+	#All spaces in the string need to be replaced with a '+' char for the geocoding API
+	address = re.sub(' ', '+', address)
+	geocode = getGeocodingData(address)
+
+	coordinates = geocode['results']['bounds']['location']
+
+	return coordinates
