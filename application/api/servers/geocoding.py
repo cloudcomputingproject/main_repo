@@ -40,13 +40,16 @@ def getData(address):
 	return request.read()
 
 def getBounds(address):
-	locationData = getData(address)
-	bounds = locationData["results"][0]["geometry"]["bounds"]
+	locationData = json.loads(getData(address))
+	try:
+		bounds = locationData["results"][0]["geometry"]["bounds"]
+	except Exception, e:
+		bounds = locationData["results"][0]["geometry"]["viewport"]
 	result = [[bounds["northeast"]["lat"], bounds["northeast"]["lng"]],[bounds["southwest"]["lat"], bounds["southwest"]["lng"]]]
 	return result
 
 def getCoordinates(address):
-	locationData = getData(address)
+	locationData = json.loads(getData(address))
 	location = locationData["results"][0]["geometry"]["location"]
 	result = [location["lat"], location["lng"]]
 	return result

@@ -48,6 +48,11 @@ def buildURL(list):
 	url = re.sub('&', '?', url, 1)
 	url += '&_pageSize=50&_page=0'
 	
+	# try:
+	# 	test = getData()
+	# except Exception as e:
+	# 	print e.message
+	# 	test = 'a'
 	return getData()
 
 '''
@@ -63,11 +68,11 @@ def getData():
 
 	# Gets the schools' IDs from all pages of the search result
 	# If 'next' exists in the result, there is next page with results
+	
 	while True:
 		opened = urllib2.urlopen(url)
 		result = (json.load(opened))['result']
 		ids = ids + (getCurrentPageIds(result['items']))
-
 		if 'next' in result:
 			url = result['next']
 		else:

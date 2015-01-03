@@ -4,6 +4,7 @@ Request Handler
 """
 import urllib2
 import json
+from httplib import HTTPException
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 from flask import request, render_template, flash, url_for, redirect, Blueprint, json, jsonify
@@ -15,6 +16,7 @@ from application.forms import ExampleForm
 from application import app
 
 from application.controller import controller
+from application.controller.exceptions import NodeExcessException, InvalidValue
 
 
 # Flask-Cache (configured to use App Engine Memcache API)
@@ -75,16 +77,21 @@ def handleAllDataReq():
 		#response["geoJSON"] = response2
 		#response = "all good"
 		#response = json.dumps({"geoCoding" : response1, "geoJSON" : response2});
+	except NodeExcessException, e:
+		response = e.message, 503
+		print response
+	except HTTPException, e:
+		response = e.message + " /n The service might be down, try again in a few minutes.", 408
 	except Exception, e:
 		response = str(e),400
 		print response
 	except ValueError as e:
-		response = str(e),200
+		response = str(e),400
 		print response 
-	finally:
-		print "****"
-		print response
-		return response;
+	# finally:
+	# 	print "****"
+	# 	print response
+	# 	return response;
 
 @handler.route('/app/geo', methods=['POST'])
 def handleGeoLocReq():
