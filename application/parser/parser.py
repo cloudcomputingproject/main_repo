@@ -115,14 +115,20 @@ def parseHouseListing(jsondata):
 	for item in data:
 		lat = item['latitude']
 		lng = item['longitude']
+		title = item['title']
 		price = item['price']
 		currency = item['price_currency']
 		bedroomN = item['bedroom_number']
 		bathN = item['bathroom_number']
-		lastUpdated = item['updated_in_days']
+		img_height = item['img_height']
+		img_width = item['img_width']
+		img_url = item['img_url']
+		price_type = item['price_type']
+		propeperty_type = item['propeperty_type']
+		summary = item['summary']
 		point = Point((lng, lat)) #this needs to be this way, the other way arround makes UK be Somalia, and we don't want that, do we?
 	#properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
-		properties = {'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated} #seems like Feature class is clever enough to turn the object into json itself ;)
+		properties = {'title':title, 'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN, 'img_height':img_height, 'img_width':img_width, 'img_url':img_url, 'price_type':price_type, 'propeperty_type':propeperty_type, 'summary':summary} #seems like Feature class is clever enough to turn the object into json itself ;)
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)

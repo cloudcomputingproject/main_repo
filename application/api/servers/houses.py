@@ -75,7 +75,7 @@ def urlBuild(req):
 #	followed by the radius and either 'km' or 'mi' as the last 4th element
 def getListing(req,listing_type):
 	global url
-
+	
 	urlBuild(req)
 
 	url += 'encoding=' + format + '&action=search_listings&country=' + country + "&listing_type=" + listing_type + "&number_of_results=50&page=1"
