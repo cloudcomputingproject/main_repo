@@ -33,7 +33,7 @@ $.blockUI({
   }
   function disable_preloader(){
     console.log('disable_preloader')
-            setTimeout($.unblockUI, 80); 
+    setTimeout($.unblockUI, 80); 
   }
 //Note: it's in milliseconds :)
 function ageOfTimestamp(timestamp){

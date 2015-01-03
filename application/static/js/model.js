@@ -48,6 +48,7 @@ var initialiseModel = function(api_names) {
 	var query = function(request_object, cb, err){
  		if(!request_object){
 			err(error_msg.empty_request);
+			return;
 		}
 		//check cache if it has the response from request_object
 		var response = Cache.getEntry(request_object);

@@ -53,7 +53,7 @@ function helperAddDataHandlerListeners(klass){
 //update is the handle() function comming from the 
 //appropriate instance of DataHandler 
 function checkBoxHandler(event, api, update) {
-    
+    enable_preloader();
 
     var name = api;
     console.log(api);
@@ -61,6 +61,7 @@ function checkBoxHandler(event, api, update) {
     var layer = layers[api];
     if(!(api in layers)){
         console.log('no layer with this name');
+        disable_preloader();
         return; 
 
     }
@@ -73,6 +74,7 @@ function checkBoxHandler(event, api, update) {
          //delete the data in the MapBox layers.
         removeDataFromLayer(api, 'heatmap' );
         removeDataFromLayer(api, 'markers' );
+        disable_preloader();
     }
 }
 //when switiching between the Search by city name tab and the Draw area tab
@@ -146,6 +148,7 @@ function setDefaultCheckboxes(){
 
 function isTabActive(id){
     id = "#"+id;
+    console.log(id)
     if($(id).length === 0){
         console.log("tab doesnt exist");
         return false;

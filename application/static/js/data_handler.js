@@ -10,10 +10,11 @@ var DataHandler = (function() {
 	//@cb -  callback, the APIHandler passes this function 
 	//@err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
-    	enable_preloader();
+    	// enable_preloader();
 
 		console.log('controller sending request to the model, request data:');
 		console.log(post_data);
+
 		Model.query(post_data, cb, err);
 	};
 
@@ -281,7 +282,7 @@ var AirqualityHandler = (function(DataHandler){
 })(DataHandler);
 
 var HousesHandler = (function(DataHandler){
-	var api = 'houses';
+	var api = 'house';
 	var handle = function (){
 		var data = constructRequestObject();
 		DataHandler.makeRequest(data, handle_airquality_response,DataHandler.defaultErrorCallback);
