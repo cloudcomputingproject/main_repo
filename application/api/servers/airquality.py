@@ -1,8 +1,6 @@
 import urllib2
 import json
 import sys
-sys.path.insert(0,'./xmltodict')
-import xmltodict
 
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
@@ -12,6 +10,7 @@ from application.decorators import login_required, admin_required
 from application.forms import ExampleForm
 from application.models import ExampleModel
 from application import app
+from application.api.servers.xmltodict import xmltodict
 
 def getData():
 	url = 'http://uk-air.defra.gov.uk/assets/rss/current_site_levels.xml'

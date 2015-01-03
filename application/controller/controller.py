@@ -7,10 +7,10 @@ from datetime import date, timedelta
 
 from application import app
 from application.decorators import login_required, admin_required
-from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools #,airquality
+from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
 from class_definitions import Boundaries, CircleArea
-from application.controller.exceptions import InvalidValue
+from application.controller.exceptions import InvalidValue, ArgumentRequired
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
@@ -210,11 +210,14 @@ def processFeatures(features):
 def processPolice(policeArgs):
 	print policeArgs
 	category = policeArgs["category"]
-	if 'date' in policeArgs:
+	if 'date' in policeArgs <= police.lastUpdated():
 		someDate = policeArgs["date"]
 	else:
+		someDate = police.lastUpdated()
+		"""
 		someDate = date.today() - timedelta(months=2)
 		someDate = str(someDate.year)+"-"+str(someDate.month)
+		"""
 	if 'location' in policeArgs:
 		location = locationOptions[policeArgs["location"]["type"]](policeArgs["location"])
 	else:
@@ -255,21 +258,30 @@ def processRestaurants(restaurantArgs):
 
 def processAirquality(airqualityArgs):
 	collection=None
-	# jsonData = airquality.getData()
-	# collection = parser.parseAirQuality(jsonData)
+	jsonData = airquality.getData()
+	collection = parser.parseAirQuality(jsonData)
 	return collection
 
 def processHouseListing(houseArgs):
 	if 'location' in houseArgs:
 		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
 	else:
-		raise Exception( "Location not specified")
+		raise ArgumentRequired("Location not specified")
+
+	listingType = 'buy' #Default value
+	if 'listing-type' in houseArgs:
+		listingType = houseArgs["listing-type"]
+
 	jsonData = ''
 	if isinstance(location, Boundaries):
-		jsonData = houses.getListing(location.locationName, location.formattedOutput())
+		if location.locationName is None:
+			jsonData = houses.getListing(location.formattedOutput(), listingType)
+		else:
+			jsonData = houses.getListing(str(location.locationName), listingType)
 	elif isinstance(location, CircleArea):
-		jsonData = houses.getListing(None, location.formattedOutput())
+		jsonData = houses.getListing(location.formattedOutput(), listingType)
 
+	print jsonData
 	collection = parser.parseHouseListing(jsonData) 
 
 	return collection
