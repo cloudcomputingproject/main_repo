@@ -58,7 +58,7 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 		url+='&date=' + date
 		result += getData()[1:-1] + ','
 	result = result[:-1] + ']'
-	print result
+	return result
 
 def lastUpdated():
 	lastUpdated = urllib2.urlopen('http://data.police.uk/api/crime-last-updated')

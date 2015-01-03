@@ -26,10 +26,6 @@ format = 'json'
 def getData():
 	global url, format
 
-	"""
-	#remove the headers, and only get the relevant info
-	result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
-	"""
 	print url
 	#obtaining the data in order to get the number of entries
 	data = json.load(urllib2.urlopen(url + '/' + format))
@@ -45,6 +41,7 @@ def getData():
 
 	#reseting the url
 	url = 'http://ratings.food.gov.uk/'
+	#remove the headers, and only get the relevant info
 	result = json.load(data)['FHRSEstablishment']['EstablishmentCollection']['EstablishmentDetail']
 	result = json.dumps(result)
 

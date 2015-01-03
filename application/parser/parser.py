@@ -113,22 +113,22 @@ def parseHouseListing(jsondata):
 	features = []
 
 	for item in data:
-		lat = item['latitude']
-		lng = item['longitude']
-		title = item['title']
-		price = item['price']
-		currency = item['price_currency']
-		bedroomN = item['bedroom_number']
-		bathN = item['bathroom_number']
-		img_height = item['img_height']
-		img_width = item['img_width']
-		img_url = item['img_url']
-		price_type = item['price_type']
-		propeperty_type = item['propeperty_type']
-		summary = item['summary']
+		lat = item.get('latitude')
+		lng = item.get('longitude')
+		title = item.get('title')
+		price = item.get('price')
+		currency = item.get('price_currency')
+		bedroomN = item.get('bedroom_number')
+		bathN = item.get('bathroom_number')
+		img_height = item.get('img_height')
+		img_width = item.get('img_width')
+		img_url = item.get('img_url')
+		price_type = item.get('price_type')
+		property_type = item.get('property_type')
+		summary = item.get('summary')
 		point = Point((lng, lat)) #this needs to be this way, the other way arround makes UK be Somalia, and we don't want that, do we?
 	#properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
-		properties = {'title':title, 'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN, 'img_height':img_height, 'img_width':img_width, 'img_url':img_url, 'price_type':price_type, 'propeperty_type':propeperty_type, 'summary':summary} #seems like Feature class is clever enough to turn the object into json itself ;)
+		properties = {'title':title, 'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN, 'img_height':img_height, 'img_width':img_width, 'img_url':img_url, 'price_type':price_type, 'property_type':property_type, 'summary':summary} #seems like Feature class is clever enough to turn the object into json itself ;)
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)

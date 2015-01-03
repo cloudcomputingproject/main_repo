@@ -10,7 +10,6 @@ from application.forms import ExampleForm
 from application.models import ExampleModel
 from application import app
 
-
 url = 'http://api.nestoria.co.uk/api?'
 format = 'json'
 country = 'uk'
@@ -23,34 +22,23 @@ def getData():
 	#for testing purposes
 	# print url
 	# print json.load(data)
-	data = urllib2.urlopen(url)
+	data = urllib2.urlopen(url+'1')
 	data = json.load(data)
-	result = data['response']['listings']
 
-	for i in range(2, int(data['response']['total_pages'])+1):
-		url = url[:-1]
-		url += str(i)
-		data = urllib2.urlopen(url)
-		result += json.load(data)['response']['listings']
+	result = '['
 
-	result = json.dumps(result)
+	for i in range(0, int(data['response']['total_pages'])):
+		data = urllib2.urlopen(url + str(i+1))
+		data = json.load(data)
+
+		result += json.dumps(data['response']['listings'])[1:-1] + ', '
+
+		
+
+	result = result[:-2] + ']'
 
 	url = 'http://api.nestoria.co.uk/api?'
 	return result
-
-	"""
-	#parsing metadata
-	data = json.loads(result)
-	data = data['metadata'][1]['data']
-	
-	strData = str(data)
-	key = strData[3:strData.index(":",2)-1]
-	
-	data = data[key]
-	avgPrice = data['avg_price']
-	datapoints = data['datapoints']
-	"""
-
 
 #private
 def urlBuild(req):
@@ -78,7 +66,7 @@ def getListing(req,listing_type):
 	
 	urlBuild(req)
 
-	url += 'encoding=' + format + '&action=search_listings&country=' + country + "&listing_type=" + listing_type + "&number_of_results=50&page=1"
+	url += 'encoding=' + format + '&action=search_listings&country=' + country + "&listing_type=" + listing_type + "&number_of_results=50&page="
 	return getData()
 
 #getListing([51,-3,10,'km'],'rent')
