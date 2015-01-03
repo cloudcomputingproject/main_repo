@@ -21,6 +21,7 @@ function addDataHandlerListeners(){
     addUpdateButtonListeners();
     addCheckBoxListeners();
     addTabsListener();
+    addDropdownListeners();
 }
 //listener for the Update button
 function addUpdateButtonListeners(){
@@ -107,7 +108,16 @@ function addCollapseListeners(){
         });
     });
 }
- 
+ function addDropdownListeners(){
+    $(".dropdown li").click(function(index){
+        var api = $(this).attr('api');
+
+        var parent_text_id = "#" + $(this).attr('parent_text_id');
+        $(parent_text_id).attr('v', $(this).attr('v'));
+        $(parent_text_id).html($(this).text());
+        console.log($(this).text())
+    });
+ }
  //police_checkbox   ----> police
 function stripName(nameWithHashtag){
     if(nameWithHashtag.indexOf('_') === -1){
@@ -183,6 +193,15 @@ function getSearchCityText(api){
         return '';
     }
     return $(id_of_input).val();
+}
+function getDropdownValue(api, dropdown_name){
+    var id = "#dropdown_value_container_" +api+"_"+dropdown_name;
+    var selector = $(id);
+    if($(id).length===0){
+        return undefined;
+    }
+    return $(id).attr('v');
+    
 }
 //returns an object containt the coordinates of the centre of the map
 //and the current zoom
