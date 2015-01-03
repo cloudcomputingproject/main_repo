@@ -10,7 +10,7 @@ from application.decorators import login_required, admin_required
 from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
 from class_definitions import Boundaries, CircleArea
-from application.controller.exceptions import InvalidValue
+from application.controller.exceptions import InvalidValue, ArgumentRequired
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
@@ -266,13 +266,22 @@ def processHouseListing(houseArgs):
 	if 'location' in houseArgs:
 		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
 	else:
-		raise Exception( "Location not specified")
+		raise ArgumentRequired("Location not specified")
+
+	listingType = 'buy' #Default value
+	if 'listing-type' in houseArgs:
+		listingType = houseArgs["listing-type"]
+
 	jsonData = ''
 	if isinstance(location, Boundaries):
-		jsonData = houses.getListing(location.locationName, location.formattedOutput())
+		if location.locationName is None:
+			jsonData = houses.getListing(location.formattedOutput(), listingType)
+		else:
+			jsonData = houses.getListing(str(location.locationName), listingType)
 	elif isinstance(location, CircleArea):
-		jsonData = houses.getListing(None, location.formattedOutput())
+		jsonData = houses.getListing(location.formattedOutput(), listingType)
 
+	print jsonData
 	collection = parser.parseHouseListing(jsonData) 
 
 	return collection
