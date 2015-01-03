@@ -5,9 +5,7 @@ import re
 
 
 def parsePoliceCategories(categStr):
-	print 'categ' + categStr
 	catArr = json.loads(categStr)
-	print catArr
 	categories = []
 	for holder in catArr:
 		categories.append(holder["name"])	
@@ -24,9 +22,7 @@ def parsePoliceCategoriesWithUrlName(categStr):
 	return categories
 
 def parseCrimes(jsondata):
-	print 'json' + jsondata
 	crimesOld = json.loads(jsondata)
-	print crimesOld
 	#feature/dynamic_map_control
 	features = [];
 	for crime in crimesOld:

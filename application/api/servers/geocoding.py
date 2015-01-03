@@ -37,3 +37,15 @@ def getData(address):
 	result = json.load(request)
 	
 	return result
+
+def getBounds(address):
+	locationData = getData(address)
+	bounds = locationData["results"][0]["geometry"]["bounds"]
+	result = [[bounds["northeast"]["lat"], bounds["northeast"]["lng"]],[bounds["southwest"]["lat"], bounds["southwest"]["lng"]]]
+	return result
+
+def getCoordinates(address):
+	locationData = getData(address)
+	location = locationData["results"][0]["geometry"]["location"]
+	result = [location["lat"], location["lng"]]
+	return result

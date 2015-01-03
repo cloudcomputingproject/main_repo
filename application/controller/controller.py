@@ -3,7 +3,7 @@ import json
 
 from flask_cache import Cache
 from pprint import pprint
-from datetime import date
+from datetime import date, timedelta
 
 from application import app
 from application.decorators import login_required, admin_required
@@ -116,8 +116,6 @@ def main(data):
 	else:
 		raise Exception("The request must include the name of the API requested")
 
-	print 'a'
-
 	if 'args' in data:
 		args = data["args"]
 	else:
@@ -208,20 +206,26 @@ def processPolice(policeArgs):
 	if 'date' in policeArgs:
 		someDate = policeArgs["date"]
 	else:
-		someDate = date.today()
-		someDate = str(someDate.year)+"-"+str(someDate.month-2)
-	print category
-	print someDate
+		someDate = date.today() - timedelta(months=2)
+		someDate = str(someDate.year)+"-"+str(someDate.month)
+
+	if 'location' in policeArgs:
+		location = locationOptions[policeArgs["location"]["type"]](policeArgs["location"])
+	else:
+		raise Exception("The request must include a location to get data from")
+
+
+	#bounds = police.getBoundary()
 	#neigh = police.getNeighbourhoods('hampshire').read()
 	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
 	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
-	crimesArea = police.getCrimesInAreaData(category, [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], someDate)
+	crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
 	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
 def processWeather(weatherArgs):
-	print processHouses
+	print weatherArgs
 
 def processRestaurants(restaurantArgs):
 	if 'location' in restaurantArgs:

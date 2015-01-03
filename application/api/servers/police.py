@@ -80,6 +80,7 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 	return getData()
 
 
+#http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:0.148271,51.38494009999999:51.38494009999999,-0.3514683:-0.3514683,51.6723432&date=2014-09
 #getCategories()
 #getNeighbourhoodsData('hampshire')
 #getBoundaryData('hampshire', 'Fair Oak')
