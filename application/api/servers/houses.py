@@ -1,6 +1,6 @@
 import urllib2
 import json
-"""
+
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
 from flask import request, render_template, flash, url_for, redirect, Blueprint
@@ -9,7 +9,7 @@ from application.decorators import login_required, admin_required
 from application.forms import ExampleForm
 from application.models import ExampleModel
 from application import app
-"""
+
 
 url = 'http://api.nestoria.co.uk/api?'
 format = 'json'
@@ -81,5 +81,5 @@ def getListing(req,listing_type):
 	url += 'encoding=' + format + '&action=search_listings&country=' + country + "&listing_type=" + listing_type + "&number_of_results=50&page=1"
 	return getData()
 
-getListing([51,-3,10,'km'],'rent')
+#getListing([51,-3,10,'km'],'rent')
 #getListing('southampton','rent')
