@@ -28,7 +28,7 @@ url = 'http://education.data.gov.uk/doc/school.json'
 '''
 Receives input, creates the URL, and gets the data
 Example format for list argument:
-['Southampton', ['less', 1000], 'Mixed', False]
+['Southampton', ['Less', 1000], 'Mixed', False]
 or
 ['London', False, 'Girls', 'Secondary']
 '''
@@ -48,12 +48,7 @@ def buildURL(l):
 	url = re.sub('\?', '&', url)
 	url = re.sub('&', '?', url, 1)
 	url += '&_pageSize=50&_page=0'
-	
-	# try:
-	# 	test = getData()
-	# except Exception as e:
-	# 	print e.message
-	# 	test = 'a'
+
 	return getData()
 
 '''
@@ -79,7 +74,7 @@ def getData():
 		else:
 			break
 
-	results = getSchoolsData(ids)
+	return getSchoolsData(ids)
 
 # Gets the data for all schools
 def getSchoolsData(ids):
@@ -94,6 +89,7 @@ def getSchoolsData(ids):
 
 # Gets the data for the current school
 def getSingleSchoolData(link):
+
 	opened = urllib2.urlopen(link)
 	result = (json.load(opened))['result']
 
@@ -145,7 +141,3 @@ def addGender(gender):
 def addPhaseOfEducation(phase):
 	global url
 	url += '?phaseOfEducation.label=' + phase
-
-
-# for testing purposes
-#buildURL(['Southampton', False, False, False])
