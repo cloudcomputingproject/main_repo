@@ -73,7 +73,8 @@ var initialiseModel = function(api_names) {
 			var getHeatmapData = function(){
 				//prepare @data for heatmap
 				//if something goes wrong, do "return undefined"
-				return L.geoJSON(data.data);
+				// console.log(L.geoJson)
+				return L.geoJson(data.data);
 			};
 			var getMarkersData = function(){
 				//prepare @data for markers
@@ -121,7 +122,7 @@ var initialiseModel = function(api_names) {
 		var cache = {};
 		var MAX_CACHE_TIME = 600000; // 10minutes
 		api_names.forEach(function(api_name){
-			cache[api_names] = {};
+			cache[api_name] = {};
 		});
 		cache.geoCoding = {};
 		///////init complete
@@ -170,9 +171,11 @@ var initialiseModel = function(api_names) {
 
 		var entryExists = function(request_object){
 			var api = getAPIFromRequestObject(request_object);
+			// console.log(api)
 			if(!api) return undefined;
 			//check if the given api was added on init of cache
 			if(! (api in cache) ) {
+				console.log(cache)
 				console.log('trying to check cache for non valid API');
 				return undefined;
 			}
@@ -181,10 +184,11 @@ var initialiseModel = function(api_names) {
 			var cached_response = cache[api][md5_of_request];
 
 			//check if the api has this object
-			if(cached_response) {
+			if(!cached_response) {
 				console.log("API cache doesn't have the entry for the request");
 				return undefined;
 			}
+			console.log(cached_response)
 			//check what is the timestamp of the object
 			var timestamp = cached_response.timestamp;
 			//check if the data is fresh enough
@@ -205,7 +209,6 @@ var initialiseModel = function(api_names) {
 
 	return {query: query};
 };
-makeRequest(request_object,modelResponseHandler,err, cb);
 
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
@@ -230,7 +233,7 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 
 	      },
 	      success:  function(response){ 
-	      	console.log('reciving the data');
+	      	console.log('receiving the data');
 			console.log(response);
 			if(modelResponseHandler && cb){
 		      	modelResponseHandler(request_object,response,cb,err); //data is the request object

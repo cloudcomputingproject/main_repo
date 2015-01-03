@@ -32,11 +32,12 @@ API_KEY = "AIzaSyAXZycyWt-ZGGooaAycfCyfZuV1W5uKBGg"
 
 components = "components=country:UK"
 def getData(address):
+	address = urllib2.quote(address, safe="%/:=&?~#+!$,;'@()*[]")
 	url = "https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&"+components+"&"+"sensor=false"+"&"+"key="+API_KEY
 	request = urllib2.urlopen(url)	
-	result = json.load(request)
+	#result = json.load(request)
 	
-	return result
+	return request.read()
 
 def getBounds(address):
 	locationData = getData(address)

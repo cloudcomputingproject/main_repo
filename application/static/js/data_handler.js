@@ -29,7 +29,7 @@ var DataHandler = (function() {
 		//set the checkbox to checked for the given api
 		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
-		View.handle(response_data, response_api);
+		View.handle(data, response_api);
 		// setMainApiCategoryCheckbox(layer, true); //layer is the same as the name of the api so safe to use it.
 		// addDataToMap(layer, data);
 	};
@@ -307,6 +307,7 @@ var GeoCodingHandler = (function(DataHandler){
 
  	//get the data and send it
 	var handle = function(){
+		console.log("~~~ handling geocoding");
 		var data = constructRequestObject();
 		if(data === undefined) {
 			console.log('cannot construct request data object');
@@ -322,13 +323,13 @@ var GeoCodingHandler = (function(DataHandler){
 
 	//this method is called when the server has returned the data
 	var handle_geoCoding_response = function(response){
+		console.log("====== > handle_geoCoding_response");
+		console.log(response);
 		//this is the default action
-		if (true) {
-			if (map){
-				zoomTo(getCenter(response["geoCoding"]),DEFAULT_ZOOM+5);      
-			}else{
-				init();
-			}
+		if (map){
+			zoomTo(getCenter(response["data"]),DEFAULT_ZOOM+5);      
+		}else{
+			init();
 		}
 	};
 
@@ -349,18 +350,21 @@ var GeoCodingHandler = (function(DataHandler){
 	};
 
 	var getCenter = function(json){
-	 	var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-                           json["results"][0]["geometry"]["location"]["lng"]);
+		console.log("~~~");
+		console.log(json);
+		console.log("~~~");
+	 	var centerLocation = L.latLng(json["data"]["results"][0]["geometry"]["location"]["lat"],
+                           json["data"]["results"][0]["geometry"]["location"]["lng"]);
 	 	return centerLocation;
 	};
 
 	var getBounds = function(json){
 		bounds = undefined;
-	 	if (L.latLng(json["results"][0]["geometry"]["bounds"])){
-            var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-            var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-                           json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
+	 	if (L.latLng(json["data"]["results"][0]["geometry"]["bounds"])){
+            var northEast = L.latLng(json["data"]["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
+                         json["data"]["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
+            var southWest = L.latLng(json["data"]["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
+                           json["data"]["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
             bounds = L.latLngBounds(southWest, northEast);
         }
         return bounds;
