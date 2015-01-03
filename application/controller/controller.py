@@ -280,9 +280,9 @@ def processHouseListing(houseArgs):
             	"type": "place",
                 "name": "CityName"
 	        }
-            "gender": "boys/girls/mixed"
-            "phase": "primary/secondary"
-            "capacity": ["more/less/equal", 1]
+            "gender": "Boys/Girls/Mixed"
+            "phase": "Primary/Secondary"
+            "capacity": ["More/Less/Equal", 1]
     	}
 '''
 def processSchools(schoolArgs):

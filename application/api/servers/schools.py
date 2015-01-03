@@ -33,15 +33,16 @@ or
 ['London', False, 'Girls', 'Secondary']
 '''
 
-def buildURL(list):
-	if (list[0] != False):
-		addLocation(list[0])
-	if (list[1] != False):
-		addCapacity(list[1][0], list[1][1])
-	if (list[2] != False):
-		addGender(list[2])
-	if (list[3] != False):
-		addPhaseOfEducation(list[3])
+def buildURL(l):
+
+	if (l[0] != False):
+		addLocation(l[0])
+	if (l[1] != False):
+		addCapacity(l[1][0], l[1][1])
+	if (l[2] != False):
+		addGender(l[2])
+	if (l[3] != False):
+		addPhaseOfEducation(l[3])
 
 	global url
 	url = re.sub('\?', '&', url)
@@ -79,12 +80,6 @@ def getData():
 			break
 
 	results = getSchoolsData(ids)
-
-	print len(results)
-	print type(results)
-
-	#for x in results:
-	#	print json.dumps(x, indent=4)
 
 # Gets the data for all schools
 def getSchoolsData(ids):
@@ -126,31 +121,31 @@ def addLocation(location):
 	url += '?address.town=' + location
 
 #less, more, equal for comparison, positive integer for value
-#e.g. 'less', 1000 ; 'more' 500 ; ...
+#e.g. 'Less', 1000 ; 'More' 500 ; ...
 def addCapacity(comparison, value):
 	global url
 
-	if comparison == 'less':
+	if comparison == 'Less':
 		value = value - 1
 		url += '?max-schoolCapacity=' + str(value)
-	if comparison == 'more':
+	if comparison == 'More':
 		value = value + 1
 		url += '?min-schoolCapacity=' + str(value)
-	if comparison == 'equal':
+	if comparison == 'Equal':
 		url += '?schoolCapacity=' + str(value)
 
 #Gender type
 #available options are: 'Boys' ; 'Girls' ; 'Mixed'
 def addGender(gender):
 	global url
-	url+= '?gender.label=' + gender
+	url += '?gender.label=' + gender
 
 #If the institution is a school, can be filtered by phase
 #available options are: 'Primary' ; 'Secondary'
 def addPhaseOfEducation(phase):
 	global url
-	url+= '?phaseOfEducation.label=' + phase
+	url += '?phaseOfEducation.label=' + phase
 
 
 # for testing purposes
-#buildURL(['Southampton', ['less', 101], False, False])
+#buildURL(['Southampton', False, False, False])
