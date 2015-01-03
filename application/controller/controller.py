@@ -7,7 +7,7 @@ from datetime import date, timedelta
 
 from application import app
 from application.decorators import login_required, admin_required
-from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools #,airquality
+from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
 from class_definitions import Boundaries, CircleArea
 from application.controller.exceptions import InvalidValue
@@ -283,9 +283,9 @@ def processHouseListing(houseArgs):
             	"type": "place",
                 "name": "CityName"
 	        }
-            "gender": "boys/girls/mixed"
-            "phase": "primary/secondary"
-            "capacity": ["more/less/equal", 1]
+            "gender": "Boys/Girls/Mixed"
+            "phase": "Primary/Secondary"
+            "capacity": ["More/Less/Equal", 1]
     	}
 '''
 def processSchools(schoolArgs):
