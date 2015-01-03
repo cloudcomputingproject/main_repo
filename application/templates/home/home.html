@@ -1,6 +1,16 @@
 {% extends "home/home_base.html" %}
 
 {% block style_block %}
+
+<style type="text/css">
+.ui-menu .ui-menu-item a,.ui-menu .ui-menu-item a.ui-state-hover, .ui-menu .ui-menu-item a.ui-state-active {
+    font-weight: normal;
+    margin: -1px;
+    text-align:left;
+    font-size:14px;
+    }
+.ui-autocomplete-loading { background: white url("/static/img/ui-anim_basic_16x16.gif") right center no-repeat; }
+</style>
     <style type="text/css">
 
         #map_wrapper {
@@ -82,6 +92,8 @@
 <script type="text/javascript" src="/static/js/data_handler.js"></script>
 <script type="text/javascript" src="/static/js/model.js"></script>
 <script type="text/javascript" src="/static/js/view.js"></script>
+<!-- <script type="text/javascript" src="/static/js/jquery.autocomplete.min.js"></script> -->
+<script type="text/javascript" src="/static/js/autocomplete.js"></script>
 
 
 {% endblock tail_script %}

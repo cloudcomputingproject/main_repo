@@ -6,7 +6,7 @@
 	The Model holds a collection in which the keys are the name of the 
 	available api's, and the values are objects containing all data for 
 	the given api
-	The Model is being used by making a query to it by passing to it a 
+	The Model is used by making a query to it by passing to it a 
 	'request object'. The model checks in its cache if there is already a 
 	response from the server for this request object and if there is, returns the data 
 	from the server response. If there is nothing in the cache(or if the data is too old
