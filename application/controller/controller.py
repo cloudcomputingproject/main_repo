@@ -210,11 +210,14 @@ def processFeatures(features):
 def processPolice(policeArgs):
 	print policeArgs
 	category = policeArgs["category"]
-	if 'date' in policeArgs:
+	if 'date' in policeArgs <= police.lastUpdated():
 		someDate = policeArgs["date"]
 	else:
+		someDate = police.lastUpdated()
+		"""
 		someDate = date.today() - timedelta(months=2)
 		someDate = str(someDate.year)+"-"+str(someDate.month)
+		"""
 	if 'location' in policeArgs:
 		location = locationOptions[policeArgs["location"]["type"]](policeArgs["location"])
 	else:
@@ -255,8 +258,8 @@ def processRestaurants(restaurantArgs):
 
 def processAirquality(airqualityArgs):
 	collection=None
-	# jsonData = airquality.getData()
-	# collection = parser.parseAirQuality(jsonData)
+	jsonData = airquality.getData()
+	collection = parser.parseAirQuality(jsonData)
 	return collection
 
 def processHouseListing(houseArgs):
