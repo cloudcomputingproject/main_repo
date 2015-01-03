@@ -1,0 +1,15 @@
+{% macro dropdown(api, dropdown_name, values, label ) -%}
+<label>{{label}}</label>
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" api={{api}} type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+
+    <span api={{api}} id="dropdown_value_container_{{api}}_{{dropdown_name}}" v="{{values[0]}}">{{values[0] | capitalize}}</span>
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+  {% for item in values %}
+    <li api={{api}} v="{{item}}" parent_text_id="dropdown_value_container_{{api}}_{{dropdown_name}}" idrole="presentation"><a role="menuitem" tabindex="-1" href="#">{{item| capitalize}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{%- endmacro %}

@@ -299,6 +299,7 @@ var HousesHandler = (function(DataHandler){
 		if(!data.location) {
 			return undefined;
 		}
+		data.listing_type = getDropdownValue(api, 'listing_type');
 		request.args = data;
 		return request;
 	};
