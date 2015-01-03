@@ -7,9 +7,10 @@ from datetime import date, timedelta
 
 from application import app
 from application.decorators import login_required, admin_required
-from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank #,airquality
+from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools #,airquality
 from application.parser import parser
 from class_definitions import Boundaries, CircleArea
+from application.controller.exceptions import InvalidValue
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
@@ -18,7 +19,8 @@ featuresOptions = {
 	"restaurant" : lambda arg: processRestaurants(arg),
 	"house" : lambda arg: processHouseListing(arg),
 	"airquality": lambda arg:processAirquality(arg),
-	"geocoding" : lambda arg: getGeoCoding(arg)
+	"geocoding" : lambda arg: getGeoCoding(arg),
+	"schools" : lambda arg: processSchools(arg)
 }
 
 locationOptions = {
@@ -133,7 +135,6 @@ def main(data):
 		jsonResult = featuresOptions[name](args) 
 	else: 
 		raise Exception( "Selection is not valid")
-
 	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
 	return response
@@ -214,12 +215,10 @@ def processPolice(policeArgs):
 	else:
 		someDate = date.today() - timedelta(months=2)
 		someDate = str(someDate.year)+"-"+str(someDate.month)
-
 	if 'location' in policeArgs:
 		location = locationOptions[policeArgs["location"]["type"]](policeArgs["location"])
 	else:
 		raise Exception("The request must include a location to get data from")
-
 
 	#bounds = police.getBoundary()
 	#neigh = police.getNeighbourhoods('hampshire').read()
@@ -265,7 +264,6 @@ def processHouseListing(houseArgs):
 		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
 	else:
 		raise Exception( "Location not specified")
-
 	jsonData = ''
 	if isinstance(location, Boundaries):
 		jsonData = houses.getListing(location.locationName, location.formattedOutput())
@@ -274,4 +272,55 @@ def processHouseListing(houseArgs):
 
 	collection = parser.parseHouseListing(jsonData) 
 
+	return collection
+
+'''
+"args": {
+            "location": {
+            	"type": "place",
+                "name": "CityName"
+	        }
+            "gender": "boys/girls/mixed"
+            "phase": "primary/secondary"
+            "capacity": ["more/less/equal", 1]
+    	}
+'''
+def processSchools(schoolArgs):
+	if 'location' in schoolArgs:
+		location = locationOptions[schoolArgs["location"]["type"]](schoolArgs["location"])
+	else:
+		raise Exception( "Location not specified")
+
+	try:
+		gender = schoolArgs["gender"]
+		if gender not in ['Boys', 'Girls', 'Mixed']:
+			raise InvalidValue("Value: " + gender + " for gender is not valid")
+	except Exception as e:
+		if type(e) is InvalidValue:
+			raise
+		else:
+			gender = False
+
+	try:
+		phase = schoolArgs["phase"]
+		if phase not in ['Primary', 'Secondary']:
+			raise InvalidValue("Value: " + phase + " for phase is not valid")
+	except Exception as e:
+		if type(e) is InvalidValue:
+			raise
+		else:
+			phase = False
+
+	try:
+		capacity = schoolArgs["capacity"]
+		if capacity[0] not in ['More', 'Less', 'Equal']:
+			raise InvalidValue("Value: " + capacity[0] + " for capacity is not valid")
+	except Exception as e:
+		if type(e) is InvalidValue:
+			raise
+		else:
+			capacity = False
+
+	jsonData = schools.buildURL([location.locationName, capacity, gender, phase])
+	collection = parser.parseSchoolData(jsonData)
 	return collection

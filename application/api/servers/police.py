@@ -1,5 +1,7 @@
 import urllib2
 import json
+
+from application.controller.exceptions import NodeExcessException
 """
 from google.appengine.api import users
 from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError
@@ -22,15 +24,20 @@ url = 'http://data.police.uk/api/'
 def getData():
 	global url
 	#json object
-	data = urllib2.urlopen(url)
-
+	try:
+		print url
+		data = urllib2.urlopen(url)
+	except urllib2.URLError, e:
+		url = 'http://data.police.uk/api/'
+		raise NodeExcessException("The nodes returned by your query exceed the 10,000 limit")
+	else:
 	#for testing purposes
 	#print url
-	url = 'http://data.police.uk/api/'
-	data = json.load(data)
-	
-	result = json.dumps(data)
-	return result
+		url = 'http://data.police.uk/api/'
+		data = json.load(data)
+		
+		result = json.dumps(data)
+		return result
 
 def getCategories():
 	global url
@@ -71,7 +78,11 @@ def getCrimesData(category, lat, lng, date):
 
 def getCrimesInAreaData(category, latArr, lngArr, date):
 	global url
-	url+='crimes-street/' + category[0] + '?poly='
+	for c in category:
+		if c is not None:
+			cat = c
+			break
+	url+='crimes-street/' + cat + '?poly='
 	for j in xrange(0, len(latArr)):
 		url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
 	url = url[:-1]
@@ -80,7 +91,7 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 	return getData()
 
 
-#http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:0.148271,51.38494009999999:51.38494009999999,-0.3514683:-0.3514683,51.6723432&date=2014-09
+#http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:51.3849401,0.148271:51.3849401,-0.3514683:51.6723432,-0.3514683&date=2014-09
 #getCategories()
 #getNeighbourhoodsData('hampshire')
 #getBoundaryData('hampshire', 'Fair Oak')

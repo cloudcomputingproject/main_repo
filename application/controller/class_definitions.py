@@ -17,14 +17,14 @@ class Boundaries:
 		return [self.northEast[0], self.southWest[0]]
 
 	def getSquareLatitudes(self):
-		return [self.northEast[0], self.northEast[1], self.southWest[0], self.southWest[1]]
+		return [self.northEast[0], self.southWest[0], self.southWest[0], self.northEast[0]]
 
 	#Longitude
 	def getYAxis(self):
 		return [self.northEast[1], self.southWest[1]]
 
 	def getSquareLongitudes(self):
-		return [self.northEast[1], self.northEast[0], self.southWest[1], self.southWest[0]]
+		return [self.northEast[1],  self.northEast[1], self.southWest[1], self.southWest[1]]
 
 	def formattedOutput(self):
 		output = [self.northEast[0], self.northEast[1], self.southWest[0], self.southWest[1]]
