@@ -228,7 +228,7 @@ var initialiseModel = function(api_names) {
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
 function makeRequest( request_object, modelResponseHandler, err, cb){
-	enable_preloader();
+
 	$.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
@@ -243,8 +243,7 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 	        }else{
 	        	err(error);
 	        }
-	        disable_preloader();
-        	return;
+         	return;
 
 	      },
 	      success:  function(response){ 
@@ -255,7 +254,6 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 			}else{
 				console.log('No callback was specified to handle the response!');
 			}
-	      	disable_preloader();
-	      }
+ 	      }
 	});
 };

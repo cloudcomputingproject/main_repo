@@ -122,7 +122,8 @@ var initialiseView = function(){
 		data.eachLayer(function(l){
 			heatmap.addLatLng(l.getLatLng());
 		});
-		map.fitBounds(data.getBounds());
+
+ 		map.fitBounds(data.getBounds());
 		
 	};
 	var renderMarkersOnMap = function(data, api){
@@ -130,9 +131,8 @@ var initialiseView = function(){
 		console.log('adding data to '+api+'\'s markers layer');
 		console.log(layers)
 		var layer = layers[api].markers;
- 		layer.addLayers(data); //
-		// map.fitBounds(layer.getBounds());
-
+ 		layer.addLayers(data); 
+ 		map.fitBounds(layer.getBounds());
 	};
 
 
