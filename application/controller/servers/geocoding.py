@@ -34,11 +34,10 @@ Example link (need to edit api key):
 
 API_KEY = "AIzaSyAXZycyWt-ZGGooaAycfCyfZuV1W5uKBGg"
 
-
+components = "components=country:UK"
 def getData(address):
 	addArr = address.split(",",3);
 	address = addArr[0];
-	components = "components=country:"+addArr[1];
 	url = "https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&"+components+"&"+"sensor=false"+"&"+"key="+API_KEY
 	request = urllib2.urlopen(url)	
 	#result = json.load(request)
