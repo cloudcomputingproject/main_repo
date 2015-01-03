@@ -26,20 +26,15 @@ function initLayers(api_names){
 		result[api].heatmap = createHeatmapEmptyLayer();
 		result[api].markers = createMarkersEmptyLayer();
 	});
-	function createMarkersEmptyLayer(){
-		return L.geoJson(false, {
-        style: function (feature) {
-              return feature.properties && feature.properties.style;
-              },
-            onEachFeature: onEachFeature
-            // pointToLayer: drawFeature
-        }).addTo(map);
+	
+	return result;
+}
+function createMarkersEmptyLayer(){
+		return new L.MarkerClusterGroup().addTo(map);
 	}
 	function createHeatmapEmptyLayer(){
  		return L.heatLayer([], { maxZoom: 12 }).addTo(map);
 	}
-	return result;
-}
 function getLayers(){
 	return layers;
 }
@@ -57,7 +52,9 @@ function removeDataFromLayer(api,layer_type){
 
 	if(layer_type === 'markers'){
 		var marker_layer = layers[api].markers;
-		marker_layer.clearLayers();
+		map.removeLayer(marker_layer);
+		layers[api].markers = createMarkersEmptyLayer();
+		
 		return true;
 	} else if (layer_type === 'heatmap'){
 		var heatmap_layer = layers[api].heatmap;
@@ -121,17 +118,21 @@ var initialiseView = function(){
 		//add heatmap data. the heatmap will be colorod based 
 		//on the number of markers. For other visualising way,
 		//specify a custom view handler
+
 		data.eachLayer(function(l){
 			heatmap.addLatLng(l.getLatLng());
 		});
+		map.fitBounds(data.getBounds());
 		
 	};
 	var renderMarkersOnMap = function(data, api){
+		var marker_cluster = new L.MarkerClusterGroup();
 		console.log('adding data to '+api+'\'s markers layer');
 		console.log(layers)
 		var layer = layers[api].markers;
-		layer.clearLayers(); //reset the state of the layer
-		layer.addData(data); //
+ 		layer.addLayers(data); //
+		// map.fitBounds(layer.getBounds());
+
 	};
 
 

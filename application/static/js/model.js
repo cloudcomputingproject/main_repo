@@ -79,7 +79,22 @@ var initialiseModel = function(api_names) {
 			var getMarkersData = function(){
 				//prepare @data for markers
 				//if something goes wrong, do "return undefined"
-				return data.data;
+				//make array of markers
+				var geojson = L.geoJson(data.data);
+				var markers = [];
+				var count = 1;
+				geojson.eachLayer(function(l){
+					if(count===1){
+						console.log(l);
+						count++;
+					}
+					var marker = L.marker(l.getLatLng());
+					
+					markers.push(marker);
+				});
+ 
+			 
+				return markers;
 			};
 
 			new_response.data = data;
