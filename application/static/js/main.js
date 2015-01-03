@@ -18,6 +18,7 @@ var Utils = {
 /* Helper methods, used throughout the application */
 
 function enable_preloader(){
+    console.log('ebable preloader')
 $.blockUI({
     message: $('#preloader'),
      css:  {
@@ -31,7 +32,8 @@ $.blockUI({
         } }); 
   }
   function disable_preloader(){
-            setTimeout($.unblockUI, 100); 
+    console.log('disable_preloader')
+            setTimeout($.unblockUI, 80); 
   }
 //Note: it's in milliseconds :)
 function ageOfTimestamp(timestamp){
@@ -56,6 +58,7 @@ function getResponseApi(response){
 }
 //get the actual geoJSON from the response
 function getResponseData(response){
+    console.log(response)
     if(response && response.data) {
         return response.data;
     }

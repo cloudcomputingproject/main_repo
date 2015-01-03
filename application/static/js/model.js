@@ -69,17 +69,39 @@ var initialiseModel = function(api_names) {
 		//add getters to the response
 		var adjusted_response = (function(data){
 			var new_response = {};	
-		
+			console.log(data)
+			if(!data && !data.data) {
+				return undefined;
+			}
 			var getHeatmapData = function(){
 				//prepare @data for heatmap
 				//if something goes wrong, do "return undefined"
 				// console.log(L.geoJson)
+			 
+
 				return L.geoJson(data.data);
+			 
 			};
 			var getMarkersData = function(){
 				//prepare @data for markers
 				//if something goes wrong, do "return undefined"
-				return data.data;
+				//make array of markers
+				 
+				var geojson = L.geoJson(data.data);
+				var markers = [];
+				var count = 1;
+				geojson.eachLayer(function(l){
+					if(count===1){
+						console.log(l);
+						count++;
+					}
+					var marker = L.marker(l.getLatLng());
+					
+					markers.push(marker);
+				});
+ 
+			 
+				return markers;
 			};
 
 			new_response.data = data;
@@ -91,6 +113,7 @@ var initialiseModel = function(api_names) {
 		})(response);
 
 		if(adjusted_response){
+
 			//the callback with the adjusted response passed to it is called.
 			cb(adjusted_response);
 		} else{
@@ -213,7 +236,8 @@ var initialiseModel = function(api_names) {
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
 function makeRequest( request_object, modelResponseHandler, err, cb){
-	enable_preloader();
+console.log('begin request')
+console.log(Date.now())
 	$.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
@@ -228,11 +252,12 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 	        }else{
 	        	err(error);
 	        }
-	        disable_preloader();
-        	return;
+         	return;
 
 	      },
 	      success:  function(response){ 
+	      	console.log('Server returned')
+	      	console.log(Date.now());
 	      	console.log('receiving the data');
 			console.log(response);
 			if(modelResponseHandler && cb){
@@ -240,7 +265,6 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 			}else{
 				console.log('No callback was specified to handle the response!');
 			}
-	      	disable_preloader();
-	      }
+ 	      }
 	});
 };

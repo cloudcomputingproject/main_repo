@@ -7,7 +7,7 @@ from datetime import date, timedelta
 
 from application import app
 from application.decorators import login_required, admin_required
-from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools #,airquality
+from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
 from class_definitions import Boundaries, CircleArea
 from application.controller.exceptions import InvalidValue
@@ -255,8 +255,8 @@ def processRestaurants(restaurantArgs):
 
 def processAirquality(airqualityArgs):
 	collection=None
-	# jsonData = airquality.getData()
-	# collection = parser.parseAirQuality(jsonData)
+	jsonData = airquality.getData()
+	collection = parser.parseAirQuality(jsonData)
 	return collection
 
 def processHouseListing(houseArgs):

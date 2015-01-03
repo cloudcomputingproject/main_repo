@@ -53,6 +53,8 @@ function helperAddDataHandlerListeners(klass){
 //update is the handle() function comming from the 
 //appropriate instance of DataHandler 
 function checkBoxHandler(event, api, update) {
+    
+
     var name = api;
     console.log(api);
     var layers = getLayers();
@@ -60,13 +62,15 @@ function checkBoxHandler(event, api, update) {
     if(!(api in layers)){
         console.log('no layer with this name');
         return; 
+
     }
 
     if($('#'+api+'_checkbox').is(':checked')){
-        //update will invoke the data handler module
+         //update will invoke the data handler module
         update();
+
     }else {
-        //delete the data in the MapBox layers.
+         //delete the data in the MapBox layers.
         removeDataFromLayer(api, 'heatmap' );
         removeDataFromLayer(api, 'markers' );
     }

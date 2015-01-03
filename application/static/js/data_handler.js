@@ -10,6 +10,8 @@ var DataHandler = (function() {
 	//@cb -  callback, the APIHandler passes this function 
 	//@err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
+    	enable_preloader();
+
 		console.log('controller sending request to the model, request data:');
 		console.log(post_data);
 		Model.query(post_data, cb, err);
@@ -18,6 +20,8 @@ var DataHandler = (function() {
 	var default_err = function(error){
 		//invoke default error action
 		console.log('Default error handler: Error message: ' +error)
+		disable_preloader();
+
 	};
 
 	var handle_response = function(data){
@@ -29,7 +33,12 @@ var DataHandler = (function() {
 		//set the checkbox to checked for the given api
 		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
+		console.log(response_data)
+		console.log(response_api)
 		View.handle(data, response_api);
+		disable_preloader();
+		console.log('All visualised')
+		console.log(Date.now())
 		// setMainApiCategoryCheckbox(layer, true); //layer is the same as the name of the api so safe to use it.
 		// addDataToMap(layer, data);
 	};
@@ -184,12 +193,12 @@ var RestaurantHandler = (function(DataHandler){
  	//get the data and send it
 	var handle = function() {
 		var data = constructRequestObject();
-	 	DataHandler.makeRequest(data, handle_restaurant_response);
+	 	DataHandler.makeRequest(data, handle_restaurant_response,DataHandler.defaultErrorCallback);
 	};
 	//private methods to RestaurantHandler
 
 	var handle_restaurant_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response(response);
 		//weather specific handling
 	};
 
@@ -223,13 +232,13 @@ var WeatherHandler = (function(DataHandler){
  	//get the data and send it
 	var handle = function(){
 		var data = constructRequestObject();
-		DataHandler.makeRequest(data,handle_weather_response);
+		DataHandler.makeRequest(data,handle_weather_response, DataHandler.defaultErrorCallback);
 		
 	};
 	//private methods to WeatherHandler
 
 	var handle_weather_response = function(response){
-		DataHandler.handle_response(api , response);
+		DataHandler.handle_response( response);
 
 		//weather specific handling
 	};
@@ -255,10 +264,10 @@ var AirqualityHandler = (function(DataHandler){
 	var api = 'airquality';
 	var handle = function (){
 		var data = constructRequestObject();
-		DataHandler.makeRequest(data, handle_airquality_response);
+		DataHandler.makeRequest(data, handle_airquality_response, DataHandler.defaultErrorCallback);
 	};
 	var handle_airquality_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response( response);
 	};
 
 	//no data is required for the weather api
@@ -275,10 +284,10 @@ var HousesHandler = (function(DataHandler){
 	var api = 'houses';
 	var handle = function (){
 		var data = constructRequestObject();
-		DataHandler.makeRequest(data, handle_airquality_response);
+		DataHandler.makeRequest(data, handle_airquality_response,DataHandler.defaultErrorCallback);
 	};
 	var handle_airquality_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response( response);
 	};
 
 	var constructRequestObject = function(){
