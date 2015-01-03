@@ -25,7 +25,6 @@ def getData():
 	global url
 	#json object
 	try:
-		print url
 		data = urllib2.urlopen(url)
 	except urllib2.URLError, e:
 		url = 'http://data.police.uk/api/'
@@ -48,17 +47,18 @@ def getCategories():
 #date must be in the format yyyy-mm
 def getCrimesInAreaData(category, latArr, lngArr, date):
 	global url
+	result = '['
 	for c in category:
 		if c is not None:
 			cat = c
-			break
-	url+='crimes-street/' + cat + '?poly='
-	for j in xrange(0, len(latArr)):
-		url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
-	url = url[:-1]
-	url+='&date=' + date
-
-	return getData()
+		url+='crimes-street/' + cat + '?poly='
+		for j in xrange(0, len(latArr)):
+			url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
+		url = url[:-1]
+		url+='&date=' + date
+		result += getData()[1:-1] + ','
+	result = result[:-1] + ']'
+	print result
 
 def lastUpdated():
 	lastUpdated = urllib2.urlopen('http://data.police.uk/api/crime-last-updated')
@@ -70,4 +70,4 @@ def lastUpdated():
 
 #http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:51.3849401,0.148271:51.3849401,-0.3514683:51.6723432,-0.3514683&date=2014-09
 #getCategories()
-#getCrimesInAreaData('all-crimes', [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-09')
+#getCrimesInAreaData(['vehicle-crime', 'other-theft'], [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-08')
