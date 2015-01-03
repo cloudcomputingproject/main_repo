@@ -9,7 +9,7 @@ from application import app
 from application.decorators import login_required, admin_required
 from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
-from class_definitions import Boundaries, CircleArea
+from class_definitions import Boundaries, CircleArea, PointPolygon
 from application.controller.exceptions import InvalidValue, ArgumentRequired
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
@@ -131,10 +131,13 @@ def main(data):
 
 	#If the feature has different calls or needs, they will be inside the features object in the JSON request
 	# The appropiate method will then strip it out and call the appropiate method of the server/parser
+	print 'a'
 	if name in featuresOptions:
 		jsonResult = featuresOptions[name](args) 
 	else: 
 		raise Exception( "Selection is not valid")
+
+	print 'a'
 	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
 	return response
@@ -178,7 +181,12 @@ def processPlace(placeArgs):
 	return Boundaries(nEast, sWest, place)
 
 def processPolygon(polygonArgs):
-	return "nothing"
+	try:
+		if len(polygonArgs["points"]) < 3:
+			raise InvalidValue("A polygon requires at least 3 points")
+	except Exception as e:
+		raise ArgumentRequired("A polygon must include a points argument")
+	return PointPolygon(polygonArgs["points"])
 
 def processArea(areaArgs):
 	center[0] = areaArgs["lat"]
@@ -208,7 +216,6 @@ def processFeatures(features):
 		return response
 
 def processPolice(policeArgs):
-	print policeArgs
 	category = policeArgs["category"]
 	if 'date' in policeArgs <= police.lastUpdated():
 		someDate = policeArgs["date"]
@@ -227,11 +234,15 @@ def processPolice(policeArgs):
 	#neigh = police.getNeighbourhoods('hampshire').read()
 	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
 	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
-	crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
+	if isinstance(location, Boundaries):
+		crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
+	elif isinstance(location, PointPolygon):
+		crimesArea = police.getCrimesInAreaData(category, location.latitudesArray, location.longitudesArray, someDate)
 	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
+#TODO
 def processWeather(weatherArgs):
 	print weatherArgs
 
@@ -281,7 +292,6 @@ def processHouseListing(houseArgs):
 	elif isinstance(location, CircleArea):
 		jsonData = houses.getListing(location.formattedOutput(), listingType)
 
-	print jsonData
 	collection = parser.parseHouseListing(jsonData) 
 
 	return collection
@@ -292,9 +302,9 @@ def processHouseListing(houseArgs):
             	"type": "place",
                 "name": "CityName"
 	        }
-            "gender": "boys/girls/mixed"
-            "phase": "primary/secondary"
-            "capacity": ["more/less/equal", 1]
+            "gender": "Boys/Girls/Mixed"
+            "phase": "Primary/Secondary"
+            "capacity": ["More/Less/Equal", 1]
     	}
 '''
 def processSchools(schoolArgs):
