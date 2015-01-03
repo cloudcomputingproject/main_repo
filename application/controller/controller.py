@@ -293,7 +293,7 @@ def processSchools(schoolArgs):
 
 	try:
 		gender = schoolArgs["gender"]
-		if gender not in ['boys', 'girls', 'mixed']:
+		if gender not in ['Boys', 'Girls', 'Mixed']:
 			raise InvalidValue("Value: " + gender + " for gender is not valid")
 	except Exception as e:
 		if type(e) is InvalidValue:
@@ -303,7 +303,7 @@ def processSchools(schoolArgs):
 
 	try:
 		phase = schoolArgs["phase"]
-		if phase not in ['primary', 'secondary']:
+		if phase not in ['Primary', 'Secondary']:
 			raise InvalidValue("Value: " + phase + " for phase is not valid")
 	except Exception as e:
 		if type(e) is InvalidValue:
@@ -313,7 +313,7 @@ def processSchools(schoolArgs):
 
 	try:
 		capacity = schoolArgs["capacity"]
-		if capacity[0] not in ['more', 'less', 'equal']:
+		if capacity[0] not in ['More', 'Less', 'Equal']:
 			raise InvalidValue("Value: " + capacity[0] + " for capacity is not valid")
 	except Exception as e:
 		if type(e) is InvalidValue:

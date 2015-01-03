@@ -92,6 +92,7 @@ def handleAllDataReq():
 	# 	print "****"
 	# 	print response
 	# 	return response;
+	return response
 
 @handler.route('/app/geo', methods=['POST'])
 def handleGeoLocReq():
