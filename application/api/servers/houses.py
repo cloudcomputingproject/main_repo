@@ -19,18 +19,23 @@ pretty = '1'
 #private
 def getData():
 	global url
-	#json object
-	data = urllib2.urlopen(url)
 
 	#for testing purposes
 	# print url
 	# print json.load(data)
+	data = urllib2.urlopen(url)
+	data = json.load(data)
+	result = data['response']['listings']
 
-	url = 'http://api.nestoria.co.uk/api?'
+	for i in range(2, int(data['response']['total_pages'])+1):
+		url = url[:-1]
+		url += str(i)
+		data = urllib2.urlopen(url)
+		result += json.load(data)['response']['listings']
 
-	result = json.load(data)['response']
 	result = json.dumps(result)
 
+	url = 'http://api.nestoria.co.uk/api?'
 	return result
 
 	"""
@@ -48,50 +53,33 @@ def getData():
 
 
 #private
-def urlBuild(name, array):
+def urlBuild(req):
 	global url
 
 	url += 'pretty=' + pretty + '&'
 
-	if(name):
-		url += 'place_name=' + name + '&'
+	if(type(req) is str):
+		url += 'place_name=' + req + '&'
 
-	elif(array and len(array) == 4):
-		if(array[3] == 'km' or array[3] == 'mi'):
-			url += 'centre_point=' + str(array[0]) + ',' + str(array[1]) + ',' + str(array[2]) + array[3] + '&'
-		elif(array[3]):
-			url += 'south_west=' + str(array[0]) + ',' + str(array[1]) + '&north_east=' + str(array[2]) + ',' + str(array[3]) + '&'
+	elif(req and len(req) == 4):
+		if(req[3] == 'km' or req[3] == 'mi'):
+			url += 'centre_point=' + str(req[0]) + ',' + str(req[1]) + ',' + str(req[2]) + req[3] + '&'
+		elif(req[3]):
+			url += 'south_west=' + str(req[0]) + ',' + str(req[1]) + '&north_east=' + str(req[2]) + ',' + str(req[3]) + '&'
 
-"""
-def getKeywords():
-	global url
-	url += 'country=' + country + '&action=keywords&encoding=' + format
-	getData()
-"""
 
-#array is expected to have 4 elements with either
+#req is expected to be a name of a plcae or an array with 4 elements with either
 #	4 numbers indicating the lat,lng of the south west and north east points of the area
 #	OR
 #	3 numbers indicating the lat,lng of a point that is going to be considered a center of the area
 #	followed by the radius and either 'km' or 'mi' as the last 4th element
-def getListing(name, array):
+def getListing(req,listing_type):
 	global url
 
-	urlBuild(name, array)
+	urlBuild(req)
 
-	url += 'encoding=' + format + '&action=search_listings&country=' + country
+	url += 'encoding=' + format + '&action=search_listings&country=' + country + "&listing_type=" + listing_type + "&number_of_results=50&page=1"
 	return getData()
 
-def getMetadata(name, array):
-	global url
-
-	urlBuild(name, array)
-
-	url += 'country=' + country + '&action=metadata&encoding=' + format 
-	getData()
-
-#getKeywords()
-#getListing(False,[51,-3,10,'km'])
-#getListing('southampton',[0,0,1,1])
-#getListing('southampton',[0,0])
-#getMetadata('Southampton',[])
+getListing([51,-3,10,'km'],'rent')
+#getListing('southampton','rent')
