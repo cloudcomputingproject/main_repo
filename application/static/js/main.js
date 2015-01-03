@@ -58,6 +58,7 @@ function getResponseApi(response){
 }
 //get the actual geoJSON from the response
 function getResponseData(response){
+    console.log(response)
     if(response && response.data) {
         return response.data;
     }

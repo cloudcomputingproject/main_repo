@@ -33,8 +33,12 @@ var DataHandler = (function() {
 		//set the checkbox to checked for the given api
 		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
+		console.log(response_data)
+		console.log(response_api)
 		View.handle(data, response_api);
 		disable_preloader();
+		console.log('All visualised')
+		console.log(Date.now())
 		// setMainApiCategoryCheckbox(layer, true); //layer is the same as the name of the api so safe to use it.
 		// addDataToMap(layer, data);
 	};
@@ -194,7 +198,7 @@ var RestaurantHandler = (function(DataHandler){
 	//private methods to RestaurantHandler
 
 	var handle_restaurant_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response(response);
 		//weather specific handling
 	};
 
@@ -234,7 +238,7 @@ var WeatherHandler = (function(DataHandler){
 	//private methods to WeatherHandler
 
 	var handle_weather_response = function(response){
-		DataHandler.handle_response(api , response);
+		DataHandler.handle_response( response);
 
 		//weather specific handling
 	};
@@ -263,7 +267,7 @@ var AirqualityHandler = (function(DataHandler){
 		DataHandler.makeRequest(data, handle_airquality_response, DataHandler.defaultErrorCallback);
 	};
 	var handle_airquality_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response( response);
 	};
 
 	//no data is required for the weather api
@@ -283,7 +287,7 @@ var HousesHandler = (function(DataHandler){
 		DataHandler.makeRequest(data, handle_airquality_response,DataHandler.defaultErrorCallback);
 	};
 	var handle_airquality_response = function(response){
-		DataHandler.handle_response(api, response);
+		DataHandler.handle_response( response);
 	};
 
 	var constructRequestObject = function(){
