@@ -23,7 +23,8 @@ function addDataHandlerListeners(){
     addCheckBoxListeners();
     addTabsListener();
     addDropdownListeners();
-    addAllCimesListener()
+    addAllCimesListener();
+    addEnterListener();
 }
 // Listener for the Update button.
 function addUpdateButtonListeners(){
@@ -138,7 +139,7 @@ function addAllCimesListener(){
         if($(this).attr('id') !== 'all-crime'){
             $(this).attr("disabled","disabled");
         }
-    })
+    });
     $('#all-crime').click(function(){
         if($(this).is(':checked')){
             $('.police_collapsable_1').each(function(){
@@ -153,9 +154,19 @@ function addAllCimesListener(){
                     $(this).removeAttr("disabled"); 
             });
         }
-    })
+    });
 }
-
+function addEnterListener(){
+    $('.press-enter').each(function(){
+        var $this = $(this);
+        $(this).keyup(function(event){
+            if(event.keyCode === 13){
+                console.log('AA')
+                $('#' + $this.attr('api') + "_update_map").click();
+            }
+        });
+    });
+}
 function setDefaultData(){
 	enable_preloader();
 	setDefaultCheckboxes();
