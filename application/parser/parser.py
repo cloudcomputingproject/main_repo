@@ -212,7 +212,7 @@ def getSchoolCoordinate(jsonAddress):
 	address = re.sub(' ', '+', address)
 	geocode = geocoding.getData(address)
 	geo = json.loads(geocode)
-	print geocode
-	coordinates = geocode['results'][0]['geometry']['location']
+	
+	coordinates = geo['results'][0]['geometry']['location']
 
 	return coordinates
