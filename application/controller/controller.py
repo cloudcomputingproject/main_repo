@@ -9,13 +9,12 @@ from application import app
 from application.decorators import login_required, admin_required
 from application.api.servers import houses, police, geocoding, foodstandartsagency, worldbank, schools ,airquality
 from application.parser import parser
-from class_definitions import Boundaries, CircleArea
-from application.controller.exceptions import InvalidValue
+from class_definitions import Boundaries, CircleArea, PointPolygon
+from application.controller.exceptions import InvalidValue, ArgumentRequired
 
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
 	"police" : lambda arg: processPolice(arg),
-	"weather" : lambda arg: processWeather(arg),
 	"restaurant" : lambda arg: processRestaurants(arg),
 	"house" : lambda arg: processHouseListing(arg),
 	"airquality": lambda arg:processAirquality(arg),
@@ -47,15 +46,8 @@ def getPoliceCategoriesWithUrl():
 #####
 
 def getGeoCoding(location):
-	print 'G-C-============================================'
-	print '######'
-	print '> getGeoCoding'
-	print '######'
-	print 'name: '
 	name = location["location"]["name"]
-	print name
 	data = geocoding.getData(name)
-	print '> data retrieved from geocoding'
 	return data
 
 #takes python object representation of the received JSON object
@@ -131,36 +123,15 @@ def main(data):
 
 	#If the feature has different calls or needs, they will be inside the features object in the JSON request
 	# The appropiate method will then strip it out and call the appropiate method of the server/parser
+
 	if name in featuresOptions:
 		jsonResult = featuresOptions[name](args) 
 	else: 
 		raise Exception( "Selection is not valid")
+
 	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
 	return response
-
-def main2(data):
-	print "inside main method controller"
-	location = data["location"]
-	print location
-	if location:
-		actualLocation = processLocation(location)
-	features = data["features"]
-	if features:
-		return processFeatures(features)
-	#test response will be the response from
-	#the module taking care of a communication 
-	#with some external API
-	#we parse that response with the PARSER
-	#and return it to the request handler
-	print actualLocation.locationName
-	print "Latitude: " + str(actualLocation.southWest[0]) + ", Longitude: " + str(actualLocation.southWest[1])
-	print actualLocation.northEast
-	test_response = police.getCategories()
-	
-	temp = test_response.read()
-
-	return temp
 
 def processPlace(placeArgs):
 	nEast = None
@@ -178,7 +149,12 @@ def processPlace(placeArgs):
 	return Boundaries(nEast, sWest, place)
 
 def processPolygon(polygonArgs):
-	return "nothing"
+	try:
+		if len(polygonArgs["points"]) < 3:
+			raise InvalidValue("A polygon requires at least 3 points")
+	except Exception as e:
+		raise ArgumentRequired("A polygon must include a points argument")
+	return PointPolygon(polygonArgs["points"])
 
 def processArea(areaArgs):
 	center[0] = areaArgs["lat"]
@@ -189,46 +165,35 @@ def processArea(areaArgs):
 
 #takes array of features
 def processFeatures(features):
-	print "processFeatures"
 	response =""
 	for feature in features:
-		print "Feature name:",feature['name']
 		response+=(featuresOptions[feature["name"]](feature["args"]))
-		#test 
-		parsed = "{\r\n\r\n    \"type\":\"FeatureCollection\",\r\n    \"features\":[\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    102.0,\r\n                    0.388799\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.333833,\r\n                    0.487521\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.371837,\r\n                    0.481811\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        }\r\n    ]\r\n\r\n}"
-
-		'''
-		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-		TO PARSE
-		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		'''
-		
-		print response
 		return response
 
 def processPolice(policeArgs):
-	print policeArgs
 	category = policeArgs["category"]
-	if 'date' in policeArgs:
+	if 'date' in policeArgs <= police.lastUpdated():
 		someDate = policeArgs["date"]
 	else:
+		someDate = police.lastUpdated()
+		"""
 		someDate = date.today() - timedelta(months=2)
 		someDate = str(someDate.year)+"-"+str(someDate.month)
+		"""
 	if 'location' in policeArgs:
 		location = locationOptions[policeArgs["location"]["type"]](policeArgs["location"])
 	else:
 		raise Exception("The request must include a location to get data from")
 
-	#bounds = police.getBoundary()
-	#neigh = police.getNeighbourhoods('hampshire').read()
-	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
-	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
-	crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
-	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
+	if isinstance(location, Boundaries):
+		crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
+	elif isinstance(location, PointPolygon):
+		crimesArea = police.getCrimesInAreaData(category, location.latitudesArray, location.longitudesArray, someDate)
+
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 
+#TODO
 def processWeather(weatherArgs):
 	print weatherArgs
 
@@ -263,12 +228,20 @@ def processHouseListing(houseArgs):
 	if 'location' in houseArgs:
 		location = locationOptions[houseArgs["location"]["type"]](houseArgs["location"])
 	else:
-		raise Exception( "Location not specified")
+		raise ArgumentRequired("Location not specified")
+
+	listingType = 'buy' #Default value
+	if 'listing_type' in houseArgs:
+		listingType = houseArgs["listing_type"]
+
 	jsonData = ''
 	if isinstance(location, Boundaries):
-		jsonData = houses.getListing(location.locationName, location.formattedOutput())
+		if location.locationName is None:
+			jsonData = houses.getListing(location.formattedOutput(), listingType)
+		else:
+			jsonData = houses.getListing(str(location.locationName), listingType)
 	elif isinstance(location, CircleArea):
-		jsonData = houses.getListing(None, location.formattedOutput())
+		jsonData = houses.getListing(location.formattedOutput(), listingType)
 
 	collection = parser.parseHouseListing(jsonData) 
 
