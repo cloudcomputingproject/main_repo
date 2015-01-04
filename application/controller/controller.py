@@ -47,15 +47,8 @@ def getPoliceCategoriesWithUrl():
 #####
 
 def getGeoCoding(location):
-	print 'G-C-============================================'
-	print '######'
-	print '> getGeoCoding'
-	print '######'
-	print 'name: '
 	name = location["location"]["name"]
-	print name
 	data = geocoding.getData(name)
-	print '> data retrieved from geocoding'
 	return data
 
 #takes python object representation of the received JSON object
@@ -131,39 +124,15 @@ def main(data):
 
 	#If the feature has different calls or needs, they will be inside the features object in the JSON request
 	# The appropiate method will then strip it out and call the appropiate method of the server/parser
-	print 'a'
+
 	if name in featuresOptions:
 		jsonResult = featuresOptions[name](args) 
 	else: 
 		raise Exception( "Selection is not valid")
 
-	print 'a'
 	response = "{ \"api\": \"%s\", \"data\": %s}" % (name, jsonResult)
 
 	return response
-
-def main2(data):
-	print "inside main method controller"
-	location = data["location"]
-	print location
-	if location:
-		actualLocation = processLocation(location)
-	features = data["features"]
-	if features:
-		return processFeatures(features)
-	#test response will be the response from
-	#the module taking care of a communication 
-	#with some external API
-	#we parse that response with the PARSER
-	#and return it to the request handler
-	print actualLocation.locationName
-	print "Latitude: " + str(actualLocation.southWest[0]) + ", Longitude: " + str(actualLocation.southWest[1])
-	print actualLocation.northEast
-	test_response = police.getCategories()
-	
-	temp = test_response.read()
-
-	return temp
 
 def processPlace(placeArgs):
 	nEast = None
@@ -197,22 +166,9 @@ def processArea(areaArgs):
 
 #takes array of features
 def processFeatures(features):
-	print "processFeatures"
 	response =""
 	for feature in features:
-		print "Feature name:",feature['name']
 		response+=(featuresOptions[feature["name"]](feature["args"]))
-		#test 
-		parsed = "{\r\n\r\n    \"type\":\"FeatureCollection\",\r\n    \"features\":[\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    102.0,\r\n                    0.388799\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.333833,\r\n                    0.487521\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        },\r\n        {\r\n            \"type\":\"Feature\",\r\n            \"geometry\":{\r\n                \"type\":\"Point\",\r\n                \"coordinates\":[\r\n                    52.371837,\r\n                    0.481811\r\n                ]\r\n            },\r\n            \"properties\":{\r\n                \"type\":\"police\"\r\n            }\r\n        }\r\n    ]\r\n\r\n}"
-
-		'''
-		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-		TO PARSE
-		!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		'''
-		
-		print response
 		return response
 
 def processPolice(policeArgs):
@@ -230,15 +186,11 @@ def processPolice(policeArgs):
 	else:
 		raise Exception("The request must include a location to get data from")
 
-	#bounds = police.getBoundary()
-	#neigh = police.getNeighbourhoods('hampshire').read()
-	#boundry =  police.getBoundary('hampshire', 'Fair Oak').read()
-	#crimes= police.getCrimes('all-crimes', 52.629729, -1.131592, '2014-09').read()
 	if isinstance(location, Boundaries):
 		crimesArea = police.getCrimesInAreaData(category, location.getSquareLatitudes(), location.getSquareLongitudes(), someDate)
 	elif isinstance(location, PointPolygon):
 		crimesArea = police.getCrimesInAreaData(category, location.latitudesArray, location.longitudesArray, someDate)
-	#return "NEIGHBOURHOOD"+"*"*10+"\n"+neigh+"BOUNDRY"+"*"*10+"\n"+boundry+"crimes"+"*"*10+"\n"+crimes+"crimesArea"+"*"*10+"\n"+crimesArea
+
 	parsed = parser.parseCrimes(crimesArea)
 	return parsed
 

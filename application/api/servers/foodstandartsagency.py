@@ -33,7 +33,7 @@ def getData():
 	#building the new url setting the parameter PageSize to be equal to the number of entries
 	url += '/1/' + data['FHRSEstablishment']['Header']['ItemCount'] + '/' + format
 
-	data = urllib2.urlopen(url)
+	data = urllib2.urlopen(url, timeout=20)
 
 	#for testing purposes
 	#print url
