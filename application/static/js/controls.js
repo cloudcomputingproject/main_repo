@@ -73,7 +73,9 @@ function checkBoxHandler(event, api, update) {
 
     }else {
          //delete the data in the MapBox layers.
-        removeDataFromAllLayers(api );
+        removeDataFromAllLayers(api);
+        //remove the listener
+        removeAllLabels(api);
         disable_preloader();
     }
 }
@@ -209,6 +211,8 @@ function addLabel(api, md5){
     var label_name = getNameForLabelFromRequest(api);
     var colors = ["label-red", "label-blue", "label-orange", "label-grey", "label-green"];
     var color = colors[Math.floor(Math.random()*colors.length)]; //pick a random style
+    var new_label_id = '#span_container_' +api+'_'+md5;
+    if($(new_label_id).length !== 0) return; //already have label for this md5
     //append a label next to a main api category to label what data is currently visualised
     //for that api and provide the user with easy way to hide the data for a specific city
     $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'"> \
@@ -238,18 +242,26 @@ function removeLabel(id){
     }
         
 }
+function removeAllLabels(api){
+    var id = '#city_name_container_'+api;
+    $(id).empty();
+
+}
 function deleteLabelListener(api, md5, parent_id){
     removeDataFromLayer(api, 'markers', md5);
     removeDataFromLayer(api, 'heatmap', md5);
     console.log(parent_id)
     removeLabel($(parent_id));
+    if(isDrawAreaTabActive(api)){
+        deleteDrawnArea();
+    }
 }
 function getNameForLabelFromRequest(api){
     //check if name was used
     if(isSearchCityTabActive(api)){
         return getSearchCityText(api);
     } else if (isDrawAreaTabActive(api)){
-        return 'drawn'
+        return 'Drawn'
     } else if(isMixedSearchActive(api)){
         return getMixedSearchText(api);
     } else {
@@ -299,6 +311,14 @@ function getApiDate(api){
 
 }
 
+
+function showError(content){
+    $('#error_content').text(content);
+    $("#alert_container").show();
+    $("#alert_close_button").click(function(){
+        $("#alert_container").hide();
+    });
+}
 //consturct the Control panel main DOM elements
 var PanelControl = L.Control.extend({
     options: {
