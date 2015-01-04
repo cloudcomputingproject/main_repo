@@ -209,13 +209,13 @@ function addLabel(api, md5){
     //append a label next to a main api category to label what data is currently visualised
     //for that api and provide the user with easy way to hide the data for a specific city
  
-    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'"> \
-        '+label_name+' | \
-        <a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" \
-        href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> \
-        <strong>✖</strong> \
-        </a> \
-        </span>');
+    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'">'+
+        label_name+' |' +
+        '<a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" '+
+        'href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> '+
+        '<strong>✖</strong> '+
+        '</a> '+
+        '</span>');
     //add listener for the label.
     $("#"  + api+"_"+md5).click(function(){
         var api = $(this).attr('api');

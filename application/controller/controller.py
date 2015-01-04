@@ -15,7 +15,6 @@ from application.controller.exceptions import InvalidValue, ArgumentRequired
 #List of all the features implemented, the structure is a dictionary, {JsonKeyword, functionName}
 featuresOptions = {
 	"police" : lambda arg: processPolice(arg),
-	"weather" : lambda arg: processWeather(arg),
 	"restaurant" : lambda arg: processRestaurants(arg),
 	"house" : lambda arg: processHouseListing(arg),
 	"airquality": lambda arg:processAirquality(arg),
