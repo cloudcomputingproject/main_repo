@@ -201,8 +201,10 @@ var initialiseView = function(){
 		} 
 		var getMarkersData = data.getMarkersData;
 		var json = getMarkersData()
- 		layer.addLayers(json); 
- 		map.fitBounds(layer.getBounds());
+		if(json){
+	 		layer.addLayers(json); 
+	 		map.fitBounds(layer.getBounds());
+		}
 	};
 
 

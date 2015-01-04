@@ -243,13 +243,16 @@ function deleteLabelListener(api, md5, parent_id){
     removeDataFromLayer(api, 'heatmap', md5);
     console.log(parent_id)
     removeLabel($(parent_id));
+    if(isDrawAreaTabActive(api)){
+        deleteDrawnArea();
+    }
 }
 function getNameForLabelFromRequest(api){
     //check if name was used
     if(isSearchCityTabActive(api)){
         return getSearchCityText(api);
     } else if (isDrawAreaTabActive(api)){
-        return 'drawn'
+        return 'Drawn'
     } else if(isMixedSearchActive(api)){
         return getMixedSearchText(api);
     } else {
@@ -299,6 +302,14 @@ function getApiDate(api){
 
 }
 
+
+function showError(content){
+    $('#error_content').text(content);
+    $("#alert_container").show();
+    $("#alert_close_button").click(function(){
+        $("#alert_container").hide();
+    });
+}
 //consturct the Control panel main DOM elements
 var PanelControl = L.Control.extend({
     options: {

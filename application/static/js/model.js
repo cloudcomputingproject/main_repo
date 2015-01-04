@@ -27,6 +27,7 @@
 var error_msg = {
 	empty_request: "The data passed to the query was empty",
 	bad_response: "The data received cannot be interpreted",
+	empty_response: "Our hardworking servers returned no results for your query",
 	400: "The request object was not constucted properly"
 };
  
@@ -77,8 +78,11 @@ var initialiseModel = function(api_names) {
 			var getHeatmapData = function(){
 				//prepare @data for heatmap
 				//if something goes wrong, do "return undefined"
-				// console.log(L.geoJson)
-			 
+				 
+			 	if(data.data.features.length === 0 ) {
+			 		err(error_msg.empty_response);
+			 		return undefined;
+			 	}
 
 				return L.geoJson(data.data);
 			 
@@ -90,18 +94,16 @@ var initialiseModel = function(api_names) {
 				 
 				var geojson = L.geoJson(data.data);
 				var markers = [];
-				var count = 1;
-				geojson.eachLayer(function(l){
-					if(count===1){
-						console.log(l);
-						count++;
-					}
+ 				geojson.eachLayer(function(l){
+					 
 					var marker = L.marker(l.getLatLng());
 					
 					markers.push(marker);
 				});
- 
-			 
+ 				if(markers.length === 0) {
+			 		err(error_msg.empty_response);
+ 					return undefined;
+			 }
 				return markers;
 			};
 
@@ -248,11 +250,12 @@ console.log(Date.now())
 	      data: JSON.stringify(request_object),
 
 	      error: function(error){
+	      	var response = "Status: "+error.status + " " + error.statusText + ", Response: " + error.responseText;
 	        console.log("Status: "+error.status + " " + error.statusText + ", Response: " + error.responseText);
 	        if(error_msg[error.status]){
 	        	err(error_msg[error.status]);
 	        }else{
-	        	err(error);
+	        	err(response);
 	        }
          	return;
 
