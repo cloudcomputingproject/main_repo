@@ -147,6 +147,8 @@ function stripName(nameWithHashtag){
 };
 
 function setDefaultData(){
+enable_preloader();
+
   setDefaultCheckboxes();
   PoliceHandler.handle(); //this will load and show the default data
  }
