@@ -48,7 +48,7 @@ def handleAllDataReq():
 	try:
 		input_data = request.data
 		input_data = json.loads(input_data)	
-
+		# return 'whatever',403
 		response = controller.main(input_data)
 		# if 'geoCoding' in input_data : 
 		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])

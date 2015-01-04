@@ -66,7 +66,7 @@ var initialiseModel = function(api_names) {
 	//change the response before sending it back to the caller.
 	var modelResponseHandler = function(request, response, cb, err){
 		//add it to the cache
-		Cache.addEntry(request, response);
+		var md5_of_request = Cache.addEntry(request, response);
 		//add getters to the response
 		var adjusted_response = (function(data){
 			var new_response = {};	
@@ -106,6 +106,7 @@ var initialiseModel = function(api_names) {
 			};
 
 			new_response.data = data;
+			new_response.md5_of_request = md5_of_request;
 			new_response.getHeatmapData = getHeatmapData;
 			new_response.getMarkersData = getMarkersData;
 			//new_response contains the original response from the server
@@ -177,7 +178,7 @@ var initialiseModel = function(api_names) {
 			//check if request already in cache
 			if(cache[api][md5_of_request]){
 				//if already in the cache, we just ignore the request 
-				return;
+				return md5_of_request;
 			} else{
 				//doesn't exist in the cache, so add it
 				var timestamp = Date.now();
@@ -187,7 +188,7 @@ var initialiseModel = function(api_names) {
 				cache[api][md5_of_request] = entry;
 
 				console.log("Added a new entry in "+api+'\'s cache');
-				return;
+				return md5_of_request;
 			}
 		};
 

@@ -70,3 +70,25 @@ position: fixed;
     font-size: 18px;
   line-height: 1.33;
 }
+
+
+.label-red {
+    background-color:#E8464B;
+    color:#f0f0f0;
+}
+.label-blue {
+    background-color:#469FE8;
+    color:#f0f0f0;
+}
+.label-orange {
+    background-color:#E87C46;
+    color:#f0f0f0;
+}
+.label-grey {
+    background-color:#9C9C9C;
+    color:#f0f0f0;
+}
+.label-green {
+    background-color:#4DDB73;
+    color:#f0f0f0;
+}
