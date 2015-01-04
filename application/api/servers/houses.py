@@ -22,20 +22,23 @@ def getData():
 	#for testing purposes
 	# print url
 	# print json.load(data)
-	data = urllib2.urlopen(url+'1')
-	data = json.load(data)
-	total_pages = int(data['response']['total_pages'])
-	if total_pages > 20:
-		total_pages = 20
-
-	result = '['
-
-	for i in range(0, total_pages):
-		data = urllib2.urlopen(url + str(i+1))
+	try: 
+		data = urllib2.urlopen(url+'1')
 		data = json.load(data)
+		total_pages = int(data['response']['total_pages'])
+		if total_pages > 20:
+			total_pages = 20
 
-		result += json.dumps(data['response']['listings'])[1:-1] + ', '
+		result = '['
 
+		for i in range(0, total_pages):
+			data = urllib2.urlopen(url + str(i+1))
+			data = json.load(data)
+
+			result += json.dumps(data['response']['listings'])[1:-1] + ', '
+	except Exception as e:
+		url = 'http://api.nestoria.co.uk/api?'
+		raise
 		
 
 	result = result[:-2] + ']'
