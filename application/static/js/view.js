@@ -135,7 +135,7 @@ var initialiseView = function(){
 			return;
 		}
 		if(api in customViews){
-			customViews.api.handle(response, api);
+			customViews[api].handle(response, api);
 		} else { // no custom view defined so just visualise on the map(using the defaultViewHandler)
 			defaultViewHandler(response, api);
 		}
@@ -201,16 +201,92 @@ var initialiseView = function(){
 		} 
 		var getMarkersData = data.getMarkersData;
 		var json = getMarkersData()
- 		layer.addLayers(json); 
- 		map.fitBounds(layer.getBounds());
+		if(json){
+	 		layer.addLayers(json); 
+	 		map.fitBounds(layer.getBounds());
+		}
 	};
 
 
 	//custom view handlers
-	var housesViewHandler = (function(){
+	var policeViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getPolicePrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var airqualityViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getAirqualityPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var restaurantViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getRestaurantPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var houseViewHandler = (function(){
 		//public method
-		var handle = function(data){
-			console.log('House view custom View entered')
+		var handle = function(data, api){
+			//use the default one to visualise the data
+			defaultViewHandler(data,api);
+ 			//then attach specific popups to each marker
+			//get the layer with markers for this api 
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getHousesPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+
+
 		};
 		//private method
 		var module = {handle: handle} //houses
@@ -226,8 +302,11 @@ var initialiseView = function(){
 	})();
 
 	var customViews = {
-		houses: housesViewHandler,
-		geocoding: geoCodingViewHandler
+		house: houseViewHandler,
+		geocoding: geoCodingViewHandler,
+		airquality: airqualityViewHandler,
+		restaurant: restaurantViewHandler,
+		police:policeViewHandler
 	};
 
 	var module = {handle: handle}; //View

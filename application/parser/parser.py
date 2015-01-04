@@ -1,6 +1,7 @@
 from flask import json, jsonify
 from geojson import Feature, Point, FeatureCollection
 from application.api import external_api
+from application.api.servers import geocoding
 import re
 
 
@@ -137,10 +138,10 @@ Parses the received school data. Receives a list of JSON objects for each school
 '''
 def parseSchoolData(listdata):
 	features = []
-
+	data = json.loads(listdata)
 	# for each school
-	for item in listdata:
-		data = json.loads(item)
+	for item in data:
+		#data = json.loads(item)
 
 		# Because not every school provides all types of data, if some data is unavailable a blank space is used
 		name = ' '
@@ -180,8 +181,8 @@ def parseSchoolData(listdata):
 		if 'altEmail' in item:
 			altEmail = item['altEmail']
 
-		point = Point((lat, lng))
-		props = json.dumps({'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail})
+		point = Point((lng, lat))
+		props = {'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail}
 		feature = Feature(geometry=point, properties=props)
 		features.append(feature)
 
@@ -208,8 +209,9 @@ def getSchoolCoordinate(jsonAddress):
 
 	#All spaces in the string need to be replaced with a '+' char for the geocoding API
 	address = re.sub(' ', '+', address)
-	geocode = getGeocodingData(address)
-
-	coordinates = geocode['results']['bounds']['location']
+	geocode = geocoding.getData(address)
+	geo = json.loads(geocode)
+	
+	coordinates = geo['results'][0]['geometry']['location']
 
 	return coordinates
