@@ -24,10 +24,13 @@ def getData():
 	# print json.load(data)
 	data = urllib2.urlopen(url+'1')
 	data = json.load(data)
+	total_pages = int(data['response']['total_pages'])
+	if total_pages > 20:
+		total_pages = 20
 
 	result = '['
 
-	for i in range(0, int(data['response']['total_pages'])):
+	for i in range(0, total_pages):
 		data = urllib2.urlopen(url + str(i+1))
 		data = json.load(data)
 
@@ -38,6 +41,22 @@ def getData():
 	result = result[:-2] + ']'
 
 	url = 'http://api.nestoria.co.uk/api?'
+	data = json.loads(result)
+	for item in data:
+		lat = item.get('latitude')
+		lng = item.get('longitude')
+		title = item.get('title')
+		price = item.get('price')
+		currency = item.get('price_currency')
+		bedroomN = item.get('bedroom_number')
+		bathN = item.get('bathroom_number')
+		img_height = item.get('img_height')
+		img_width = item.get('img_width')
+		img_url = item.get('img_url')
+		price_type = item.get('price_type')
+		property_type = item.get('property_type')
+		summary = item.get('summary')
+
 	return result
 
 #private
@@ -70,4 +89,4 @@ def getListing(req,listing_type):
 	return getData()
 
 #getListing([51,-3,10,'km'],'rent')
-#getListing('southampton','rent')
+getListing('southampton','buy')

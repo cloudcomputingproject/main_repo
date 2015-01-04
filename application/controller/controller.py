@@ -232,8 +232,8 @@ def processHouseListing(houseArgs):
 		raise ArgumentRequired("Location not specified")
 
 	listingType = 'buy' #Default value
-	if 'listing-type' in houseArgs:
-		listingType = houseArgs["listing-type"]
+	if 'listing_type' in houseArgs:
+		listingType = houseArgs["listing_type"]
 
 	jsonData = ''
 	if isinstance(location, Boundaries):
