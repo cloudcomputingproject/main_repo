@@ -58,6 +58,7 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 		url+='&date=' + date
 		result += getData()[1:-1] + ','
 	result = result[:-1] + ']'
+
 	return result
 
 def lastUpdated():
@@ -70,4 +71,4 @@ def lastUpdated():
 
 #http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:51.3849401,0.148271:51.3849401,-0.3514683:51.6723432,-0.3514683&date=2014-09
 #getCategories()
-#getCrimesInAreaData(['vehicle-crime', 'other-theft'], [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-08')
+getCrimesInAreaData(['vehicle-crime', 'other-theft'], [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-08')
