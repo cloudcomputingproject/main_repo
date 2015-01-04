@@ -23,6 +23,7 @@ function addDataHandlerListeners(){
     addCheckBoxListeners();
     addTabsListener();
     addDropdownListeners();
+    addAllCimesListener()
 }
 // Listener for the Update button.
 function addUpdateButtonListeners(){
@@ -130,6 +131,29 @@ function collapseListener(event,idOfElement) {
         $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
     }
     return true;
+}
+
+function addAllCimesListener(){
+    $('.police_collapsable_1').each(function(){
+        if($(this).attr('id') !== 'all-crime'){
+            $(this).attr("disabled","disabled");
+        }
+    })
+    $('#all-crime').click(function(){
+        if($(this).is(':checked')){
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime'){
+                    $(this).prop('checked', false);
+                    $(this).attr("disabled","disabled");
+                }
+            })
+        } else {
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime')
+                    $(this).removeAttr("disabled"); 
+            });
+        }
+    })
 }
 
 function setDefaultData(){

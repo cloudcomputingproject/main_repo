@@ -94,9 +94,14 @@ def parseFSA(jsondata):
 		name = item['BusinessName']
 		lat = item['Geocode']['Latitude']
 		lng = item['Geocode']['Longitude']
-		hygiene = item['Scores']['Hygiene']
-		mang = item['Scores']['ConfidenceInManagement']
-		structural = item['Scores']['Structural']
+		if(type(item['Scores']['Hygiene']) is not dict):
+			hygiene = item['Scores']['Hygiene']
+			mang = item['Scores']['ConfidenceInManagement']
+			structural = item['Scores']['Structural']
+		else:
+			hygiene = 'N/A'
+			mang = 'N/A'
+			structural = 'N/A'
 		#took this approach for pragmatism, some of the data of FSA is corrupt and they send null fields, since there is no point keeping a place that we don't know where it is, I simply ignore it
 		try:
 			point = Point((float(lng), float(lat)))
