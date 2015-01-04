@@ -18,27 +18,71 @@ var layers;
 var initView = function(){
 	layers = initLayers(getAPINames());
 	View = initialiseView();
-}
+};
 function initLayers(api_names){
 	var result = {};
 	api_names.forEach(function(api){
 		result[api] = {};
-		result[api].heatmap = createHeatmapEmptyLayer();
-		result[api].markers = createMarkersEmptyLayer();
+		result[api].heatmap = {};
+		result[api].markers = {};
 	});
 	
 	return result;
 }
 function createMarkersEmptyLayer(){
 		return new L.MarkerClusterGroup().addTo(map);
-	}
-	function createHeatmapEmptyLayer(){
+}
+function createHeatmapEmptyLayer(){
  		return L.heatLayer([], { maxZoom: 12 }).addTo(map);
-	}
+}
 function getLayers(){
 	return layers;
 }
-function removeDataFromLayer(api,layer_type){
+function getLayer(api, layer_type, md5){
+	if(layers && layers[api] && layers[api][layer_type] && layers[api][layer_type][md5]){
+		return layers[api][layer_type][md5]
+	} else{
+		return undefined; 
+	}
+}
+function addLayer(api, layer_type, md5){
+	if(layer_type === 'markers'){
+		layers[api][layer_type][md5] = createMarkersEmptyLayer();
+		return layers[api][layer_type][md5];
+	} else if(layer_type ==='heatmap'){
+		layers[api][layer_type][md5] = createHeatmapEmptyLayer();
+		return  layers[api][layer_type][md5];
+	}
+
+}
+function removeDataFromAllLayers(api){
+	var all_heatmap_ids = Object.keys(layers[api]['heatmap']);
+	all_heatmap_ids.forEach(function(id){
+		//for each layer we want to remove it from the map
+		var layer  = layers[api]['heatmap'][id];
+
+		console.log(layer)
+		if(layer && map.hasLayer(layer)){
+			map.removeLayer(layer);
+			layers[api]['heatmap'][id] = createHeatmapEmptyLayer();
+		}
+	});
+	var all_marker_ids = Object.keys(layers[api]['markers']);
+	console.log(all_marker_ids)
+	all_marker_ids.forEach(function(id){
+		//for each layer we want to remove it from the map
+		var layer  = layers[api]['markers'][id];
+				console.log(layer)
+
+		if(layer && map.hasLayer(layer)){
+
+			map.removeLayer(layer);
+			layers[api]['markers'][id] = createMarkersEmptyLayer();
+		}
+	});
+}
+// function addLayer(api, layer_type)
+function removeDataFromLayer(api,layer_type, md5){
 	//check if layer exists 
 	if(!(api in layers)){
 		console.log('Trying to remove data from layer which is not in the layers collection ');
@@ -51,15 +95,30 @@ function removeDataFromLayer(api,layer_type){
 	}
 
 	if(layer_type === 'markers'){
-		var marker_layer = layers[api].markers;
-		map.removeLayer(marker_layer);
-		layers[api].markers = createMarkersEmptyLayer();
+		console.log(layers)
+
+		// var marker_layer = layers[api]['markers'][md5];
+		var marker_layer = getLayer(api, 'markers', md5);
+		if(marker_layer){
+			console.log(marker_layer)
+			layers[api]['markers'][md5] = createMarkersEmptyLayer();
+			map.removeLayer(marker_layer);
+			return true;
+		} else {
+			//layer doesnt exist
+			return false;
+		}
 		
-		return true;
 	} else if (layer_type === 'heatmap'){
-		var heatmap_layer = layers[api].heatmap;
-		heatmap_layer.setLatLngs([]);
-		return true;
+		// var heatmap_layer = layers[api]['heatmap'][md5];
+		var heatmap_layer = getLayer(api,'heatmap', md5);
+		if(heatmap_layer){
+			heatmap_layer.setLatLngs([]);
+			return true;
+		} else{
+			//layer doesnt exist
+			return false;
+		}
 	} else{
 		console.log("Non-supported layer type");
 		return false;
@@ -76,70 +135,157 @@ var initialiseView = function(){
 			return;
 		}
 		if(api in customViews){
-			customViews.api.handle(response, api);
-		} else{ // no custom view defined so just visualise on the map
+			customViews[api].handle(response, api);
+		} else { // no custom view defined so just visualise on the map(using the defaultViewHandler)
 			defaultViewHandler(response, api);
 		}
 	}
 	//private methods
 	var defaultViewHandler = function(data, api){
-		var data_for_map= {};
 		var render_mode = getRenderMode(api);
 		//first wipe out the old data
-		removeDataFromLayer(api, 'markers');
-		removeDataFromLayer(api, 'heatmap');
+		var marker_layer_exists = removeDataFromLayer(api, 'markers', data.md5_of_request);
+		var heatmap_layer_exists = removeDataFromLayer(api, 'heatmap', data.md5_of_request);
+		addLabel(api, data.md5_of_request);
 		render_mode.forEach(function(mode){
-			if(mode === 'markers'){
-				var getMarkersData = data.getMarkersData; // get the function
+			if (mode === 'markers') {
 				// use the Model method to retrieve the data suitable for Markers
-				console.log(data)
-				data_for_map = getMarkersData(data); 
-				renderMarkersOnMap(data_for_map, api);
+				console.log(data);
+				//create new layer for this data
+
+				// data_for_map = getMarkersData(data); 
+				renderMarkersOnMap(data, api);
 
 			} else if (mode === 'heatmap'){
-				var getHeatmapData = data.getHeatmapData;
-				data_for_map = getHeatmapData(data);
-				console.log(data_for_map)
-				renderHeatmapOnMap(data_for_map, api);
+				console.log(data)
+				renderHeatmapOnMap(data, api);
 			} else{
 				console.log('Render mode not specified');
 				return;
 			}
 		});
-
 	};
 
 
 	var renderHeatmapOnMap = function(data, api){
 		console.log('adding data to '+api+'\'s heatmap layer');
+		// var json = getResponseData(data);
+		var getHeatmapData = data.getHeatmapData;
+		var json = getHeatmapData();
+		
+		var md5_of_request = data.md5_of_request;
 
-		var heatmap = layers[api].heatmap;
-		heatmap.setLatLngs([]); //reset the state of the layer
-		//add heatmap data. the heatmap will be colorod based 
+		var heatmap = layers[api]['heatmap'][md5_of_request];
+		var heatmap = getLayer(api, 'heatmap', md5_of_request);
+		if(!heatmap){
+			heatmap = addLayer(api, 'heatmap', md5_of_request);
+		}  
+		//add heatmap data. the heatmap will be colored based 
 		//on the number of markers. For other visualising way,
 		//specify a custom view handler
 
-		data.eachLayer(function(l){
+		json.eachLayer(function(l){
 			heatmap.addLatLng(l.getLatLng());
 		});
 
- 		map.fitBounds(data.getBounds());
+ 		map.fitBounds(json.getBounds());
 		
 	};
 	var renderMarkersOnMap = function(data, api){
-		var marker_cluster = new L.MarkerClusterGroup();
 		console.log('adding data to '+api+'\'s markers layer');
 		console.log(layers)
-		var layer = layers[api].markers;
- 		layer.addLayers(data); 
- 		map.fitBounds(layer.getBounds());
+		var md5_of_request = data.md5_of_request;
+		var layer = layers[api]['markers'][md5_of_request];
+		if(!layer){
+			layer = addLayer(api, 'markers', md5_of_request);
+		} 
+		var getMarkersData = data.getMarkersData;
+		var json = getMarkersData()
+		if(json){
+	 		layer.addLayers(json); 
+	 		map.fitBounds(layer.getBounds());
+		}
 	};
 
 
 	//custom view handlers
-	var housesViewHandler = (function(){
+	var policeViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getPolicePrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var airqualityViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getAirqualityPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var restaurantViewHandler = (function(){
+		var handle = function(data, api){
+			defaultViewHandler(data,api);
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getRestaurantPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+		};
+		var module = {handle: handle} //houses
+		return module;
+	})();
+	var houseViewHandler = (function(){
 		//public method
-		var handle = function(data){
+		var handle = function(data, api){
+			//use the default one to visualise the data
+			defaultViewHandler(data,api);
+ 			//then attach specific popups to each marker
+			//get the layer with markers for this api 
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getHousesPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(')
+			}
+
 
 		};
 		//private method
@@ -149,15 +295,18 @@ var initialiseView = function(){
 
 	var geoCodingViewHandler = (function(){
 		var handle = function(data){ 
-
+			console.log('geo coding cusomt viewer entered');
 		}
 		var module = {handle: handle};
 		return module; //geocoding
 	})();
 
 	var customViews = {
-		houses: housesViewHandler,
-		geocoding: geoCodingViewHandler
+		house: houseViewHandler,
+		geocoding: geoCodingViewHandler,
+		airquality: airqualityViewHandler,
+		restaurant: restaurantViewHandler,
+		police:policeViewHandler
 	};
 
 	var module = {handle: handle}; //View

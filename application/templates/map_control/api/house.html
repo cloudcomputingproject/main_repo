@@ -1,4 +1,7 @@
 {% import '/map_control/misc/select_location.html' as s %}
+{% import '/map_control/misc/dropdown.html' as d %}
  
 
+{{d.dropdown(main_api_category, 'listing_type', ['buy', 'rent'], 'Select listing type')}}
 {{s.select_location(main_api_category, ['circle', 'rectangle'])}} {# shapes should be non_space delimited strings#}
+

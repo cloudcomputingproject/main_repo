@@ -6,7 +6,7 @@
 	The Model holds a collection in which the keys are the name of the 
 	available api's, and the values are objects containing all data for 
 	the given api
-	The Model is being used by making a query to it by passing to it a 
+	The Model is used by making a query to it by passing to it a 
 	'request object'. The model checks in its cache if there is already a 
 	response from the server for this request object and if there is, returns the data 
 	from the server response. If there is nothing in the cache(or if the data is too old
@@ -27,6 +27,7 @@
 var error_msg = {
 	empty_request: "The data passed to the query was empty",
 	bad_response: "The data received cannot be interpreted",
+	empty_response: "Our hardworking servers returned no results for your query",
 	400: "The request object was not constucted properly"
 };
  
@@ -66,7 +67,7 @@ var initialiseModel = function(api_names) {
 	//change the response before sending it back to the caller.
 	var modelResponseHandler = function(request, response, cb, err){
 		//add it to the cache
-		Cache.addEntry(request, response);
+		var md5_of_request = Cache.addEntry(request, response);
 		//add getters to the response
 		var adjusted_response = (function(data){
 			var new_response = {};	
@@ -77,8 +78,11 @@ var initialiseModel = function(api_names) {
 			var getHeatmapData = function(){
 				//prepare @data for heatmap
 				//if something goes wrong, do "return undefined"
-				// console.log(L.geoJson)
-			 
+				 
+			 	if(data.data.features.length === 0 ) {
+			 		err(error_msg.empty_response);
+			 		return undefined;
+			 	}
 
 				return L.geoJson(data.data);
 			 
@@ -90,22 +94,26 @@ var initialiseModel = function(api_names) {
 				 
 				var geojson = L.geoJson(data.data);
 				var markers = [];
-				var count = 1;
-				geojson.eachLayer(function(l){
-					if(count===1){
-						console.log(l);
-						count++;
-					}
+ 				geojson.eachLayer(function(l){
+					 
 					var marker = L.marker(l.getLatLng());
-					
+					// console.log(l.feature.properties)
+					// var popup = L.popup();
+
+					marker.bindPopup(JSON.stringify(l.feature.properties));
+    			 
+					// marker.setPopupContent(l.feature.properties)
 					markers.push(marker);
 				});
- 
-			 
+ 				if(markers.length === 0) {
+			 		err(error_msg.empty_response);
+ 					return undefined;
+			 }
 				return markers;
 			};
 
 			new_response.data = data;
+			new_response.md5_of_request = md5_of_request;
 			new_response.getHeatmapData = getHeatmapData;
 			new_response.getMarkersData = getMarkersData;
 			//new_response contains the original response from the server
@@ -144,7 +152,8 @@ var initialiseModel = function(api_names) {
 			}
 		*/
 		var cache = {};
-		var MAX_CACHE_TIME = 600000; // 10minutes
+		// var MAX_CACHE_TIME = 10000; // 10secs
+		var MAX_CACHE_TIME = 300000; // 5minutes
 		api_names.forEach(function(api_name){
 			cache[api_name] = {};
 		});
@@ -177,7 +186,7 @@ var initialiseModel = function(api_names) {
 			//check if request already in cache
 			if(cache[api][md5_of_request]){
 				//if already in the cache, we just ignore the request 
-				return;
+				return md5_of_request;
 			} else{
 				//doesn't exist in the cache, so add it
 				var timestamp = Date.now();
@@ -187,7 +196,7 @@ var initialiseModel = function(api_names) {
 				cache[api][md5_of_request] = entry;
 
 				console.log("Added a new entry in "+api+'\'s cache');
-				return;
+				return md5_of_request;
 			}
 		};
 
@@ -215,13 +224,15 @@ var initialiseModel = function(api_names) {
 			console.log(cached_response)
 			//check what is the timestamp of the object
 			var timestamp = cached_response.timestamp;
+			console.log(timestamp)
 			//check if the data is fresh enough
 			if (ageOfTimestamp(timestamp) < MAX_CACHE_TIME) {
 				console.log("Cache object is fresh enough");
 				return cached_response.data;
 			} else{
 				//remove it from the cache
-				delete cache[api][cached_response];
+				console.log(cache[api][md5_of_request])
+				delete cache[api][md5_of_request];
 				console.log("Cache object is not fresh enough");
 				return undefined;
 			}
@@ -247,11 +258,12 @@ console.log(Date.now())
 	      data: JSON.stringify(request_object),
 
 	      error: function(error){
+	      	var response = "Status: "+error.status + " " + error.statusText + ", Response: " + error.responseText;
 	        console.log("Status: "+error.status + " " + error.statusText + ", Response: " + error.responseText);
 	        if(error_msg[error.status]){
 	        	err(error_msg[error.status]);
 	        }else{
-	        	err(error);
+	        	err(response);
 	        }
          	return;
 

@@ -16,6 +16,13 @@ var map_init_options  = {
 };
 var map;
 var availableLayers = {};
+var additionalLayerGroup = new L.LayerGroup();
+additionalLayerGroup.statusMap = new Object();
+
+var l1 =  L.tileLayer('http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png', {
+           attribution: 'Map data © OpenWeatherMap',
+            maxZoom: 18
+    });
 
 var domain = document.location.origin;
 
@@ -68,7 +75,12 @@ function setMap(map_init_options){
                         maxZoom: 18,
                         id : 'examples.map-20v6611k'
 		}).addTo(map);
-  new L.control.zoom({position:'bottomleft'}).addTo(map);
+  L.control.zoom({position:'bottomleft'}).addTo(map);
+  additionalLayerGroup.addTo(map);
+  //magnifying glass geocoder from mapbox
+    // map.addControl(L.mapbox.geocoderControl('mapbox.places-v1', {
+    //     autocomplete: true
+    // }));
   return map;
 }
 //add to the map the layers based on the categories available(this comes from the server)

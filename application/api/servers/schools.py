@@ -64,7 +64,7 @@ def getData():
 
 	# Gets the schools' IDs from all pages of the search result
 	# If 'next' exists in the result, there is next page with results
-	
+	print url
 	while True:
 		opened = urllib2.urlopen(url)
 		result = (json.load(opened))['result']
@@ -85,7 +85,8 @@ def getSchoolsData(ids):
 	for x in ids:
 		schools.append(getSingleSchoolData(base_url + str(x) + '.json'))
 
-	return schools
+
+	return json.dumps(schools)
 
 # Gets the data for the current school
 def getSingleSchoolData(link):

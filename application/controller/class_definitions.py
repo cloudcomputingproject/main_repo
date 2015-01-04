@@ -39,3 +39,21 @@ class CircleArea:
 	def formattedOutput(self):
 		output = [self.center[0], self.center[1], radius, radiusFormat]
 		return output
+
+class PointPolygon:
+	def __init__(self, coordinatesArray):
+		self.coordinatesArray = coordinatesArray
+		self.latitudesArray = self.getLatitudes()
+		self.longitudesArray = self.getLongitudes()
+
+	def getLatitudes(self):
+		lats = []
+		for c in self.coordinatesArray:
+			lats.append(c[0])
+		return lats
+
+	def getLongitudes(self):
+		lngs = []
+		for c in self.coordinatesArray:
+			lngs.append(c[1])
+		return lngs

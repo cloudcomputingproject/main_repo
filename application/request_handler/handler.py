@@ -48,35 +48,11 @@ def handleAllDataReq():
 	try:
 		input_data = request.data
 		input_data = json.loads(input_data)	
-
 		response = controller.main(input_data)
-		# if 'geoCoding' in input_data : 
-		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
-		# 	response = "{ \"geoCoding\": %s}" % (response1)
-		# elif  'geoJSON' in input_data:
-		# 	response2 = controller.main(input_data["geoJSON"])
-		# 	response = "{\"geoJSON\": %s}" % (response2)
-
-		# if ('geoCoding' in input_data) & ('geoJSON' in input_data):
-		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
-		# 	response2 = controller.main(input_data["geoJSON"])
-		# 	response = "{ \"geoCoding\": %s, \"geoJSON\": %s}" % (response1,response2)
-		# elif 'geoCoding' in input_data :
-		# 	response1 = controller.getGeoCoding(input_data["geoCoding"])
-		# 	response = "{ \"geoCoding\": %s}" % (response1)
-		# elif  'geoJSON' in input_data:
-		# 	response2 = controller.main(input_data["geoJSON"])
-		# 	response = "{\"geoJSON\": %s}" % (response2)
-
-		#response = controller.main(input_data);
 
 		print "****"
 		print "****"
-		print "****"		
-		#response["geoCoding"] = response1
-		#response["geoJSON"] = response2
-		#response = "all good"
-		#response = json.dumps({"geoCoding" : response1, "geoJSON" : response2});
+		print "****"
 	except NodeExcessException, e:
 		response = e.message, 503
 		print response
@@ -88,11 +64,11 @@ def handleAllDataReq():
 	except ValueError as e:
 		response = str(e),400
 		print response 
-	# finally:
-	# 	print "****"
-	# 	print response
-	# 	return response;
-	return response
+	finally:
+		print "****"
+		print response
+		return response;
+	#return response
 
 @handler.route('/app/geo', methods=['POST'])
 def handleGeoLocReq():
@@ -115,8 +91,7 @@ def handleGeoLocReq():
 def handleDataReq():
 	#extract the data sent from the client
 	#the POST request's body should contain a key-value pair and the name of the key is 'data'
-	
- 	
+
  	response = "There was an error"
 	try:
 	

@@ -1,6 +1,7 @@
 from flask import json, jsonify
 from geojson import Feature, Point, FeatureCollection
 from application.api import external_api
+from application.api.servers import geocoding
 import re
 
 
@@ -110,20 +111,25 @@ def parseFSA(jsondata):
 
 def parseHouseListing(jsondata):
 	data = json.loads(jsondata)
-	data = data['listings']
 	features = []
 
 	for item in data:
-		lat = item['latitude']
-		lng = item['longitude']
-		price = item['price']
-		currency = item['price_currency']
-		bedroomN = item['bedroom_number']
-		bathN = item['bathroom_number']
-		lastUpdated = item['updated_in_days']
+		lat = item.get('latitude')
+		lng = item.get('longitude')
+		title = item.get('title')
+		price = item.get('price')
+		currency = item.get('price_currency')
+		bedroomN = item.get('bedroom_number')
+		bathN = item.get('bathroom_number')
+		img_height = item.get('img_height')
+		img_width = item.get('img_width')
+		img_url = item.get('img_url')
+		price_type = item.get('price_type')
+		property_type = item.get('property_type')
+		summary = item.get('summary')
 		point = Point((lng, lat)) #this needs to be this way, the other way arround makes UK be Somalia, and we don't want that, do we?
 	#properties = json.dumps({'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated})
-		properties = {'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN,'lastUpdated':lastUpdated} #seems like Feature class is clever enough to turn the object into json itself ;)
+		properties = {'title':title, 'price':price,'currency':currency,'bedroomNumber':bedroomN,'bathNumber':bathN, 'img_height':img_height, 'img_width':img_width, 'img_url':img_url, 'price_type':price_type, 'property_type':property_type, 'summary':summary} #seems like Feature class is clever enough to turn the object into json itself ;)
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
@@ -133,10 +139,10 @@ Parses the received school data. Receives a list of JSON objects for each school
 '''
 def parseSchoolData(listdata):
 	features = []
-
+	data = json.loads(listdata)
 	# for each school
-	for item in listdata:
-		data = json.loads(item)
+	for item in data:
+		#data = json.loads(item)
 
 		# Because not every school provides all types of data, if some data is unavailable a blank space is used
 		name = ' '
@@ -176,8 +182,8 @@ def parseSchoolData(listdata):
 		if 'altEmail' in item:
 			altEmail = item['altEmail']
 
-		point = Point((lat, lng))
-		props = json.dumps({'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail})
+		point = Point((lng, lat))
+		props = {'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail}
 		feature = Feature(geometry=point, properties=props)
 		features.append(feature)
 
@@ -204,8 +210,9 @@ def getSchoolCoordinate(jsonAddress):
 
 	#All spaces in the string need to be replaced with a '+' char for the geocoding API
 	address = re.sub(' ', '+', address)
-	geocode = getGeocodingData(address)
-
-	coordinates = geocode['results']['bounds']['location']
+	geocode = geocoding.getData(address)
+	geo = json.loads(geocode)
+	print geocode
+	coordinates = geocode['results'][0]['geometry']['location']
 
 	return coordinates
