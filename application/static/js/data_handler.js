@@ -229,10 +229,10 @@ var HousesHandler = (function(DataHandler){
 	
 	var handle = function (){
 		var data = constructRequestObject();
-		DataHandler.makeRequest(data, handle_airquality_response,DataHandler.defaultErrorCallback);
+		DataHandler.makeRequest(data, handle_houses_response,DataHandler.defaultErrorCallback);
 	};
 	
-	var handle_airquality_response = function(response){
+	var handle_houses_response = function(response){
 		DataHandler.handle_response( response);
 	};
 
@@ -245,6 +245,37 @@ var HousesHandler = (function(DataHandler){
 			return undefined;
 		}
 		data.listing_type = getDropdownValue(api, 'listing_type');
+		request.args = data;
+		return request;
+	};
+	
+	var module = {handle: handle};
+	
+	return module;
+})(DataHandler);
+var SchoolsHandler = (function(DataHandler){
+	var api = 'schools';
+	
+	var handle = function (){
+		var data = constructRequestObject();
+		DataHandler.makeRequest(data, handle_schools_response,DataHandler.defaultErrorCallback);
+	};
+	
+	var handle_schools_response = function(response){
+		DataHandler.handle_response( response);
+	};
+
+	var constructRequestObject = function(){
+		var request = {};
+		var data = {};
+		request.name = api;
+		data.location = DataHandler.getLocation(api);
+		if(!data.location) {
+			return undefined;
+		}
+		data.gender = getDropdownValue(api, 'gender_type');
+		data.phase = getDropdownValue(api, 'education_phase');
+		data.capacity = false;
 		request.args = data;
 		return request;
 	};
@@ -338,6 +369,7 @@ var DataHandlerMapper = {
 	'restaurant': RestaurantHandler,
 	'geoCoding': GeoCodingHandler,
 	'airquality': AirqualityHandler,
+	'schools': SchoolsHandler,
 	'house': HousesHandler
 
 };
