@@ -56,11 +56,7 @@ function helperAddDataHandlerListeners(klass) {
 // appropriate instance of DataHandler.
 function checkBoxHandler(event, api, update){
     enable_preloader();
-
-    var name = api;
-    console.log(api);
     var layers = getLayers();
-    var layer = layers[api];
     if(!(api in layers)){
         console.log('no layer with this name');
         disable_preloader();
@@ -73,7 +69,7 @@ function checkBoxHandler(event, api, update){
 
     } else {
          // Delete the data in the MapBox layers.
-        removeDataFromAllLayers(api );
+        removeDataFromAllLayers(api);
         disable_preloader();
     }
 }
@@ -105,28 +101,19 @@ function addCollapseListeners(){
         });
     });
 }
- function addDropdownListeners(){
+
+function addDropdownListeners(){
     $(".dropdown li").click(function(index){
-        var api = $(this).attr('api');
         var parent_text_id = "#" + $(this).attr('parent_text_id');
         $(parent_text_id).attr('v', $(this).attr('v'));
         $(parent_text_id).html($(this).text());
         console.log($(this).text());
     });
  }
- // police_checkbox ----> police
-function stripName(nameWithHashtag){
-    if(nameWithHashtag.indexOf('_') === -1){
-        console.log('the id of a checkbox is not set properly');
-        return '';
-    }
-    var temp1 = nameWithHashtag.split("_"); // temp1 = ['#police', "_checkbox"]
-    return temp1[0];
- }
 
 // When collapsing elements, this handles rotating the arrow.
 // name - name of the layer.
- function collapseListener(event,idOfElement) {
+function collapseListener(event,idOfElement) {
     event.preventDefault();
     // Rotate the arrow next to the police categories based on whether we collapse
 	// it or not.
@@ -174,19 +161,23 @@ function isSearchCityTabActive(api){
     
     return isTabActive(id_of_tab);
 }
+
 function isDrawAreaTabActive(api){
     var id_of_tab = 'draw_api_tab_heading_'+api;
     
     return isTabActive(id_of_tab);
 }
+
 function isMixedSearchActive(api){
     var id_of_tab = 'mixed_api_tab_heading_'+api;
     return isTabActive(id_of_tab);
 }
+
 function isAllUkTabActive(api){
      var id_of_tab = 'entire_uk_api_tab_'+api;
     return isTabActive(id_of_tab);
 }
+
 function getSearchCityText(api){
     var id_of_input = '#search_city_'+api;
     if($(id_of_input).length === 0){
@@ -194,15 +185,16 @@ function getSearchCityText(api){
     }
     return $(id_of_input).val();
 }
+
 function getDropdownValue(api, dropdown_name){
     var id = "#dropdown_value_container_" +api+"_"+dropdown_name;
-    var selector = $(id);
     if($(id).length===0){
         return undefined;
     }
     return $(id).attr('v');
     
 }
+
 function addLabel(api, md5){
     var id = "#city_name_container_"  + api;
     var label_name = getNameForLabelFromRequest(api);
