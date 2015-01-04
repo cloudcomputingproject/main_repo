@@ -25,10 +25,13 @@ def getData():
 	global url
 	#json object
 	try:
-		data = urllib2.urlopen(url)
+		data = urllib2.urlopen(url, timeout = 20)
 	except urllib2.URLError, e:
 		url = 'http://data.police.uk/api/'
 		raise NodeExcessException("The nodes returned by your query exceed the 10,000 limit")
+	except Exception as e:
+		url = 'http://data.police.uk/api/'
+		raise
 	else:
 	#for testing purposes
 	#print url
@@ -51,12 +54,15 @@ def getCrimesInAreaData(category, latArr, lngArr, date):
 	for c in category:
 		if c is not None:
 			cat = c
-		url+='crimes-street/' + cat + '?poly='
-		for j in xrange(0, len(latArr)):
-			url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
-		url = url[:-1]
-		url+='&date=' + date
-		result += getData()[1:-1] + ','
+			url+='crimes-street/' + cat + '?poly='
+			for j in xrange(0, len(latArr)):
+				url+=str(latArr[j]) + ',' + str(lngArr[j]) + ':'
+			url = url[:-1]
+			url+='&date=' + date
+			result += getData()[1:-1] + ','
+			if cat is 'all-crime':
+				break
+
 	result = result[:-1] + ']'
 
 	return result
@@ -71,4 +77,4 @@ def lastUpdated():
 
 #http://data.police.uk/api/crimes-street/all-crime?poly=51.6723432,0.148271:51.3849401,0.148271:51.3849401,-0.3514683:51.6723432,-0.3514683&date=2014-09
 #getCategories()
-getCrimesInAreaData(['vehicle-crime', 'other-theft'], [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-08')
+#getCrimesInAreaData(['vehicle-crime', 'other-theft'], [52.268, 52.794, 52.130], [0.543, 0.238, 0.478], '2014-08')
