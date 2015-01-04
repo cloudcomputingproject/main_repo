@@ -30,9 +30,8 @@ def parseCrimes(jsondata):
 		lng =  crime["location"]["longitude"]
 		point = Point((float(lng),float(lat)))
 		category = crime["category"]
-		context = crime["context"]
 		out_stat = crime["outcome_status"]
-		properties = {'category':category,'context':context,'outcome_status':out_stat}
+		properties = {'category':category,'outcome_status':out_stat}
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
