@@ -232,14 +232,101 @@ var WeatherHandler = (function(DataHandler){
 
  	//get the data and send it
 	var handle = function(){
-		var data = constructRequestObject();
-		DataHandler.makeRequest(data,handle_weather_response, DataHandler.defaultErrorCallback);
-		
+		disable_preloader();
+		//console.log(">> action1");
+		handle_weather_locally();
+		//var data = constructRequestObject();
+		//DataHandler.makeRequest(data,handle_weather_response, DataHandler.defaultErrorCallback);
 	};
 	//private methods to WeatherHandler
 
+	var handle_weather_locally = function(){
+		var map_name = getDropdownValue(api, 'listing_type');
+
+		var map_type_addr = {
+			"Temperature" : {
+				"addr" : 'http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png',
+				"opacity" : 0.3
+				},
+			"Clouds" : {		
+				"addr" : 'http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png',
+				"opacity" : 0.8
+			},
+			"Precipitations" : {
+				"addr" : 'http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png',
+				"opacity" : 0.7
+			},
+			"Sea level pressure" : {
+				"addr" : 'http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png',
+				"opacity" : 0.3
+			},
+			"Wind speed" : {
+				"addr" : 'http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png',
+				"opacity" : 0.3
+			},
+			"Snow" : {
+				"addr" : 'http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png',
+				"opacity" : 0.8
+			}
+		}
+		
+		// if given map recognised
+		if(map_type_addr[map_name]){
+			//if the layer was not applied to the map yet
+			if(!additionalLayerGroup.statusMap[map_name]){
+				additionalLayerGroup.clearLayers();			
+				additionalLayerGroup.statusMap[map_name]=true;
+				var newLayer = L.tileLayer(map_type_addr[map_name]["addr"], {
+					 maxZoom: 18,
+					 opacity: map_type_addr[map_name]["opacity"]
+				});
+				newLayer.on("load", function(){
+					disable_preloader();
+					console.log("....loadede");
+				});
+				newLayer.on("loading", function(){
+					enable_preloader();
+					console.log("start loading....");
+				});
+
+				additionalLayerGroup.addLayer(newLayer);
+			}
+		}else{
+			if (map_name==="None") {
+				additionalLayerGroup.clearLayers();
+				additionalLayerGroup.statusMap = new Object();
+			};
+		}
+
+		if (map.getZoom() > 6){
+			map.setZoom(6);
+		}
+
+		// switch(map_name) {
+  //   		case "None":
+  //       		additionalLayerGroup.clearLayers();
+  //       		console.log(">>> NONE");
+
+  //       		break;
+  //   		case "Clouds":
+  //   			additionalLayerGroup.clearLayers();
+  //       		additionalLayerGroup.addLayer(l_cloud);
+  //       		console.log(">>> Cloud");
+        	
+  //       		break;
+  //       	case "Precipitations":
+    			
+  //       		additionalLayerGroup.addLayer(l_snow);
+  //       		console.log(">>> Snow");
+        	
+  //       		break;	
+		// }
+
+		
+	}
+
 	var handle_weather_response = function(response){
-		DataHandler.handle_response( response);
+		DataHandler.handle_response(response);
 
 		//weather specific handling
 	};
