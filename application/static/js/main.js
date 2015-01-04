@@ -100,7 +100,108 @@ function polygonLayerToPolygon(raw_layer){
     polygon.points = n_arr;
     return polygon;
 }
+function getHousesPrettyHtml(json){
+     var bathnumber = json.bathNumber;
+    var bednumber = json.bedroomNumber;
+    var currency = json.currency;
+    var img_height = json.img_height;
+    var img_url = json.img_url;
+    var img_width = json.img_width;
+    var price = json.price;
+    var price_type = json.price_type;
+    var property_type = json.property_type;
+    var summary = json.summary;
+    var title = json.title;
+    var rent_buy = getDropdownValue('house', 'listing_type');
+    var pre_content = summary + '<p><img width='+img_width +'px height='+img_height+' src='+
+    img_url+'></p>';
+    var content = '<tr><td>Bedrooms</td><td>'+bednumber+'</td></tr>'+
+    '<tr><td>Bathrooms</td><td>'+bathnumber+'</td></tr>'+
+    '<tr><td>Rent/buy</td><td>'+rent_buy+'</td></tr>'+
+    '<tr><td>Price</td><td>'+price+'('+price_type+')</td></tr>'+
+    '<tr><td>Property type</td><td>'+property_type+'</td></tr>';
+
+    var html = '<div class="panel panel-info">'+
+  '<!-- Default panel contents -->'+
+  '<div class="panel-heading">'+title+'</div>'+
+  '<div class="panel-body">'+
+  '  <p>'+pre_content + '</p>'+
+  '</div>'+
+  '<!-- Table -->'+
+  '<table class="table">'+content+
+  '</table>'+
+'</div>';
+return html;
+}
+function getRestaurantPrettyHtml(json){
+    var title = json.name;
+    var hygine = json.hygine;  
+    var mang = json.mang;
+    var structural = json.structural;
+
+  var pre_content = "Rating for the following categories";
+    var content = '<tr><td>Hygine</td><td>'+hygine+'</td></tr>'+
+    '<tr><td>Management</td><td>'+mang+'</td></tr>'+
+    '<tr><td>Structural/buy</td><td>'+structural+'</td></tr>';
+
+    var html = '<div class="panel panel-info">'+
+  '<!-- Default panel contents -->'+
+  '<div class="panel-heading">'+title+' </div>'+
+  '<div class="panel-body">'+
+  '  <p>'+pre_content + '</p>'+
+  '</div>'+
+  '<!-- Table -->'+
+  '<table class="table">'+content+
+  '</table>'+
+'</div>';
+return html;
+}
+function getAirqualityPrettyHtml(json){
+     var title = json.title;
+    var pollutionLevel = json.pollutionLevel;  
+
+  var pre_content = "Air quality";
+    var content = '<tr><td>Station</td><td>'+title+'</td></tr>'+
+    '<tr><td>Pollution Level</td><td>'+pollutionLevel+'</td></tr>';
+
+    var html = '<div class="panel panel-info">'+
+  '<!-- Default panel contents -->'+
+  '<div class="panel-heading">'+title+' </div>'+
+  '<div class="panel-body">'+
+  '  <p>'+pre_content + '</p>'+
+  '</div>'+
+  '<!-- Table -->'+
+  '<table class="table">'+content+
+  '</table>'+
+'</div>';
+return html;
+}
+function getPolicePrettyHtml(json){
+     var category = json.category;
+     // var context = json.context;
+     var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
+     var date = json.outcome_status ? json.outcome_status.date : "N/A";
+
+  var pre_content = "Crime details";
+    var content = '<tr><td>Category</td><td>'+category+'</td></tr>'+
+    '<tr><td>Outcome</td><td>'+outcome_status_category+'</td></tr>'+
+    '<tr><td>Date</td><td>'+date+'</td></tr>';
+
+    var html = '<div class="panel panel-info">'+
+  '<!-- Default panel contents -->'+
+  '<div class="panel-heading">'+'Crime'+' </div>'+
+  '<div class="panel-body">'+
+  '  <p>'+pre_content + '</p>'+
+  '</div>'+
+  '<!-- Table -->'+
+  '<table class="table">'+content+
+  '</table>'+
+'</div>';
+return html;
+}
   /**
+    }
+}
 }
 }
 }

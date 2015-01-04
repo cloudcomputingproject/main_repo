@@ -20,7 +20,7 @@ var DataHandler = (function() {
 	var default_err = function(error){
 		//invoke default error action
 		console.log('Default error handler: Error message: ' +error)
-		showError(error)
+		showError(error);
 		disable_preloader();
 
 	};

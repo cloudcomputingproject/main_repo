@@ -73,7 +73,9 @@ function checkBoxHandler(event, api, update) {
 
     }else {
          //delete the data in the MapBox layers.
-        removeDataFromAllLayers(api );
+        removeDataFromAllLayers(api);
+        //remove the listener
+        removeAllLabels(api);
         disable_preloader();
     }
 }
@@ -209,6 +211,8 @@ function addLabel(api, md5){
     var label_name = getNameForLabelFromRequest(api);
     var colors = ["label-red", "label-blue", "label-orange", "label-grey", "label-green"];
     var color = colors[Math.floor(Math.random()*colors.length)]; //pick a random style
+    var new_label_id = '#span_container_' +api+'_'+md5;
+    if($(new_label_id).length !== 0) return; //already have label for this md5
     //append a label next to a main api category to label what data is currently visualised
     //for that api and provide the user with easy way to hide the data for a specific city
     $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'"> \
@@ -237,6 +241,11 @@ function removeLabel(id){
         console.log('id is not $')
     }
         
+}
+function removeAllLabels(api){
+    var id = '#city_name_container_'+api;
+    $(id).empty();
+
 }
 function deleteLabelListener(api, md5, parent_id){
     removeDataFromLayer(api, 'markers', md5);

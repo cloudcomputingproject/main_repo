@@ -97,7 +97,12 @@ var initialiseModel = function(api_names) {
  				geojson.eachLayer(function(l){
 					 
 					var marker = L.marker(l.getLatLng());
-					
+					// console.log(l.feature.properties)
+					// var popup = L.popup();
+
+					marker.bindPopup(JSON.stringify(l.feature.properties));
+    			 
+					// marker.setPopupContent(l.feature.properties)
 					markers.push(marker);
 				});
  				if(markers.length === 0) {
@@ -147,7 +152,8 @@ var initialiseModel = function(api_names) {
 			}
 		*/
 		var cache = {};
-		var MAX_CACHE_TIME = 600000; // 10minutes
+		// var MAX_CACHE_TIME = 10000; // 10secs
+		var MAX_CACHE_TIME = 300000; // 5minutes
 		api_names.forEach(function(api_name){
 			cache[api_name] = {};
 		});
@@ -218,13 +224,15 @@ var initialiseModel = function(api_names) {
 			console.log(cached_response)
 			//check what is the timestamp of the object
 			var timestamp = cached_response.timestamp;
+			console.log(timestamp)
 			//check if the data is fresh enough
 			if (ageOfTimestamp(timestamp) < MAX_CACHE_TIME) {
 				console.log("Cache object is fresh enough");
 				return cached_response.data;
 			} else{
 				//remove it from the cache
-				delete cache[api][cached_response];
+				console.log(cache[api][md5_of_request])
+				delete cache[api][md5_of_request];
 				console.log("Cache object is not fresh enough");
 				return undefined;
 			}
