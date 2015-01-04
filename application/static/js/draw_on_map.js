@@ -44,6 +44,10 @@ function disableDrawing(){
 	}
 	drawControl = undefined;
 }
+function deleteDrawnArea(){
+			featureGroup.clearLayers();
+
+}
 //returns geoJSON with the coordinates of the shape
 function getDrawnAreaBounds(){
 	return area;

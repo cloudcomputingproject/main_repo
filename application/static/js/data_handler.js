@@ -10,6 +10,7 @@ var DataHandler = (function() {
 	// @cb -  callback, the APIHandler passes this function 
 	// @err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
+ 
 		console.log('controller sending request to the model, request data:');
 		console.log(post_data);
 		Model.query(post_data, cb, err);
@@ -18,6 +19,7 @@ var DataHandler = (function() {
 	var default_err = function(error){
 		// Invoke default error action.
 		console.log('Default error handler: Error message: ' +error)
+		showError(error);
 		disable_preloader();
 	};
 
@@ -36,22 +38,10 @@ var DataHandler = (function() {
 		disable_preloader();
 		console.log('All visualised')
 		console.log(Date.now())
+ 
 	};
-	
-	var addDataToMap = function (layer, data){	
-		layer = availableLayers[layer]; // Get the MapBox layer.
-		if(!layer){
-			console.log('layer not existing');
-			return;
-		}
-		if(!data){
-			console.log("data from server is empty");
-			return;
-		}
-		layer.clearLayers();
-		layer.addData(data); // Add data to the layer.
-	};
-	
+
+ 
 	var getLocation = function(api){
 		// Check if we are in Search city mode or Draw area mode.
 		var location = {};
