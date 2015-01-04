@@ -73,8 +73,7 @@ function checkBoxHandler(event, api, update) {
 
     }else {
          //delete the data in the MapBox layers.
-        removeDataFromLayer(api, 'heatmap' );
-        removeDataFromLayer(api, 'markers' );
+        removeDataFromAllLayers(api );
         disable_preloader();
     }
 }
@@ -148,6 +147,8 @@ function stripName(nameWithHashtag){
 };
 
 function setDefaultData(){
+enable_preloader();
+
   setDefaultCheckboxes();
   PoliceHandler.handle(); //this will load and show the default data
  }
@@ -202,6 +203,60 @@ function getDropdownValue(api, dropdown_name){
     }
     return $(id).attr('v');
     
+}
+function addLabel(api, md5){
+    var id = "#city_name_container_"  + api;
+    var label_name = getNameForLabelFromRequest(api);
+    var colors = ["label-red", "label-blue", "label-orange", "label-grey", "label-green"];
+    var color = colors[Math.floor(Math.random()*colors.length)]; //pick a random style
+    //append a label next to a main api category to label what data is currently visualised
+    //for that api and provide the user with easy way to hide the data for a specific city
+    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'"> \
+        '+label_name+' | \
+        <a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" \
+        href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> \
+        <strong>✖</strong> \
+        </a> \
+        </span>');
+    //add listener for the label.
+    $("#"  + api+"_"+md5).click(function(){
+        var api = $(this).attr('api');
+        var md5 = $(this).attr('md5');
+        var parent_id ="#"+ $(this).attr('a_parent');
+        console.log(parent_id)
+        deleteLabelListener(api, md5, parent_id);
+    });
+}
+//id should be jquery element
+function removeLabel(id){
+    if(id && id.remove){
+        id.remove();
+
+        console.log(id)
+    } else{
+        console.log('id is not $')
+    }
+        
+}
+function deleteLabelListener(api, md5, parent_id){
+    removeDataFromLayer(api, 'markers', md5);
+    removeDataFromLayer(api, 'heatmap', md5);
+    console.log(parent_id)
+    removeLabel($(parent_id));
+}
+function getNameForLabelFromRequest(api){
+    //check if name was used
+    if(isSearchCityTabActive(api)){
+        return getSearchCityText(api);
+    } else if (isDrawAreaTabActive(api)){
+        return 'drawn'
+    } else if(isMixedSearchActive(api)){
+        return getMixedSearchText(api);
+    } else {
+        console.log('unrecognised tab')
+        return ':))'
+    }
+
 }
 //returns an object containt the coordinates of the centre of the map
 //and the current zoom
