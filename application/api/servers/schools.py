@@ -64,16 +64,20 @@ def getData():
 
 	# Gets the schools' IDs from all pages of the search result
 	# If 'next' exists in the result, there is next page with results
-	print url
-	while True:
-		opened = urllib2.urlopen(url)
-		result = (json.load(opened))['result']
-		ids = ids + (getCurrentPageIds(result['items']))
-		if 'next' in result:
-			url = result['next']
-		else:
-			break
+	try:
+		while True:
+			opened = urllib2.urlopen(url)
+			result = (json.load(opened))['result']
+			ids = ids + (getCurrentPageIds(result['items']))
+			if 'next' in result:
+				url = result['next']
+			else:
+				break
+	except Exception as e:
+		url = 'http://education.data.gov.uk/doc/school.json'
+		raise
 
+	url = 'http://education.data.gov.uk/doc/school.json'
 	return getSchoolsData(ids)
 
 # Gets the data for all schools
@@ -81,7 +85,8 @@ def getSchoolsData(ids):
 	base_url = 'http://education.data.gov.uk/doc/school/'
 
 	schools = []
-
+	
+	ids = ids[1:60]
 	for x in ids:
 		schools.append(getSingleSchoolData(base_url + str(x) + '.json'))
 
