@@ -57,7 +57,7 @@ function setMap(map_init_options){
 
 	var mapLink1 = "tile.openstreetmap.org";
 	var mapLink2 = "tiles.mapbox.com/v3/{id}";
-	var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
+	L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
                         maxZoom: 18,
                         id : 'examples.map-20v6611k'
 		}).addTo(map);

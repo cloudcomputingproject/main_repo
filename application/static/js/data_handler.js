@@ -308,7 +308,7 @@ var GeoCodingHandler = (function(DataHandler){
 		// This is the default action.
 		if (map){
 			zoomTo(getCenter(response.data),DEFAULT_ZOOM+5);      
-		}else{
+		} else {
 			init();
 		}
 	};
