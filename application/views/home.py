@@ -30,12 +30,28 @@ def homepage():
 	#away, without having to make consequetive requests 
 	dataToSend = {
 		'categoriesAPI': controller.getCategoriesAPI(),
-		'policeCategories': controller.getPoliceCategories()
+		'policeCategories': controller.getPoliceCategoriesWithUrl()
+
 		# 'policeCategories': controller.getPoliceCategories()
 	}
-
 	dataToSend = json.dumps(dataToSend,separators=(',', ':'))
 	return render_template('home/home.html', dataToSend=dataToSend)
+
+# this returns the html for the Control of the map
+@home.route('/app/control_panel')
+def control_panel():
+	policeCategories = controller.getPoliceCategoriesWithUrl()
+	all_categories = controller.getCategoriesAPI()
+	# we dont want to visualise the geoGoding on the Map Control
+	try:
+		all_categories.remove('geocoding')
+	except ValueError:
+		pass
+  	template_data = {
+	'all_api_categories': all_categories,
+	'policeCategories': policeCategories
+	}
+	return render_template('map_control/main.html', template_data = template_data)
 
 @home.route('/<page_name>')
 def renderPage(page_name):

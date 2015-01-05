@@ -1,101 +1,71 @@
+ /*
+ Entry point of the front end
+ The model and the view are initialised here
+ The map is initialised here
+The control panel(the side panel on the right) is initialised here.
+ */
  // global variables
-var DEFAULT_LOCATION = "United Kingdom";
-var DEFAULT_ZOOM = 5;
+var DEFAULT_LOCATION_NAME = "United Kingdom";
+var DEFAULT_centerLocation = L.latLng(55.378051,-3.435973);
+var DEFAULT_northEast = L.latLng(60.8606697,33.916555);
+var DEFAULT_southWest = L.latLng(34.5625145,-8.649357199999999);
+var DEFAULT_ZOOM = 6;
 
+var map_init_options  = {
+    centerLocation: DEFAULT_centerLocation, 
+    zoomLevel: DEFAULT_ZOOM,
+    mapbox_access_token: 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg'        
+};
 var map;
-var availableLayers = new Object();
-var MAX_CACHE_AGE = 600; //600sec = 10minutes
-var cache = new Object();
 
 var domain = document.location.origin;
 
-function init(locationName, zoomLevel){
+//entry point for the front end logic
+$(document).ready(function() {
+	init();
+	attachButtonListeners();
+});
 
-	if (!map){
 
-		$.ajax({
-	    	type: "POST",
-	    	url: domain+'/app/geo',
-	    	dataType: "json",
-	    	contentType: "application/json",
-	    	data: JSON.stringify({"name": encodeURIComponent(locationName)}),
-	    	success:  function(json){
-	    
-	        	// convert name to coordinates using /api/2/
-	        	var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-	                            json["results"][0]["geometry"]["location"]["lng"]);
-	        	// Sitting bounds
-	        	var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-	                         json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-	        	var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-	                         json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
-	        	bounds = L.latLngBounds(southWest, northEast);
-	        
-				//set up MapBox
-	        	L.mapbox.accessToken = 'pk.eyJ1IjoiY2hpcHNhbiIsImEiOiJqa0JwV1pnIn0.mvduWzyRdcHxK_QIOpetFg';
-				map = L.mapbox.map('map').setView(centerLocation, zoomLevel);
+//get the coordinates for the initial location
+//and then using them, set up the map,
+//add it's ControlPanel,
+//initialise the layers on the map,
+//	and add default content to them(this is done by initLayer)
+function init(){
+  if(!map){
+    setMap(map_init_options);
+  } 
+    initModel();
+    initView();
+    addControlPanel(); 
 
-	        	var mapLink1 = "tile.openstreetmap.org";
-	        	var mapLink2 = "tiles.mapbox.com/v3/{id}"
-	        	var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
-	                                maxZoom: 18,
-	                                id : 'examples.map-20v6611k'
-	       		}).addTo(map);
-
-	        	// the Control Panle showing the different layers
-	        	//(the method is implemented in controls.js)
-	        	addControlPanel(); 
-	        	initLayers();  
-	      	}
-	    });
-	}
 }
-//add to the map the layers based on the categories available(this comes from the server)
-//then add the default content to the map and set the checkboxes on the control panel.
-function initLayers(){
- 
-  	var serverData = getServerData(); //this is the data passed as a variable when rendering the template
-  	var layerData = serverData['categoriesAPI']; //all the types of data we support
- 
-    //create layers
-    //dictionary to store layer (name,reference) //map to store feature type : layers, which will later be used to filter information
-    for (var i = 0; i < layerData.length; i++) {
-        availableLayers[layerData[i]] = L.geoJson(false, {
-        style: function (feature) {
-              return feature.properties && feature.properties.style;
-              },
-            onEachFeature: onEachFeature,
-            pointToLayer: drawFeature
-        }).addTo(map);
-        cache[layerData[i]] = -1; //init the cache for each layer
-    }
- 
-    //make a request for the default data to be displayed
-    //TO-DO make a request for the police data
-    //add the data to the layers and show it
-    displayData([data, data2], availableLayers);
-    //set the value of the checkboxes based on what data is initially visualised
-    //so basically set the default checkboxes
-    setCheckboxes([data,data2]);
+function zoomTo(centerLoation, zoomLevel){
+  if (map){
+    map.setZoom(200);      
+    map.panTo(centerLoation);            
+    map.setZoom(zoomLevel);      
+    map.setView(centerLoation);    
+  }
 }
 
-//sets the checkboxes of the Control panel 
-//@arr is the default feature collections being showed
-function setCheckboxes(arr){
-    //get the categories of data used
-    var cats = [];
-    for (var i = 0; i < arr.length; i++) {
-        cats[i] = arr[i]['properties']['type'];
-    };
-    //set the checkbox value
-    for (var i = 0; i < cats.length; i++) {
-    	//match the id's from the html of the Control panel
-        var name = "#" + cats[i] + "_checkbox"; 
-        console.log($(name));
+function setMap(map_init_options){
 
-        $(name).prop("checked", true);
-    };
+	L.mapbox.accessToken = map_init_options.mapbox_access_token;
+	map = L.mapbox.map('map',  null, { zoomControl:false }).setView(map_init_options.centerLocation, map_init_options.zoomLevel);
+
+	var mapLink1 = "tile.openstreetmap.org";
+	var mapLink2 = "tiles.mapbox.com/v3/{id}";
+	var tiles = L.tileLayer('http://{s}.'+mapLink1+'/{z}/{x}/{y}.png', {
+                        maxZoom: 18,
+                        id : 'examples.map-20v6611k'
+		}).addTo(map);
+  L.control.zoom({position:'bottomleft'}).addTo(map);
+ 
+  return map;
 }
+
 //this function gets the data which is passed from the controller trhrouh the
 //template engine.
 //the data is attached to an html element attribute( the #map <div> in our case)
@@ -104,66 +74,33 @@ function getServerData(){
   // console.log(x);
   return data;
 }
-var zoomTo = function(locationName, zoomLevel) {
+ 
+function getAPINames(){
+  var server_data = getServerData();
+  return server_data.categoriesAPI;
+}
 
-	$.ajax({
-      type: "POST",
-      url: domain+'/app/geo',
-      dataType: "json",
-      contentType: "application/json",
-      data: JSON.stringify({"name": encodeURIComponent(locationName)}),//locationName.replace(/\s/g, '%20')}),
-      
-      success:  function(json){
-    
-        var centerLocation = L.latLng(json["results"][0]["geometry"]["location"]["lat"],
-                         json["results"][0]["geometry"]["location"]["lng"]);
-
-        // Bounds
-
-        if (L.latLng(json["results"][0]["geometry"]["bounds"])){
-          var northEast = L.latLng(json["results"][0]["geometry"]["bounds"]["northeast"]["lat"],
-                       json["results"][0]["geometry"]["bounds"]["northeast"]["lng"]);
-          var southWest = L.latLng(json["results"][0]["geometry"]["bounds"]["southwest"]["lat"],
-                         json["results"][0]["geometry"]["bounds"]["southwest"]["lng"]);
-
-          bounds = L.latLngBounds(southWest, northEast);
-        }
-
-        // Map not inialized
-        if (!map){
-          init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-        }
-
-        // Map initialised  
-        else{   
-          map.setZoom(200);      
-          map.panTo(centerLocation);
-          //map.setMaxBounds(bounds);
-          map.setZoom(zoomLevel);      
-          map.setView(centerLocation);       
-        }
-        // displayData([data,data2],availableLayers);
-    }
-   });
-
-};
-$(document).ready(function(){
-
-  init(DEFAULT_LOCATION, DEFAULT_ZOOM);
-
-  $("#go").on('click', function(){
-    //alert("Clicked");
-    zoomTo($("#location").val(),10);
+function attachButtonListeners(){
+  $("#toggle_nav").on('click', function(){
+    $('#main_nav').toggle({duration: 600});
+ 
   });
+	$("#go").on('click', function(){
+	    enable_preloader();
+      var handler = DataHandlerMapper["geoCoding"];
+      handler.handle();
+      disable_preloader();
+	    
+	});
 
-  $("#location").keypress(function(event){
-    if ( event.which == 13 ) {
-     $('#go').click();
-  }
-  });
+	$("#location").keypress(function(event){
+		if ( event.which == 13 ) {
+			$('#go').click();
+		}
+	});
 
-  $("#reset").on('click', function(){
-    zoomTo(DEFAULT_LOCATION, DEFAULT_ZOOM);
-  });
+	$("#reset").on('click', function(){
+		zoomTo(DEFAULT_centerLocation, DEFAULT_ZOOM);
 
-});
+	});
+}

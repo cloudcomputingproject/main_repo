@@ -1,0 +1,36 @@
+{# uncomment the head when testing the template using /app/control_panel #}
+
+{#
+<head>
+	<!-- Latest compiled and minified CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+</head>
+  #}
+<div class="panel-group" id="accordion_main" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingZero">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion_main" href="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
+                <span class="glyphicon glyphicon-cog glyphicon-lg"></span> Data Controls</a>
+            </h4>
+        </div>
+
+ 			<div id="collapseZero" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingZero">
+            <div class="panel-body">
+	            <!-- checkboxes for switching between Markers/Heatmap(/Both) -->
+	           
+	           <!-- begin control content -->
+	           {% include '/map_control/main_content.html' %}
+	           <!-- end control content -->
+            </div>
+</div>
+</div>
+</div>

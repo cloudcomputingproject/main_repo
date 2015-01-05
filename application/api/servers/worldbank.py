@@ -1,6 +1,5 @@
 """
 handles interaction with the worldbank api
-
 """
 import urllib2
 import json

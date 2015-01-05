@@ -1,0 +1,36 @@
+{#
+generate a collapsable list of <li> with checkboxes before them 
+http://getbootstrap.com/javascript/#collapse
+  
+	@name - this will appear in the head section of the collapsable element
+	@api - under which main API category the collapsable will exist
+	@occurance - 1 indexed.(1, 2, 3....) - if under one API category 
+	we need more than one collapsable element, we need to enumarate them appropriately
+	@values - the array of values to add to the collapsable
+	
+	returns - div element which can be collapsed, with content <li> checkboxes(the first checkbox is always preselected)
+#}
+{% macro collapsable(name, api,occurance, values, check_first) -%}
+<div>
+<div class="panel-group" id="accordion_{{api}}_{{occurance}}" role="tablist" aria-multiselectable="true" style="margin-top:15px">
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="heading{{api}}{{occurance}}">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion_{{api}}_{{occurance}}" href="#collapse{{api}}{{occurance}}" aria-expanded="true" aria-controls="collapse{{api}}{{occurance}}" id ="{{api}}_collapsable_{{occurance}}" class='api_accordion'>
+				<span id='span_arrow_collapse{{api}}{{occurance}}' class='glyphicon glyphicon-chevron-down right-side-panel-dropdown'></span> {{name}} </a>
+			</h4>
+		</div>
+		<div id="collapse{{api}}{{occurance}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{api}}{{occurance}}">
+			<div class="panel-body">
+				<div id="{{api}}_checkboxes_{{occurance}}">
+				{% for item in values%}
+ 					<input type="checkbox" class="{{api}}_collapsable_{{occurance}}" id="{{item[0]}}" {%- if loop.index==1  and check_first %}checked{% endif %}> <label for="{{item[0]}}">{{item[1]}}</label><br/>
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<hr>
+{%- endmacro %}

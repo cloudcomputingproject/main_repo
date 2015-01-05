@@ -2,21 +2,24 @@
 <html lang="en" class="no-js">
 {% set bootstrap_version = '3.0.0' %}
 {% set modernizer_version = '2.6.2' %}
-{% set jquery_version = '1.9.1' %}
+{% set jquery_version = '1.11.2' %}
 {% set parsley_version = '1.1.16' %}
 {% set awesome_version = '4.0.1' %}
 {% set bootswatch_version = '3.0.0' %}
-{% set bootswatch_theme = 'cyborg' %}
+{% set bootswatch_theme = 'paper' %}
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-    <title>{% block title%}Flask on App Engine{% endblock %}</title>
+    <title>{% block title%}TerraCognita{% endblock %}</title>
     <link href="//netdna.bootstrapcdn.com/bootstrap/{{ bootstrap_version }}/css/bootstrap.min.css" rel="stylesheet" />
     <link href="//netdna.bootstrapcdn.com/font-awesome/{{ awesome_version }}/css/font-awesome.min.css" rel="stylesheet" >
-    <link href="//netdna.bootstrapcdn.com/bootswatch/{{ bootswatch_version }}/{{ bootswatch_theme }}/bootstrap.min.css" rel="stylesheet" >
-    <style>  </style> <!-- Bootstrap -->
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+
+    <!-- <link href="//netdna.bootstrapcdn.com/bootswatch/{{ bootswatch_theme }}/bootstrap.min.css" rel="stylesheet" > -->
+    <!-- <link href="http://bootswatch.com/readable/bootstrap.min.css" rel="stylesheet" > -->
+
     <link href="/static/css/main.css" rel="stylesheet" />
     <link rel="shortcut icon" href="/static/img/favicon.ico" />
     {% block style_block %}{# page-specific CSS #}{% endblock %}
@@ -25,8 +28,9 @@
 </head>
 <body>
 
-        {% include 'includes/nav.html' %} {# pull in navbar #}
-
+   {% include 'includes/nav.html' %} {# pull in navbar #}
+    <img id="preloader" style='display:none' src={{ url_for('static', filename='img/preloader.gif')}}>    
+ 
     <div class="container" id="maincontent">
         {% include 'includes/flash_message.html' %} {# page-level feedback notices #}
         <div id="body_content">
@@ -39,9 +43,15 @@
         </div><!-- /footer -->
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/{{ jquery_version }}/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+
     <script src="//netdna.bootstrapcdn.com/bootstrap/{{ bootstrap_version }}/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/{{ parsley_version }}/parsley-standalone.min.js"></script>
     <script src="/static/js/main.js"></script>
+<<<<<<< HEAD
+=======
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js"></script>
+>>>>>>> release/first_release
     {% block tail_script %}{# defer-capable JS block #}{% endblock %}
     {{ profiler_includes|safe }}
 </body>

@@ -1,7 +1,3 @@
-"""
-handles interaction with the worldbank api
-
-"""
 import urllib2
 import json
 
@@ -36,15 +32,24 @@ API_KEY = "AIzaSyAXZycyWt-ZGGooaAycfCyfZuV1W5uKBGg"
 
 components = "components=country:UK"
 def getData(address):
+	address = urllib2.quote(address, safe="%/:=&?~#+!$,;'@()*[]")
 	url = "https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&"+components+"&"+"sensor=false"+"&"+"key="+API_KEY
 	request = urllib2.urlopen(url)	
-	result = json.load(request)
+	#result = json.load(request)
 	
+	return request.read()
+
+def getBounds(address):
+	locationData = json.loads(getData(address))
+	try:
+		bounds = locationData["results"][0]["geometry"]["bounds"]
+	except Exception, e:
+		bounds = locationData["results"][0]["geometry"]["viewport"]
+	result = [[bounds["northeast"]["lat"], bounds["northeast"]["lng"]],[bounds["southwest"]["lat"], bounds["southwest"]["lng"]]]
 	return result
 
-
-
-
-
-
-
+def getCoordinates(address):
+	locationData = json.loads(getData(address))
+	location = locationData["results"][0]["geometry"]["location"]
+	result = [location["lat"], location["lng"]]
+	return result

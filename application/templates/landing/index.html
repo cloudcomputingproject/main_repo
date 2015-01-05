@@ -5,8 +5,8 @@
 <!--<![endif]-->
 	<head>
 		<meta charset="utf-8">
-		<title>TerraCognita | Free Powerful Theme by HtmlCoder</title>
-		<meta name="description" content="TerraCognita a Bootstrap-based, Responsive HTML5 Template">
+		<title>TerraCognita</title>
+		<meta name="description" content="TerraCognita - visualise data on a map">
 		<meta name="author" content="htmlcoder.me">
 
 		<!-- Mobile Meta -->
@@ -129,11 +129,12 @@
 					<div class="row">
 						<div class="col-md-8 col-md-offset-2 object-non-visible" data-animation-effect="fadeIn">
 							<h1 class="text-center">We are <span>TerraCognita</span></h1>
-							<p class="lead text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos debitis provident nulla illum minus enim praesentium repellendus ullam cupiditate reiciendis optio voluptatem, recusandae nobis quis aperiam, sapiente libero ut at.<br>
-							<!-- <a href="{{request.headers['HOST']}}" class="btn btn-primary btn-lg" role="button"> -->
-							<a href="{{app_url}}" class="btn btn-primary btn-lg" role="button">
-      Go to the App!
-   </a></p>
+							<p class="lead text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos debitis provident nulla illum minus enim praesentium repellendus ullam cupiditate reiciendis optio voluptatem, recusandae nobis quis aperiam, sapiente libero ut at.
+							<br>
+
+							<a target="_blank" href="{{app_url}}" class="btn btn-success btn-lg" role="button">
+      						Go to the App!
+   							</a></p>
 						</div>
 					</div>
 				</div>
@@ -226,6 +227,25 @@
 				</div>
 			</div>
 		</div>
+		<!-- section end -->
+<!-- <div class="section clearfix object-non-visible" data-animation-effect="fadeIn">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<h1 id="about" class="title text-center">Example Map</h1>
+						<p class="lead text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta officia, aspernatur.</p>
+						<div class="space"></div>
+						<div class="row">
+							<div class="col-md-12">
+							
+ 							</div>
+							 
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div> -->
 		<!-- section end -->
 
 		<!-- section start -->
@@ -1093,6 +1113,8 @@
 
 		<!-- Custom Scripts -->
 		<script type="text/javascript" src="{{ url_for('landing.static', filename ='js/custom.js')}}"></script>
+			<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.4/mapbox.js'></script>
+
 
 	</body>
 </html>

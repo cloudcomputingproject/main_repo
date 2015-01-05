@@ -6,3 +6,108 @@
 .nowrap { white-space: nowrap; }
 
 /* Your customizations here */
+/*the X on the labels of cities in the Conrol of the Map*/
+
+.label_delete strong{  
+	color:red;
+}
+/* unvisited link */
+.label_delete :link {
+    color: red;
+}
+
+/* visited link */
+.label_delete :visited {
+    color: red;
+}
+
+/* mouse over link */
+.label_delete :hover {
+    color: red;
+}
+
+/* selected link */
+.label_delete :active {
+    color: red;
+}
+
+.leaflet-draw {
+	margin-top: 100px !important;
+}
+.leaflet-draw-actions li a{
+	color:white !important;
+}
+
+.custom_alert{
+position: fixed;
+    /* center the element */
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    /* give it dimensions */
+    min-height: 10em;
+    width: 50%;
+}
+#stop_ajax { 
+    /* fixed position a zero-height full width container */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    /* center all inline content */
+    text-align: center;
+    z-index: 10000;
+}
+
+#stop_ajax > div {
+    /* make the block inline */
+    display: inline-block;
+    /* reset container's center alignment */
+    text-align: left;
+    z-index: 10000;
+
+}
+.no_select_text{
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+ 
+}
+
+#accordion_main{
+    overflow: auto;
+    max-height: 95vh;
+    margin-right: 5px;
+}
+.glyphicon-lg{
+    font-size: 18px;
+  line-height: 1.33;
+}
+
+
+.label-red {
+    background-color:#E8464B;
+    color:#f0f0f0;
+}
+.label-blue {
+    background-color:#469FE8;
+    color:#f0f0f0;
+}
+.label-orange {
+    background-color:#E87C46;
+    color:#f0f0f0;
+}
+.label-grey {
+    background-color:#9C9C9C;
+    color:#f0f0f0;
+}
+.label-green {
+    background-color:#4DDB73;
+    color:#f0f0f0;
+}

@@ -1,157 +1,131 @@
-/*var NavControl =  L.Control.extend({
-    options: {
-        position: 'topleft'
-    },
+//this class is responisble for creating the Control of the map(the panel on the right)
+//It adds all listeners on DOM elements of the Control
+//getters and setters for elements of the Control are added here 
 
-    onAdd: function (map) {
-        // create the control container with a particular class name
-        //(tag,class-name,container) returns HTML element
-        var container = L.DomUtil.create('div', 'navigation-control');
-        var textBox = L.DomUtil.create('input','textBox',container);
-        textBox.setAttribute("id","location");
-        textBox.setAttribute("value","London");
-        //make the go Btn
-        var goBtn = L.DomUtil.create('button','button',container);
-        goBtn.setAttribute('type','button');
-        goBtn.setAttribute('value','click');
-        goBtn.setAttribute('id','goo');
-        goBtn.innerHTML = "Go";
-        var resetBtn = L.DomUtil.create('button','button',container);
-        resetBtn.setAttribute('type','button');
-        resetBtn.setAttribute('value','click');
-        resetBtn.setAttribute('id','reset');
-        resetBtn.innerHTML = "Reset Map";
-        // ... initialize other DOM elements, add listeners, etc.
-        console.log($("#goo"));
- $("#goo").on('click', function(){
-    alert("Clicked");
-    zoomTo($("#location").val(),10);
-  });
-        return container;
-    }
-});
-*/
 function addControlPanel(){
-    //initialise the Panel control - this would
-    //create the DOM elements.
+    // Initialise the Panel control - this would
+    // create the DOM elements.
     map.addControl(new PanelControl());
-    //after the DOM elements are created, we add listeners to them,
-    //and append another elements
-        $.ajax({
-             url: 'static/includes/control_panel.html',
-             success: function(data) {
-                console.log(data);
-                $("#control_panel").html( data ); //set the content of control_panel to this html
-                // $("#police_checkbox").prop('checked', true); //by default police is checked
-                //append the categories of crimes under Police.
-                addPoliceCategories();
+    // After the DOM elements are created, we add listeners to them
+    // and append another elements.
+	$.ajax({
+		 url: 'app/control_panel',
+		 success: function(response) {
+			$("#control_panel").html( response ); //set the content of control_panel to this html
+		 
+			addDataHandlerListeners();
+			addCollapseListeners();
 
-                //these listeners will show/hide map layers
-                //they depend that the id attributes of the corresponding html elements(checkboxes) are
-                //set with accordance to the names of the data categories we support
-                //so in the html of the control panel, the id of the checkbox for the police layer
-                //will be  police_checkbox
-                //the 'police' bit is also the name of the layer for this data. it is also
-                //equal to the data type that the server supports.
-                addCheckBoxListeners();
-                 //set the default data category  to be visualised
-            },
-            //we want sync. request, so the html is loaded before we call setCheckboxes()
-            async: false
-        }); 
+			setDefaultData();
+			
+		},
+	}); 
 }
 
-var PanelControl = L.Control.extend({
-    options: {
-        position: 'topright'
-    },
-    onAdd: function (map) {
-        //c is the main container for the control panel
-        var c = L.DomUtil.create('div', 'navigation-control');
-        c.setAttribute('id', 'control_container');
-        L.DomEvent.disableClickPropagation(c); //if click/drag/zoom on the panel, the map won't react
-        var container = L.DomUtil.create('div', 'navv', c);
-        container.setAttribute('id', 'control_panel');
-        return c;
-    }
-}); 
+function addDataHandlerListeners(){
+    addUpdateButtonListeners();
+    addCheckBoxListeners();
+    addTabsListener();
+    addDropdownListeners();
+    addAllCimesListener();
+    addEnterListener();
+}
+// Listener for the Update button.
+function addUpdateButtonListeners(){
+    helperAddDataHandlerListeners('update_map_btn');
+}
 
+// Handles when a checkbox of an API category is clicked.
 function addCheckBoxListeners(){
-    $('#police_checkbox').click(function(event){var $this = $(this); checkBoxHandler(event, $this);});
-    $('#restaurant_checkbox').click(function(event){var $this = $(this);checkBoxHandler(event, $this)});
+    helperAddDataHandlerListeners('main_api_category');
  }
+ // For each element with class (@klass because class is JS reserved keyword)
+ // get the element api, and assign the appropriate data handler to it.
+function helperAddDataHandlerListeners(klass) {
+    $("." + klass).each(function(index) {
+        var api  = $(this).attr('api');
+        var handler = DataHandlerMapper[api];
+        if(!handler || !handler.handle){
+            console.log(api +' - cannot find handler');
+            return;
+        }
+        $(this).click(function(event){checkBoxHandler(event, api, handler.handle);});
+    });
+}
 
-function checkBoxHandler(event, $this) {
-    var name = stripName($this.attr('id'));
-    console.log(name);
-    var layer = availableLayers[name];
-    if(!layer){
+// Handles when a checkbox of an API category is clicked.
+// Each layer this handler is addin/removing to the map
+// is the layer for the API category. Theses layers are 
+// added to availableLayers on page load by initLayers();   
+// update is the handle() function comming from the 
+// appropriate instance of DataHandler.
+function checkBoxHandler(event, api, update){
+    enable_preloader();
+    var layers = getLayers();
+    if(!(api in layers)){
         console.log('no layer with this name');
+        disable_preloader();
         return; 
     }
 
-    if($this.is(':checked')){
-         //check if we have the data AND it is not expired
-        if(checkIfDataHasExpired(name)){
-            //make a request which will update the availableLayers
-            //TO-DO
-            console.log('expired')
-        }
-        layer = availableLayers[name];
-        map.addLayer(layer);
+    if($('#'+api+'_checkbox').is(':checked')) {
+         // Update will invoke the data handler module.
+        update();
+
+
     }else {
-         map.removeLayer(layer);
+         //delete the data in the MapBox layers.
+        removeDataFromAllLayers(api);
+        //remove the listener
+        removeAllLabels(api);
+        disable_preloader();
     }
 }
+// When switching between the Search by city name tab and the Draw area tab.
+function addTabsListener(){
+	$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		var action = $(e.target).attr('action') ;
+		if(action === 'draw'){
+			var api = $(e.target).attr('api');
+			var allowedShapes = $('#draw_api_tab_'+api).attr('allowed_shapes');
+			if(allowedShapes){
+				allowedShapes = allowedShapes.split(' ');
+				enableDrawing(allowedShapes);    
+			} else{
+				console.log('no allowedShapes defined');
+			}
+		} else {
+			disableDrawing();
+		}
+	});
+}
 
-function addPoliceCategories(){
-    var server_json = $('#map').data('fromserver');
-
-    var categories = server_json.policeCategories;  
-    categories.forEach(function(el){
-        var str = '<input type="checkbox" id="'+el+'"/>'+ el+ '<br/>';
-        $('#police_categories_checkboxes').append(str);
+function addCollapseListeners(){
+     $(".api_accordion").each(function(index){
+        $(this).click(function(event){
+            var idOfCollapsable = $(this).attr('aria-controls');
+            collapseListener(event, idOfCollapsable);
+        });
     });
-    $("#police_categories").click(function(event){collapseListener(event, 'collapsePoliceCategories')});
-
 }
- //police_checkbox   ----> police
-function stripName(nameWithHashtag){
-    if(nameWithHashtag.indexOf('_') === -1){
-        console.log('the id of a checkbox is not set properly');
-        return '';
-    }
-    var temp1 = nameWithHashtag.split("_"); //temp1 = ['#police', "_checkbox"]
-    return temp1[0];
+
+function addDropdownListeners(){
+    $(".dropdown li").click(function(index){
+        var parent_text_id = "#" + $(this).attr('parent_text_id');
+        $(parent_text_id).attr('v', $(this).attr('v'));
+        $(parent_text_id).html($(this).text());
+    });
  }
- //name - name of the layer
-function checkIfDataHasExpired(name){
-    //check if the data was set x minutes ago or less
-    var lastSet = cache[name]; //when the cache was last updated.
-    console.log('cache:' + lastSet);
-    if(lastSet < 0)  { //true if cache was never set
-        return true;
-    }
-    var now = Math.round(new Date().getTime() / 1000); // SECONDS since 1970
-    var ageOfData = now - lastSet;
-    //if the data is older than the maximum time we allow the data to be cached for
-    if(ageOfData <= MAX_CACHE_AGE){
-        return false;
-    } else{
-        return true;
-    }
 
-}
-
-//when collapsing elements, this handles rotating the arrow
- function collapseListener(event,idOfElement) {
+// When collapsing elements, this handles rotating the arrow.
+// name - name of the layer.
+function collapseListener(event,idOfElement) {
     event.preventDefault();
-    //rotate the arrow next to the police categories based on whether we collapse it or not
-    //check if it is collapsed
+    // Rotate the arrow next to the police categories based on whether we collapse
+	// it or not.
+    // Check if it is collapsed.
     var name = "#"+idOfElement;
-    console.log(name);
-    var classes = $(name).attr('class').split(' ');
-    if(classes.indexOf('in') !== -1){ //contains 'in' - not collapsed
+    if($(name).hasClass('in')){ //contains 'in' - not collapsed
         $('#span_arrow_' + idOfElement).removeClass('glyphicon-chevron-down');
         $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-right');
     } else{
@@ -159,5 +133,232 @@ function checkIfDataHasExpired(name){
         $('#span_arrow_' + idOfElement).addClass('glyphicon-chevron-down');
     }
     return true;
+}
 
-};
+function addAllCimesListener(){
+    $('.police_collapsable_1').each(function(){
+        if($(this).attr('id') !== 'all-crime'){
+            $(this).attr("disabled","disabled");
+        }
+    });
+    $('#all-crime').click(function(){
+        if($(this).is(':checked')){
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime'){
+                    $(this).prop('checked', false);
+                    $(this).attr("disabled","disabled");
+                }
+            });
+        } else {
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime')
+                    $(this).removeAttr("disabled"); 
+            });
+        }
+    });
+}
+function addEnterListener(){
+    $('.press-enter').each(function(){
+        var $this = $(this);
+        $(this).keyup(function(event){
+            if(event.keyCode === 13){
+                $('#' + $this.attr('api') + "_update_map").click();
+            }
+        });
+    });
+}
+function setDefaultData(){
+	enable_preloader();
+	setDefaultCheckboxes();
+	// Load and show the default data. 
+	PoliceHandler.handle();
+}
+ 
+// The default data to be displayed on page load is police all crimes.
+function setDefaultCheckboxes(){
+    $("#police_checkbox").prop('checked', true);
+}
+
+function isTabActive(id){
+    id = "#"+id;
+    if($(id).length === 0){
+        console.log("tab doesnt exist");
+        return false;
+    }
+    return ($(id).hasClass('active'));
+}
+
+/*Helper functions */
+
+//find the Search city tab for the given API 
+//and check if it is visible
+function isSearchCityTabActive(api){
+
+    var id_of_tab = 'search_api_tab_heading_'+api;
+    
+    return isTabActive(id_of_tab);
+}
+
+function isDrawAreaTabActive(api){
+    var id_of_tab = 'draw_api_tab_heading_'+api;
+    
+    return isTabActive(id_of_tab);
+}
+
+function isMixedSearchActive(api){
+    var id_of_tab = 'mixed_api_tab_heading_'+api;
+    return isTabActive(id_of_tab);
+}
+
+function isAllUkTabActive(api){
+     var id_of_tab = 'entire_uk_api_tab_'+api;
+    return isTabActive(id_of_tab);
+}
+
+function getSearchCityText(api){
+    var id_of_input = '#search_city_'+api;
+    if($(id_of_input).length === 0){
+        return '';
+    }
+    return $(id_of_input).val();
+}
+
+function getDropdownValue(api, dropdown_name){
+    var id = "#dropdown_value_container_" +api+"_"+dropdown_name;
+    if($(id).length===0){
+        return undefined;
+    }
+    return $(id).attr('v');
+    
+}
+
+function addLabel(api, md5){
+    var id = "#city_name_container_"  + api;
+    var label_name = getNameForLabelFromRequest(api);
+    var colors = ["label-red", "label-blue", "label-orange", "label-grey", "label-green"];
+ 
+    var color = colors[Math.floor(Math.random()*colors.length)]; //pick a random style
+    var new_label_id = '#span_container_' +api+'_'+md5;
+    if($(new_label_id).length !== 0) return; //already have label for this md5
+    //append a label next to a main api category to label what data is currently visualised
+    //for that api and provide the user with easy way to hide the data for a specific city
+ 
+ 
+    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'">'+
+        label_name+' |' +
+        '<a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" '+
+        'href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> '+
+        '<strong>✖</strong> '+
+        '</a> '+
+        '</span>');
+ 
+    //add listener for the label.
+    $("#"  + api+"_"+md5).click(function(){
+        var api = $(this).attr('api');
+        var md5 = $(this).attr('md5');
+        var parent_id ="#"+ $(this).attr('a_parent');
+        deleteLabelListener(api, md5, parent_id);
+    });
+}
+
+// ID should be a jQuery element.
+function removeLabel(id){
+    if(id && id.remove){
+        id.remove();
+    } else {
+        console.log('id is not $');
+    }
+        
+}
+ 
+function removeAllLabels(api){
+    var id = '#city_name_container_'+api;
+    $(id).empty();
+
+}
+ 
+function deleteLabelListener(api, md5, parent_id){
+    removeDataFromLayer(api, 'markers', md5);
+    removeDataFromLayer(api, 'heatmap', md5);
+    removeLabel($(parent_id));
+    if(isDrawAreaTabActive(api)){
+        deleteDrawnArea();
+    }
+}
+
+function getNameForLabelFromRequest(api){
+    //check if name was used
+    if(isSearchCityTabActive(api)){
+        return getSearchCityText(api);
+    } else if (isDrawAreaTabActive(api)){
+        return 'Drawn';
+    } else if(isMixedSearchActive(api)){
+        return getMixedSearchText(api);
+    } else {
+        console.log('unrecognised tab');
+        return ':))';
+    }
+}
+
+// Returns an object containing the coordinates of the centre of 
+// the map and the current zoom.
+function getDrawCoordinates(){
+    var result = getDrawnAreaBounds();
+    return result;
+}
+
+function getMixedSearchText(api){
+    var id = '#mixed_city_'+api;
+    if($(id).length === 0) {
+        console.log('cannot find mixed search');
+        return '';
+    }
+    return $(id).val();
+}
+
+// Array of Render modes the user has selected for the given API.
+// The defaults are currently HeatMap and Markers.
+function getRenderMode(api){
+    var result = [];
+    $(".render_mode_"+api).each(function(el){
+        if($(this).is(':checked')){
+            result.push($(this).attr('mode'));
+        }
+    });
+    return result;
+}
+
+function setMainApiCategoryCheckbox(api,bool){
+    var id = "#"+ api +"_checkbox";
+    $(id).prop(checked, bool);
+}
+
+function getApiDate(api){
+    var id = "#date_selector_"+api;
+    if ($(id).length === 0) return undefined;
+    return $(id).val();
+}
+
+function showError(content){
+    $('#error_content').text(content);
+    $("#alert_container").show();
+    $("#alert_close_button").click(function(){
+        $("#alert_container").hide();
+    });
+}
+
+// Consturct the Control panel main DOM elements.
+var PanelControl = L.Control.extend({
+    options: {
+        position: 'topright'
+    },
+    onAdd: function (map) {
+        // c is the main container for the control panel.
+        var c = L.DomUtil.create('div', 'navigation-control');
+        c.setAttribute('id', 'control_container');
+        L.DomEvent.disableClickPropagation(c); // If click/drag on the panel, the map won't react.
+        var container = L.DomUtil.create('div', 'navv', c);
+        container.setAttribute('id', 'control_panel');
+        return c;
+    }
+});

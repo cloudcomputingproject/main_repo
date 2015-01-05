@@ -1,0 +1,4 @@
+{% import '/map_control/misc/select_location.html' as s %}
+{% import '/map_control/misc/dropdown.html' as d %}
+
+{{s.select_location(main_api_category, ['polygon'], false)}} {# shapes should be non_space delimited#}
