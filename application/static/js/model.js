@@ -241,12 +241,17 @@ var initialiseModel = function(api_names) {
 
 	return {query: query};
 };
-
+function abortAjaxRequest(){
+	if(ajax_request){
+		ajax_request.abort();
+	}
+}
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
+var ajax_request ;
 function makeRequest( request_object, modelResponseHandler, err, cb){
  
-	$.ajax({
+	 ajax_request = $.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
 	      dataType: "json",

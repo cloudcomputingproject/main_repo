@@ -16,9 +16,19 @@ var Utils = {
 };
 
 /* Helper methods, used throughout the application */
+(function ajaxStopListener(){
+    $('#cancel_request').click(function(){
+        abortAjaxRequest();
+        disable_preloader();
 
+    });
+    $("#background_request").click(function(){
+        disable_preloader();
+    });
+})();
+ 
 function enable_preloader(){
-  
+    $('#stop_ajax').show();
     $.blockUI({
         message: $('#preloader'),
          css:  {
@@ -32,6 +42,8 @@ function enable_preloader(){
             } }); 
   }
   function disable_preloader(){
+        $('#stop_ajax').hide();
+
      setTimeout($.unblockUI, 80); 
   }
 //Note: it's in milliseconds :)
