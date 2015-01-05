@@ -44,21 +44,6 @@ def getData():
 	result = result[:-2] + ']'
 
 	url = 'http://api.nestoria.co.uk/api?'
-	data = json.loads(result)
-	for item in data:
-		lat = item.get('latitude')
-		lng = item.get('longitude')
-		title = item.get('title')
-		price = item.get('price')
-		currency = item.get('price_currency')
-		bedroomN = item.get('bedroom_number')
-		bathN = item.get('bathroom_number')
-		img_height = item.get('img_height')
-		img_width = item.get('img_width')
-		img_url = item.get('img_url')
-		price_type = item.get('price_type')
-		property_type = item.get('property_type')
-		summary = item.get('summary')
 
 	return result
 
