@@ -10,7 +10,6 @@ var DataHandler = (function() {
 	// @cb -  callback, the APIHandler passes this function 
 	// @err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
- 
 		console.log('controller sending request to the model, request data:');
 		console.log(post_data);
 		Model.query(post_data, cb, err);
@@ -18,27 +17,23 @@ var DataHandler = (function() {
 
 	var default_err = function(error){
 		// Invoke default error action.
-		console.log('Default error handler: Error message: ' +error)
+		console.log('Default error handler: Error message: ' +error);
 		showError(error);
 		disable_preloader();
 	};
 
 	var handle_response = function(data){
-		console.log('handle_respnse data:')
-		console.log(data)
+		console.log('handle_respnse data:');
+		console.log(data);
 		// If this method is executed, it means the Model returned a valid response
 		// (containing valid data).
 		// So, delegate it to the view to handle and
 		// set the checkbox to checked for the given API.
 		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
-		console.log(response_data)
-		console.log(response_api)
 		View.handle(data, response_api);
 		disable_preloader();
-		console.log('All visualised')
-		console.log(Date.now())
- 
+		console.log('All visualised');
 	};
 
  
@@ -252,7 +247,7 @@ var WeatherHandler = (function(DataHandler){
 				});
 				newLayer.on("load", function(){
 					disable_preloader();
-					console.log("....loadede");
+					console.log("....loaded");
 				});
 				newLayer.on("loading", function(){
 					enable_preloader();
@@ -368,7 +363,7 @@ var GeoCodingHandler = (function(DataHandler){
 
 	// This method is called when the server has returned the data.
 	var handle_geoCoding_response = function(response){
-		console.log("====== > handle_geoCoding_response");
+		console.log("====== > handle_geoCoding_response:");
 		console.log(response);
 		// This is the default action.
 		if (map){
