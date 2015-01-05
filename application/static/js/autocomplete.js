@@ -12,7 +12,6 @@ jQuery(function ()
 		minLength: 2,
 		select: function (event, ui) {
 			var selectedObj = ui.item;
-			console.log(JSON.stringify(selectedObj));
 			jQuery("#location").val(selectedObj.value);
 			return false;
 		},
