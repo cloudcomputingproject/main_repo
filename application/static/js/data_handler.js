@@ -185,7 +185,7 @@ var RestaurantHandler = (function(DataHandler){
 		var data = {};
 		data.location = DataHandler.getLocation(api);
 		if(data.location ===undefined) return undefined;
-
+		data.name = getMixedSearchRestaurant(api);
 		request.args = data;
 		return request;
 	};
@@ -308,7 +308,7 @@ var GeoCodingHandler = (function(DataHandler){
 		// This is the default action.
 		if (map){
 			zoomTo(getCenter(response.data),DEFAULT_ZOOM+5);      
-		}else{
+		} else {
 			init();
 		}
 	};

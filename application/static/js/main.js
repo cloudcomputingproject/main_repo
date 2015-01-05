@@ -2,7 +2,7 @@ var Utils = {
     renderFieldErrorTooltip: function (selector, msg, placement) {
         var elem;
         if (typeof placement === 'undefined') {
-            placement = 'right'; // default to right-aligned tooltip
+            placement = 'right'; // Default to right-aligned tooltip.
         }
         elem = $(selector);
         elem.tooltip({'title': msg, 'trigger': 'manual', 'placement': placement});
@@ -32,72 +32,75 @@ function enable_preloader(){
     $('#stop_ajax').show();
     $.blockUI({
         message: $('#preloader'),
-         css:  {
-                border: 'none', 
-                padding: '15px', 
-                backgroundColor: '#000', 
-                '-webkit-border-radius': '10px', 
-                '-moz-border-radius': '10px', 
-                opacity: 0.5, 
-                color: '#fff' 
-            } }); 
-  }
-  function disable_preloader(){
-        $('#stop_ajax').hide();
+         css: {
+            border: 'none', 
+            padding: '15px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: 0.5, 
+            color: '#fff' 
+        }
+	}); 
+}
 
-     setTimeout($.unblockUI, 80); 
-  }
-//Note: it's in milliseconds :)
+function disable_preloader(){
+    $('#stop_ajax').hide();
+	setTimeout($.unblockUI, 80); 
+}
+
+// Timestamp in milliseconds.
 function ageOfTimestamp(timestamp){
     var now = Date.now();
     return now - timestamp;
 }
+
 function getAPIFromRequestObject(request_object){
-    // console.log(request_object)
     if(request_object && request_object.name){
         return request_object.name;
     }
     return undefined;
  
 }
-//get the name of the api from the response from the server
+
+// Get the name of the api from the response from the server.
 function getResponseApi(response){
-    // console.log(response)
     if(response && response.data && response.data.api) {
         return response.data.api;
     }
     return undefined;
 }
-//get the actual geoJSON from the response
+
+// Get the actual geoJSON from the response.
 function getResponseData(response){
-    console.log(response)
     if(response && response.data) {
         return response.data;
     }
     return undefined;
 }
-//convert a geoJSON object to
-//a data structure containing
-//the center location and the radius
+
+// Convert a geoJSON object to
+// a data structure containing
+// the center location and the radius.
 function circleLayerToCircle(raw_layer){
     var circle = {};
-
-    circle['type'] = 'area';
-    circle['radius'] = raw_layer.getRadius();
-    circle['lat'] = raw_layer.getgetLatLng().lat;
-    circle['long'] = raw_layer.getgetLatLng().lng;
+    circle.type = 'area';
+    circle.radius = raw_layer.getRadius();
+    circle.lat = raw_layer.getgetLatLng().lat;
+    circle.long = raw_layer.getgetLatLng().lng;
     return circle;
 }
+
 function rectangleLayerToRectangle(raw_layer){
   var rectangle = {};
-
-    rectangle['type'] = 'rectangle';
+    rectangle.type = 'rectangle';
     var northEast = raw_layer.getBounds().getNorthWest();
-    rectangle['northEast'] = [northEast.lat, northEast.lng];
+    rectangle.northEast = [northEast.lat, northEast.lng];
     var southWest = raw_layer.getBounds().getSouthWest();
-    rectangle['southWest'] = [southWest.lat, southWest.lng];
+    rectangle.southWest = [southWest.lat, southWest.lng];
     return rectangle;
 }
+
 function polygonLayerToPolygon(raw_layer){
     var polygon = {};
     polygon.type = 'polygon';
@@ -112,6 +115,7 @@ function polygonLayerToPolygon(raw_layer){
     polygon.points = n_arr;
     return polygon;
 }
+
 function getHousesPrettyHtml(json){
      var bathnumber = json.bathNumber ? json.bathNumber : "N/A";
     var bednumber = json.bedroomNumber ? json.bedroomNumber : "N/A";
@@ -128,89 +132,89 @@ function getHousesPrettyHtml(json){
     var pre_content = summary + '<p><img width='+img_width +'px height='+img_height+' src='+
     img_url+'></p>';
     var content = '<tr><td>Bedrooms</td><td>'+bednumber+'</td></tr>'+
-    '<tr><td>Bathrooms</td><td>'+bathnumber+'</td></tr>'+
-    '<tr><td>Rent/buy</td><td>'+rent_buy+'</td></tr>'+
-    '<tr><td>Price</td><td>'+price+'('+price_type+')</td></tr>'+
-    '<tr><td>Property type</td><td>'+property_type+'</td></tr>';
-
+		'<tr><td>Bathrooms</td><td>'+bathnumber+'</td></tr>'+
+		'<tr><td>Rent/buy</td><td>'+rent_buy+'</td></tr>'+
+		'<tr><td>Price</td><td>'+price+'('+price_type+')</td></tr>'+
+		'<tr><td>Property type</td><td>'+property_type+'</td></tr>';
     var html = '<div class="panel panel-info">'+
-  '<!-- Default panel contents -->'+
-  '<div class="panel-heading">'+title+'</div>'+
-  '<div class="panel-body">'+
-  '  <p>'+pre_content + '</p>'+
-  '</div>'+
-  '<!-- Table -->'+
-  '<table class="table">'+content+
-  '</table>'+
-'</div>';
-return html;
+		'<!-- Default panel contents -->'+
+		'<div class="panel-heading">'+title+'</div>'+
+		'<div class="panel-body">'+
+		'  <p>'+pre_content + '</p>'+
+		'</div>'+
+		'<!-- Table -->'+
+		'<table class="table">'+content+
+		'</table>'+
+		'</div>';
+	return html;
 }
+
 function getRestaurantPrettyHtml(json){
     var title = json.name ? json.name : 'N/A';
-    var hygine = json.hygine ? json.hygine : "N/A";  
-    var mang = json.mang ? json.man : "N/A";
+    var hygiene = json.hygiene ? json.hygiene : "N/A";  
+    var management = json.management ? json.management : "N/A";
     var structural = json.structural ? json.structural : "N/A";
 
-  var pre_content = "Rating for the following categories";
-    var content = '<tr><td>Hygine</td><td>'+hygine+'</td></tr>'+
-    '<tr><td>Management</td><td>'+mang+'</td></tr>'+
-    '<tr><td>Structural</td><td>'+structural+'</td></tr>';
+	var pre_content = "Rating for the following categories";
+    var content = '<tr><td>Hygiene</td><td>'+hygiene+'</td></tr>'+
+		'<tr><td>Management</td><td>'+management+'</td></tr>'+
+		'<tr><td>Structural</td><td>'+structural+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
-  '<!-- Default panel contents -->'+
-  '<div class="panel-heading">'+title+' </div>'+
-  '<div class="panel-body">'+
-  '  <p>'+pre_content + '</p>'+
-  '</div>'+
-  '<!-- Table -->'+
-  '<table class="table">'+content+
-  '</table>'+
-'</div>';
-return html;
+		'<!-- Default panel contents -->'+
+		'<div class="panel-heading">'+title+' </div>'+
+		'<div class="panel-body">'+
+		'  <p>'+pre_content + '</p>'+
+		'</div>'+
+		'<!-- Table -->'+
+		'<table class="table">'+content+
+		'</table>'+
+		'</div>';
+	return html;
 }
+
 function getAirqualityPrettyHtml(json){
-     var title = json.title;
+    var title = json.title;
     var pollutionLevel = json.pollutionLevel;  
 
-  var pre_content = "Air quality";
+	var pre_content = "Air quality";
     var content = '<tr><td>Station</td><td>'+title+'</td></tr>'+
-    '<tr><td>Pollution Level</td><td>'+pollutionLevel+'</td></tr>';
+		'<tr><td>Pollution Level</td><td>'+pollutionLevel+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
-  '<!-- Default panel contents -->'+
-  '<div class="panel-heading">'+title+' </div>'+
-  '<div class="panel-body">'+
-  '  <p>'+pre_content + '</p>'+
-  '</div>'+
-  '<!-- Table -->'+
-  '<table class="table">'+content+
-  '</table>'+
-'</div>';
-return html;
+		'<!-- Default panel contents -->'+
+		'<div class="panel-heading">'+title+' </div>'+
+		'<div class="panel-body">'+
+		'  <p>'+pre_content + '</p>'+
+		'</div>'+
+		'<!-- Table -->'+
+		'<table class="table">'+content+
+		'</table>'+
+		'</div>';
+	return html;
 }
+
 function getPolicePrettyHtml(json){
     var category = json.category;
-    // var context = json.context;
     var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
     var date = json.outcome_status ? json.outcome_status.date : "N/A";
-
     var pre_content = "Crime details";
     var content = '<tr><td>Category</td><td>'+category+'</td></tr>'+
-    '<tr><td>Outcome</td><td>'+outcome_status_category+'</td></tr>'+
-    '<tr><td>Date</td><td>'+date+'</td></tr>';
-
+		'<tr><td>Outcome</td><td>'+outcome_status_category+'</td></tr>'+
+		'<tr><td>Date</td><td>'+date+'</td></tr>';
     var html = '<div class="panel panel-info">'+
-    '<!-- Default panel contents -->'+
-    '<div class="panel-heading">'+'Crime'+' </div>'+
-    '<div class="panel-body">'+
-    '  <p>'+pre_content + '</p>'+
-    '</div>'+
-    '<!-- Table -->'+
-    '<table class="table">'+content+
-    '</table>'+
-    '</div>';
+		'<!-- Default panel contents -->'+
+		'<div class="panel-heading">'+'Crime'+' </div>'+
+		'<div class="panel-body">'+
+		'  <p>'+pre_content + '</p>'+
+		'</div>'+
+		'<!-- Table -->'+
+		'<table class="table">'+content+
+		'</table>'+
+		'</div>';
     return html;
 }
+
 function getSchoolsPrettyHtml(json){
     var capacity = json.capacity ? json.capacity : "N/A" ;
     var gender = json.gender ? json.gender : "N/A" ;
@@ -218,32 +222,31 @@ function getSchoolsPrettyHtml(json){
     var temp = json.phase_of_education;
     var phase = "";
     if(temp){
-      phase = json.phase_of_education.label ? json.phase_of_education.label : "N/A";
-    }else{
-        phase = "N/A"
+		phase = json.phase_of_education.label ? json.phase_of_education.label : "N/A";
+    } else {
+        phase = "N/A";
     }
     var establishment = json.type_of_establishment ? json.type_of_establishment : "N/A";
     var religious = json.religious_character ? json.religious_character : "N/A";
-    // var context = json.context;
     var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
- 
+	
     var pre_content = "School details";
     var content = '<tr><td>Capacity</td><td>'+capacity+'</td></tr>'+
-    '<tr><td>Gender</td><td>'+gender+'</td></tr>'+
-    '<tr><td>Establishment</td><td>'+establishment+'</td></tr>'+
-    '<tr><td>Religious character</td><td>'+religious+'</td></tr>'+
-    '<tr><td>Phase of education</td><td>'+phase+'</td></tr>';
+		'<tr><td>Gender</td><td>'+gender+'</td></tr>'+
+		'<tr><td>Establishment</td><td>'+establishment+'</td></tr>'+
+		'<tr><td>Religious character</td><td>'+religious+'</td></tr>'+
+		'<tr><td>Phase of education</td><td>'+phase+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
-    '<!-- Default panel contents -->'+
-    '<div class="panel-heading">'+name+' </div>'+
-    '<div class="panel-body">'+
-    '  <p>'+pre_content + '</p>'+
-    '</div>'+
-    '<!-- Table -->'+
-    '<table class="table">'+content+
-    '</table>'+
-    '</div>';
+		'<!-- Default panel contents -->'+
+		'<div class="panel-heading">'+name+' </div>'+
+		'<div class="panel-body">'+
+		'  <p>'+pre_content + '</p>'+
+		'</div>'+
+		'<!-- Table -->'+
+		'<table class="table">'+content+
+		'</table>'+
+		'</div>';
     return html;
 }
 
@@ -280,32 +283,32 @@ var MD5 = function (string) {
         } else {
             return (lResult ^ lX8 ^ lY8);
         }
-     }
+    }
  
-     function F(x,y,z) { return (x & y) | ((~x) & z); }
-     function G(x,y,z) { return (x & z) | (y & (~z)); }
-     function H(x,y,z) { return (x ^ y ^ z); }
+    function F(x,y,z) { return (x & y) | ((~x) & z); }
+    function G(x,y,z) { return (x & z) | (y & (~z)); }
+    function H(x,y,z) { return (x ^ y ^ z); }
     function I(x,y,z) { return (y ^ (x | (~z))); }
  
     function FF(a,b,c,d,x,s,ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(F(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
  
     function GG(a,b,c,d,x,s,ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(G(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
  
     function HH(a,b,c,d,x,s,ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(H(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
  
     function II(a,b,c,d,x,s,ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(I(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
  
     function ConvertToWordArray(string) {
         var lWordCount;
@@ -328,7 +331,7 @@ var MD5 = function (string) {
         lWordArray[lNumberOfWords-2] = lMessageLength<<3;
         lWordArray[lNumberOfWords-1] = lMessageLength>>>29;
         return lWordArray;
-    };
+    }
  
     function WordToHex(lValue) {
         var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;
@@ -338,7 +341,7 @@ var MD5 = function (string) {
             WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2);
         }
         return WordToHexValue;
-    };
+    }
  
     function Utf8Encode(string) {
         string = string.replace(/\r\n/g,"\n");
@@ -364,7 +367,7 @@ var MD5 = function (string) {
         }
  
         return utftext;
-    };
+    }
  
     var x=Array();
     var k,AA,BB,CC,DD,a,b,c,d;

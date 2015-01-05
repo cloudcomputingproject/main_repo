@@ -279,4 +279,4 @@ function makeRequest( request_object, modelResponseHandler, err, cb){
 			}
  	      }
 	});
-};
+}

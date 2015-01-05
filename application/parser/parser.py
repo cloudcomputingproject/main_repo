@@ -2,6 +2,7 @@ from flask import json, jsonify
 from geojson import Feature, Point, FeatureCollection
 from application.api import external_api
 from application.api.servers import geocoding
+from application.controller.exceptions import GeocodingLimitException
 import re
 
 
@@ -94,7 +95,7 @@ def parseFSA(jsondata):
 		name = item['BusinessName']
 		lat = item['Geocode']['Latitude']
 		lng = item['Geocode']['Longitude']
-		if(type(item['Scores']['Hygiene']) is not dict):
+		if type(item['Scores']['Hygiene']) is not dict:
 			hygiene = item['Scores']['Hygiene']
 			mang = item['Scores']['ConfidenceInManagement']
 			structural = item['Scores']['Structural']
@@ -174,7 +175,11 @@ def parseSchoolData(listdata):
 			religiousChar = item['religiousCharacter']['label']
 
 		# each school's address in JSON format, uses a helper function to find the coordinates
-		coordinates = getSchoolCoordinate(item['address'])
+		try:
+			coordinates = getSchoolCoordinate(item['address'])
+		except GeocodingLimitException as e:
+			print 'Geocoding Limit Reached'
+			continue
 		lat = coordinates['lat']
 		lng = coordinates['lng']
 
@@ -215,8 +220,10 @@ def getSchoolCoordinate(jsonAddress):
 	#All spaces in the string need to be replaced with a '+' char for the geocoding API
 	address = re.sub(' ', '+', address)
 	geocode = geocoding.getData(address)
-	geo = json.loads(geocode)
-	
-	coordinates = geo['results'][0]['geometry']['location']
 
-	return coordinates
+	geo = json.loads(geocode)
+	if 'error_message' in geo:
+		raise GeocodingLimitException("Geocoding limit reached")
+	else :
+		coordinates = geo['results'][0]['geometry']['location']
+		return coordinates
