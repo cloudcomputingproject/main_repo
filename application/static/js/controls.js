@@ -1,3 +1,7 @@
+//this class is responisble for creating the Control of the map(the panel on the right)
+//It adds all listeners on DOM elements of the Control
+//getters and setters for elements of the Control are added here 
+
 function addControlPanel(){
     // Initialise the Panel control - this would
     // create the DOM elements.
@@ -42,8 +46,7 @@ function helperAddDataHandlerListeners(klass) {
         var api  = $(this).attr('api');
         var handler = DataHandlerMapper[api];
         if(!handler || !handler.handle){
-            console.log(api);
-            console.log('cannot find handler');
+            console.log(api +' - cannot find handler');
             return;
         }
         $(this).click(function(event){checkBoxHandler(event, api, handler.handle);});
@@ -145,7 +148,7 @@ function addAllCimesListener(){
                     $(this).prop('checked', false);
                     $(this).attr("disabled","disabled");
                 }
-            })
+            });
         } else {
             $('.police_collapsable_1').each(function(){
                 if($(this).attr('id') !== 'all-crime')
@@ -159,7 +162,6 @@ function addEnterListener(){
         var $this = $(this);
         $(this).keyup(function(event){
             if(event.keyCode === 13){
-                console.log('AA')
                 $('#' + $this.attr('api') + "_update_map").click();
             }
         });
@@ -332,7 +334,6 @@ function setMainApiCategoryCheckbox(api,bool){
 }
 
 function getApiDate(api){
-    console.log(api);
     var id = "#date_selector_"+api;
     if ($(id).length === 0) return undefined;
     return $(id).val();

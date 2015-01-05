@@ -66,7 +66,7 @@ function showPolygonArea(e) {
   featureGroup.addLayer(e.layer);
   area = e.layer.toGeoJSON();
   rawLayer = e.layer;
-  console.log(e.layer.getLatLngs())
+  console.log(e.layer.getLatLngs());
   console.log(area);
   e.layer.bindPopup((LGeo.area(e.layer) / 1000000).toFixed(2) + ' km<sup>2</sup>');
   e.layer.openPopup();
