@@ -198,6 +198,41 @@ function getPolicePrettyHtml(json){
     '</div>';
     return html;
 }
+function getSchoolsPrettyHtml(json){
+    var capacity = json.capacity ? json.capacity : "N/A" ;
+    var gender = json.gender ? json.gender : "N/A" ;
+    var name = json.name ? json.name : "N/A" ;
+    var temp = json.phase_of_education;
+    var phase = "";
+    if(temp){
+      phase = json.phase_of_education.label ? json.phase_of_education.label : "N/A";
+    }else{
+        phase = "N/A"
+    }
+    var establishment = json.type_of_establishment ? json.type_of_establishment : "N/A";
+    var religious = json.religious_character ? json.religious_character : "N/A";
+    // var context = json.context;
+    var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
+ 
+    var pre_content = "School details";
+    var content = '<tr><td>Capacity</td><td>'+capacity+'</td></tr>'+
+    '<tr><td>Gender</td><td>'+gender+'</td></tr>'+
+    '<tr><td>Establishment</td><td>'+establishment+'</td></tr>'+
+    '<tr><td>Religious character</td><td>'+religious+'</td></tr>'+
+    '<tr><td>Phase of education</td><td>'+phase+'</td></tr>';
+
+    var html = '<div class="panel panel-info">'+
+    '<!-- Default panel contents -->'+
+    '<div class="panel-heading">'+name+' </div>'+
+    '<div class="panel-body">'+
+    '  <p>'+pre_content + '</p>'+
+    '</div>'+
+    '<!-- Table -->'+
+    '<table class="table">'+content+
+    '</table>'+
+    '</div>';
+    return html;
+}
 
 
  /*

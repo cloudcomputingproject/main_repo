@@ -304,6 +304,33 @@ var initialiseView = function(){
 		return module;
 	})();
 
+	var schoolsViewHandler = (function(){
+		//public method
+		var handle = function(data, api){
+			//use the default one to visualise the data
+			defaultViewHandler(data,api);
+ 			//then attach specific popups to each marker
+			//get the layer with markers for this api 
+			var layer = getLayer(api, 'markers', data.md5_of_request);
+			 
+			if(layer){
+				layer.eachLayer(function(l){
+					var content = l.getPopup().getContent();
+ 					content = JSON.parse(content);
+					var new_content = getSchoolsPrettyHtml(content);
+					l.setPopupContent(new_content);
+				});
+			}else{
+				console.log('no layer :(');
+			}
+
+
+		};
+		//private method
+		var module = {handle: handle}; //houses
+		return module;
+	})();
+
 	var geoCodingViewHandler = (function(){
 		var handle = function(data){ 
 			console.log('geo coding cusomt viewer entered');
@@ -317,6 +344,7 @@ var initialiseView = function(){
 		geocoding: geoCodingViewHandler,
 		airquality: airqualityViewHandler,
 		restaurant: restaurantViewHandler,
+		schools: schoolsViewHandler,
 		police:policeViewHandler
 	};
 

@@ -273,9 +273,6 @@ var SchoolsHandler = (function(DataHandler){
 		if(!data.location) {
 			return undefined;
 		}
-		data.gender = getDropdownValue(api, 'gender_type');
-		data.phase = getDropdownValue(api, 'education_phase');
-		data.capacity = false;
 		request.args = data;
 		return request;
 	};
