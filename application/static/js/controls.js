@@ -23,6 +23,8 @@ function addDataHandlerListeners(){
     addCheckBoxListeners();
     addTabsListener();
     addDropdownListeners();
+    addAllCimesListener();
+    addEnterListener();
 }
 // Listener for the Update button.
 function addUpdateButtonListeners(){
@@ -130,6 +132,39 @@ function collapseListener(event,idOfElement) {
     return true;
 }
 
+function addAllCimesListener(){
+    $('.police_collapsable_1').each(function(){
+        if($(this).attr('id') !== 'all-crime'){
+            $(this).attr("disabled","disabled");
+        }
+    });
+    $('#all-crime').click(function(){
+        if($(this).is(':checked')){
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime'){
+                    $(this).prop('checked', false);
+                    $(this).attr("disabled","disabled");
+                }
+            })
+        } else {
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime')
+                    $(this).removeAttr("disabled"); 
+            });
+        }
+    });
+}
+function addEnterListener(){
+    $('.press-enter').each(function(){
+        var $this = $(this);
+        $(this).keyup(function(event){
+            if(event.keyCode === 13){
+                console.log('AA')
+                $('#' + $this.attr('api') + "_update_map").click();
+            }
+        });
+    });
+}
 function setDefaultData(){
 	enable_preloader();
 	setDefaultCheckboxes();
@@ -205,14 +240,16 @@ function addLabel(api, md5){
     if($(new_label_id).length !== 0) return; //already have label for this md5
     //append a label next to a main api category to label what data is currently visualised
     //for that api and provide the user with easy way to hide the data for a specific city
-	/*jshint multistr: true */
-    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'"> \
-        '+label_name+' | \
-        <a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" \
-        href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> \
-        <strong>✖</strong> \
-        </a> \
-        </span>');
+ 
+ 
+    $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'">'+
+        label_name+' |' +
+        '<a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" '+
+        'href="#" id="'+api+'_'+md5+'" md5="'+md5+'"  api="'+api+'"> '+
+        '<strong>✖</strong> '+
+        '</a> '+
+        '</span>');
+ 
     //add listener for the label.
     $("#"  + api+"_"+md5).click(function(){
         var api = $(this).attr('api');
