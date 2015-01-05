@@ -315,6 +315,14 @@ function getMixedSearchText(api){
     }
     return $(id).val();
 }
+function getMixedSearchRestaurant(api){
+    var id = '#mixed_restaurant_'+api;
+    if($(id).length === 0) {
+        console.log('cannot find mixed search');
+        return '';
+    }
+    return $(id).val();
+}
 
 // Array of Render modes the user has selected for the given API.
 // The defaults are currently HeatMap and Markers.
