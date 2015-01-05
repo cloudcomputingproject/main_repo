@@ -150,8 +150,8 @@ function getHousesPrettyHtml(json){
 
 function getRestaurantPrettyHtml(json){
     var title = json.name ? json.name : 'N/A';
-    var hygine = json.hygine ? json.hygine : "N/A";  
-    var mang = json.mang ? json.man : "N/A";
+    var hygiene = json.hygiene ? json.hygiene : "N/A";  
+    var management = json.management ? json.management : "N/A";
     var structural = json.structural ? json.structural : "N/A";
 
 	var pre_content = "Rating for the following categories";
