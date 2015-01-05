@@ -15,3 +15,9 @@ class ArgumentRequired(Exception):
 		#call base constructor
 		super(ArgumentRequired, self).__init__(message)
 		self.message = message
+
+class GeocodingLimitException(Exception):
+	def __init__(self, message):
+		#call base constructor
+		super(GeocodingLimitException, self).__init__(message)
+		self.message = message
