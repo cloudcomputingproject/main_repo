@@ -66,8 +66,9 @@ def getData():
 	# If 'next' exists in the result, there is next page with results
 	try:
 		while True:
-			opened = urllib2.urlopen(url)
+			opened = urllib2.urlopen(url, timeout=20)
 			result = (json.load(opened))['result']
+
 			ids = ids + (getCurrentPageIds(result['items']))
 			if 'next' in result:
 				url = result['next']
@@ -85,8 +86,8 @@ def getSchoolsData(ids):
 	base_url = 'http://education.data.gov.uk/doc/school/'
 
 	schools = []
-	
-	ids = ids[1:60]
+
+	ids = ids[0:60]
 	for x in ids:
 		schools.append(getSingleSchoolData(base_url + str(x) + '.json'))
 
@@ -96,7 +97,7 @@ def getSchoolsData(ids):
 # Gets the data for the current school
 def getSingleSchoolData(link):
 
-	opened = urllib2.urlopen(link)
+	opened = urllib2.urlopen(link, timeout=20)
 	result = (json.load(opened))['result']
 
 	return result['primaryTopic']
