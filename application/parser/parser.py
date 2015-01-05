@@ -94,7 +94,7 @@ def parseFSA(jsondata):
 		name = item['BusinessName']
 		lat = item['Geocode']['Latitude']
 		lng = item['Geocode']['Longitude']
-		if(type(item['Scores']['Hygiene']) is not dict):
+		if type(item['Scores']['Hygiene']) is not dict:
 			hygiene = item['Scores']['Hygiene']
 			mang = item['Scores']['ConfidenceInManagement']
 			structural = item['Scores']['Structural']
