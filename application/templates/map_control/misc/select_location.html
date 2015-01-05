@@ -1,5 +1,5 @@
 {% import '/map_control/misc/all_uk_checkbox.html' as a %}
-{% macro select_location(api, allowed_shapes) -%}
+{% macro select_location(api, allowed_shapes, can_draw) -%}
 <div id='select_location_{{api}}' role="tabpanel">
 <label class="no_select_text" for="search_city_{{api}}">Select for which location to get data</label>
 <!-- Nav tabs -->
@@ -7,7 +7,9 @@
 <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" id="search_api_tab_heading_{{api}}" class="search_api_tab_{{api}} active"><a href="#search_api_tab_{{api}}"   aria-controls="search_api_tab_{{api}}" role="tab" action='search' data-toggle="tab">Search by city name</a></li>
+    {% if can_draw %}  
     <li class="draw_api_tab_{{api}}" id="draw_api_tab_heading_{{api}}" role="presentation"><a href="#draw_api_tab_{{api}}" action='draw' aria-controls="draw_api_tab_{{api}}" role="tab" data-toggle="tab" api="{{api}}">Draw area with mouse</a></li>
+    {% endif %}
     {# include any custom Location selection ways, if available #}
     {% include '/map_control/misc/location/'~api~'_tab.html' ignore missing %}
   </ul>
@@ -18,10 +20,12 @@
         <br>
         <input type="text" api={{api}} class="form-control press-enter" placeholder="Type city name here..." id="search_city_{{api}}" value="Southampton">
     </div>
+    {% if can_draw %}
     <div role="tabpanel" class="draw_area_tab tab-pane fade" id="draw_api_tab_{{api}}" api={{api}} allowed_shapes="{%for shape in allowed_shapes%}{{shape}}{%if not loop.last%} {% endif %}{% endfor %}" >
     <br>
         Draw on the map the area you want using your mouse
     </div>
+    {% endif %}
     {% include '/map_control/misc/location/'~api~'_content.html' ignore missing %}
 
   </div>

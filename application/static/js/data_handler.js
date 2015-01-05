@@ -172,8 +172,7 @@ var RestaurantHandler = (function(DataHandler){
 
 	var handle_restaurant_response = function(response){
 		DataHandler.handle_response(response);
-		//weather specific handling
-	};
+ 	};
 
  	//this method gets the input from the Control panel
 	//and adds it to the data object 
@@ -199,98 +198,6 @@ var RestaurantHandler = (function(DataHandler){
 })(DataHandler);
 
 
-var WeatherHandler = (function(DataHandler){
-  	var api  = 'weather';
-
- 	// Get the data and send it.
-	var handle = function(){
-		disable_preloader();
-		handle_weather_locally();
-	};
-	
-	/* Private methods */
-
-	var handle_weather_locally = function(){
-		var map_name = getDropdownValue(api, 'listing_type');
-
-		var map_type_addr = {
-			"Temperature" : {
-				"addr" : 'http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png',
-				"opacity" : 0.3
-				},
-			"Clouds" : {		
-				"addr" : 'http://{s}.tile.openweathermap.org/map/clouds/{z}/{x}/{y}.png',
-				"opacity" : 0.8
-			},
-			"Precipitations" : {
-				"addr" : 'http://{s}.tile.openweathermap.org/map/precipitation/{z}/{x}/{y}.png',
-				"opacity" : 0.7
-			},
-			"Sea level pressure" : {
-				"addr" : 'http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png',
-				"opacity" : 0.3
-			},
-			"Wind speed" : {
-				"addr" : 'http://{s}.tile.openweathermap.org/map/wind/{z}/{x}/{y}.png',
-				"opacity" : 0.3
-			},
-			"Snow" : {
-				"addr" : 'http://{s}.tile.openweathermap.org/map/snow/{z}/{x}/{y}.png',
-				"opacity" : 0.8
-			}
-		}
-		
-		// If given map recognised.
-		if(map_type_addr[map_name]){
-			// If the layer was not applied to the map yet.
-			if(!additionalLayerGroup.statusMap[map_name]){
-				additionalLayerGroup.clearLayers();			
-				additionalLayerGroup.statusMap[map_name]=true;
-				var newLayer = L.tileLayer(map_type_addr[map_name]["addr"], {
-					 maxZoom: 18,
-					 opacity: map_type_addr[map_name]["opacity"]
-				});
-				newLayer.on("load", function(){
-					disable_preloader();
-					console.log("....loadede");
-				});
-				newLayer.on("loading", function(){
-					enable_preloader();
-					console.log("start loading....");
-				});
-
-				additionalLayerGroup.addLayer(newLayer);
-			}
-		} else{
-			if (map_name==="None") {
-				additionalLayerGroup.clearLayers();
-				additionalLayerGroup.statusMap = new Object();
-			};
-		}
-
-		if (map.getZoom() > 6){
-			map.setZoom(6);
-		}
-	};
-
-	var handle_weather_response = function(response){
-		DataHandler.handle_response(response);
-
-		//weather specific handling
-	};
-
-
- 	// This method gets the input from the Control panel
-	// and adds it to the data object.
-	var constructRequestObject = function() {
-		var data = {};
-		data.name = api;
-		return data;
-	};
-
-	var module = {handle: handle};
-	return module;
-})(DataHandler);
 
 
 var AirqualityHandler = (function(DataHandler){
@@ -322,10 +229,10 @@ var HousesHandler = (function(DataHandler){
 	
 	var handle = function (){
 		var data = constructRequestObject();
-		DataHandler.makeRequest(data, handle_airquality_response,DataHandler.defaultErrorCallback);
+		DataHandler.makeRequest(data, handle_houses_response,DataHandler.defaultErrorCallback);
 	};
 	
-	var handle_airquality_response = function(response){
+	var handle_houses_response = function(response){
 		DataHandler.handle_response( response);
 	};
 
@@ -338,6 +245,37 @@ var HousesHandler = (function(DataHandler){
 			return undefined;
 		}
 		data.listing_type = getDropdownValue(api, 'listing_type');
+		request.args = data;
+		return request;
+	};
+	
+	var module = {handle: handle};
+	
+	return module;
+})(DataHandler);
+var SchoolsHandler = (function(DataHandler){
+	var api = 'schools';
+	
+	var handle = function (){
+		var data = constructRequestObject();
+		DataHandler.makeRequest(data, handle_schools_response,DataHandler.defaultErrorCallback);
+	};
+	
+	var handle_schools_response = function(response){
+		DataHandler.handle_response( response);
+	};
+
+	var constructRequestObject = function(){
+		var request = {};
+		var data = {};
+		request.name = api;
+		data.location = DataHandler.getLocation(api);
+		if(!data.location) {
+			return undefined;
+		}
+		data.gender = getDropdownValue(api, 'gender_type');
+		data.phase = getDropdownValue(api, 'education_phase');
+		data.capacity = false;
 		request.args = data;
 		return request;
 	};
@@ -429,9 +367,9 @@ var GeoCodingHandler = (function(DataHandler){
 var DataHandlerMapper = {
 	'police': PoliceHandler,
 	'restaurant': RestaurantHandler,
-	'weather': WeatherHandler,
 	'geoCoding': GeoCodingHandler,
 	'airquality': AirqualityHandler,
+	'schools': SchoolsHandler,
 	'house': HousesHandler
 
 };

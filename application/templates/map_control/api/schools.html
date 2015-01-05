@@ -1,0 +1,6 @@
+{% import '/map_control/misc/select_location.html' as s %}
+{% import '/map_control/misc/dropdown.html' as d %}
+
+{{s.select_location(main_api_category, ['polygon'], false)}} {# shapes should be non_space delimited#}
+{{d.dropdown(main_api_category, 'gender_type', ['Boys', 'Girls','Mixed'], 'Select gender')}}
+{{d.dropdown(main_api_category, 'education_phase', ['Primary', 'Secondary'], 'Education phase')}}
