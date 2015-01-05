@@ -101,17 +101,17 @@ function polygonLayerToPolygon(raw_layer){
     return polygon;
 }
 function getHousesPrettyHtml(json){
-     var bathnumber = json.bathNumber;
-    var bednumber = json.bedroomNumber;
-    var currency = json.currency;
-    var img_height = json.img_height;
-    var img_url = json.img_url;
-    var img_width = json.img_width;
-    var price = json.price;
-    var price_type = json.price_type;
-    var property_type = json.property_type;
-    var summary = json.summary;
-    var title = json.title;
+     var bathnumber = json.bathNumber ? json.bathNumber : "N/A";
+    var bednumber = json.bedroomNumber ? json.bedroomNumber : "N/A";
+    var currency = json.currency ? json.currency : "N/A";
+    var img_height = json.img_height ? json.img_height : "N/A";
+    var img_url = json.img_url ? json.img_url : "N/A";
+    var img_width = json.img_width ? json.img_width : "N/A";
+    var price = json.price ? json.price : "N/A";
+    var price_type = json.price_type ? json.price_type : "N/A";
+    var property_type = json.property_type ? json.property_type : "N/A";
+    var summary = json.summary ? json.summary : "N/A";
+    var title = json.title ? json.title : "N/A";
     var rent_buy = getDropdownValue('house', 'listing_type');
     var pre_content = summary + '<p><img width='+img_width +'px height='+img_height+' src='+
     img_url+'></p>';
@@ -134,15 +134,15 @@ function getHousesPrettyHtml(json){
 return html;
 }
 function getRestaurantPrettyHtml(json){
-    var title = json.name;
-    var hygine = json.hygine;  
-    var mang = json.mang;
-    var structural = json.structural;
+    var title = json.name ? json.name : 'N/A';
+    var hygine = json.hygine ? json.hygine : "N/A";  
+    var mang = json.mang ? json.man : "N/A";
+    var structural = json.structural ? json.structural : "N/A";
 
   var pre_content = "Rating for the following categories";
     var content = '<tr><td>Hygine</td><td>'+hygine+'</td></tr>'+
     '<tr><td>Management</td><td>'+mang+'</td></tr>'+
-    '<tr><td>Structural/buy</td><td>'+structural+'</td></tr>';
+    '<tr><td>Structural</td><td>'+structural+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
   '<!-- Default panel contents -->'+
