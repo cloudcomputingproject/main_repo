@@ -155,8 +155,8 @@ function getRestaurantPrettyHtml(json){
     var structural = json.structural ? json.structural : "N/A";
 
 	var pre_content = "Rating for the following categories";
-    var content = '<tr><td>Hygine</td><td>'+hygine+'</td></tr>'+
-		'<tr><td>Management</td><td>'+mang+'</td></tr>'+
+    var content = '<tr><td>Hygiene</td><td>'+hygiene+'</td></tr>'+
+		'<tr><td>Management</td><td>'+management+'</td></tr>'+
 		'<tr><td>Structural</td><td>'+structural+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
