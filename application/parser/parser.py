@@ -31,9 +31,8 @@ def parseCrimes(jsondata):
 		lng =  crime["location"]["longitude"]
 		point = Point((float(lng),float(lat)))
 		category = crime["category"]
-		context = crime["context"]
 		out_stat = crime["outcome_status"]
-		properties = {'category':category,'context':context,'outcome_status':out_stat}
+		properties = {'category':category,'outcome_status':out_stat}
 		feature = Feature(geometry=point,properties=properties)
 		features.append(feature)
 	fc = FeatureCollection(features)
@@ -95,9 +94,14 @@ def parseFSA(jsondata):
 		name = item['BusinessName']
 		lat = item['Geocode']['Latitude']
 		lng = item['Geocode']['Longitude']
-		hygiene = item['Scores']['Hygiene']
-		mang = item['Scores']['ConfidenceInManagement']
-		structural = item['Scores']['Structural']
+		if(type(item['Scores']['Hygiene']) is not dict):
+			hygiene = item['Scores']['Hygiene']
+			mang = item['Scores']['ConfidenceInManagement']
+			structural = item['Scores']['Structural']
+		else:
+			hygiene = 'N/A'
+			mang = 'N/A'
+			structural = 'N/A'
 		#took this approach for pragmatism, some of the data of FSA is corrupt and they send null fields, since there is no point keeping a place that we don't know where it is, I simply ignore it
 		try:
 			point = Point((float(lng), float(lat)))
@@ -212,7 +216,7 @@ def getSchoolCoordinate(jsonAddress):
 	address = re.sub(' ', '+', address)
 	geocode = geocoding.getData(address)
 	geo = json.loads(geocode)
-	print geocode
-	coordinates = geocode['results'][0]['geometry']['location']
+	
+	coordinates = geo['results'][0]['geometry']['location']
 
 	return coordinates

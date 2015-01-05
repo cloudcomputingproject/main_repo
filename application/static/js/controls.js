@@ -23,6 +23,8 @@ function addDataHandlerListeners(){
     addCheckBoxListeners();
     addTabsListener();
     addDropdownListeners();
+    addAllCimesListener();
+    addEnterListener();
 }
 // Listener for the Update button.
 function addUpdateButtonListeners(){
@@ -83,7 +85,6 @@ function addTabsListener(){
 		if(action === 'draw'){
 			var api = $(e.target).attr('api');
 			var allowedShapes = $('#draw_api_tab_'+api).attr('allowed_shapes');
-			console.log(allowedShapes);
 			if(allowedShapes){
 				allowedShapes = allowedShapes.split(' ');
 				enableDrawing(allowedShapes);    
@@ -110,7 +111,6 @@ function addDropdownListeners(){
         var parent_text_id = "#" + $(this).attr('parent_text_id');
         $(parent_text_id).attr('v', $(this).attr('v'));
         $(parent_text_id).html($(this).text());
-        console.log($(this).text());
     });
  }
 
@@ -132,6 +132,39 @@ function collapseListener(event,idOfElement) {
     return true;
 }
 
+function addAllCimesListener(){
+    $('.police_collapsable_1').each(function(){
+        if($(this).attr('id') !== 'all-crime'){
+            $(this).attr("disabled","disabled");
+        }
+    });
+    $('#all-crime').click(function(){
+        if($(this).is(':checked')){
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime'){
+                    $(this).prop('checked', false);
+                    $(this).attr("disabled","disabled");
+                }
+            })
+        } else {
+            $('.police_collapsable_1').each(function(){
+                if($(this).attr('id') !== 'all-crime')
+                    $(this).removeAttr("disabled"); 
+            });
+        }
+    });
+}
+function addEnterListener(){
+    $('.press-enter').each(function(){
+        var $this = $(this);
+        $(this).keyup(function(event){
+            if(event.keyCode === 13){
+                console.log('AA')
+                $('#' + $this.attr('api') + "_update_map").click();
+            }
+        });
+    });
+}
 function setDefaultData(){
 	enable_preloader();
 	setDefaultCheckboxes();
@@ -146,7 +179,6 @@ function setDefaultCheckboxes(){
 
 function isTabActive(id){
     id = "#"+id;
-    console.log(id);
     if($(id).length === 0){
         console.log("tab doesnt exist");
         return false;
@@ -209,6 +241,7 @@ function addLabel(api, md5){
     //append a label next to a main api category to label what data is currently visualised
     //for that api and provide the user with easy way to hide the data for a specific city
  
+ 
     $(id).append('<span id="span_container_'+api+'_'+md5+'" class="badge badge-default '+color+'">'+
         label_name+' |' +
         '<a class="label_delete" a_parent="span_container_'+api+'_'+md5+'" '+
@@ -216,12 +249,12 @@ function addLabel(api, md5){
         '<strong>✖</strong> '+
         '</a> '+
         '</span>');
+ 
     //add listener for the label.
     $("#"  + api+"_"+md5).click(function(){
         var api = $(this).attr('api');
         var md5 = $(this).attr('md5');
         var parent_id ="#"+ $(this).attr('a_parent');
-        console.log(parent_id);
         deleteLabelListener(api, md5, parent_id);
     });
 }
@@ -230,7 +263,6 @@ function addLabel(api, md5){
 function removeLabel(id){
     if(id && id.remove){
         id.remove();
-        console.log(id);
     } else {
         console.log('id is not $');
     }
@@ -246,7 +278,6 @@ function removeAllLabels(api){
 function deleteLabelListener(api, md5, parent_id){
     removeDataFromLayer(api, 'markers', md5);
     removeDataFromLayer(api, 'heatmap', md5);
-    console.log(parent_id);
     removeLabel($(parent_id));
     if(isDrawAreaTabActive(api)){
         deleteDrawnArea();
@@ -258,9 +289,7 @@ function getNameForLabelFromRequest(api){
     if(isSearchCityTabActive(api)){
         return getSearchCityText(api);
     } else if (isDrawAreaTabActive(api)){
- 
-        return 'Drawn'
- 
+        return 'Drawn';
     } else if(isMixedSearchActive(api)){
         return getMixedSearchText(api);
     } else {
@@ -294,7 +323,6 @@ function getRenderMode(api){
             result.push($(this).attr('mode'));
         }
     });
-    console.log(result);
     return result;
 }
 
@@ -306,13 +334,9 @@ function setMainApiCategoryCheckbox(api,bool){
 function getApiDate(api){
     console.log(api);
     var id = "#date_selector_"+api;
-    console.log( $(id).val());
     if ($(id).length === 0) return undefined;
     return $(id).val();
-
 }
-
- 
 
 function showError(content){
     $('#error_content').text(content);
@@ -321,20 +345,19 @@ function showError(content){
         $("#alert_container").hide();
     });
 }
-//consturct the Control panel main DOM elements
- 
+
+// Consturct the Control panel main DOM elements.
 var PanelControl = L.Control.extend({
     options: {
         position: 'topright'
     },
     onAdd: function (map) {
-        //c is the main container for the control panel
+        // c is the main container for the control panel.
         var c = L.DomUtil.create('div', 'navigation-control');
         c.setAttribute('id', 'control_container');
-        L.DomEvent.disableClickPropagation(c); //if click/drag on the panel, the map won't react
-
+        L.DomEvent.disableClickPropagation(c); // If click/drag on the panel, the map won't react.
         var container = L.DomUtil.create('div', 'navv', c);
         container.setAttribute('id', 'control_panel');
         return c;
     }
-}); 
+});

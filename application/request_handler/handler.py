@@ -45,6 +45,7 @@ def handleAllDataReq():
 	print "***************"
 	print "*** REQUEST ***"
 	print "***************"
+
 	try:
 		input_data = request.data
 		input_data = json.loads(input_data)	
@@ -64,11 +65,13 @@ def handleAllDataReq():
 	except ValueError as e:
 		response = str(e),400
 		print response 
+
 	finally:
 		print "****"
 		print response
 		return response;
 	#return response
+
 
 @handler.route('/app/geo', methods=['POST'])
 def handleGeoLocReq():
