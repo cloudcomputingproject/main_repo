@@ -1,12 +1,13 @@
-// A controller for the API Handlers.
+// The Controller for the API Handlers.
 // The functions implemented here handle the events in the Control panel of the map,
-// extract data from the Control panel, and send a request to the server.
-// Use this to make the request to the server.
+// extract data from the Control panel, and send a request to the Model for data.
+// The response from the Model is then passed to the View
+
 // The code below uses the Module Pattern (http://toddmotto.com/mastering-the-module-pattern/).
 
 var DataHandler = (function() {
 
-	// Make a request to the server and gets the response
+	// Make a request to the Model and gets the response
 	// @cb -  callback, the APIHandler passes this function 
 	// @err - callback, handles errors
 	var makeRequest = function(post_data, cb, err){
@@ -29,14 +30,14 @@ var DataHandler = (function() {
 		// (containing valid data).
 		// So, delegate it to the view to handle and
 		// set the checkbox to checked for the given API.
-		var response_data = getResponseData(data);
 		var response_api = getResponseApi(data);
 		View.handle(data, response_api);
 		disable_preloader();
 		console.log('All visualised');
 	};
 
- 
+ 	//Wrapper function which handles all types of locations,
+ 	//and returns the desired location based on an api
 	var getLocation = function(api){
 		// Check if we are in Search city mode or Draw area mode.
 		var location = {};
@@ -93,7 +94,12 @@ var DataHandler = (function() {
 	return module;
 })();
 
-
+//This module is used when the user has request data for the Police API
+//(so the listeners for Updata map/Checkbox call this function)
+//handle() constructs the object by collecting the data which the user
+//has inputted, wraps in in an object, and makes a request to the Model
+//handle_police_response here calls the default handler because usually this is
+//sufficient.
  var PoliceHandler = (function(DataHandler){
  	// Get the data and send it.
  	var api  = 'police';
@@ -119,7 +125,7 @@ var DataHandler = (function() {
 	var constructRequestObject = function() {
 		// Add all the data to the object.
 		var request = {};
-		request['name'] = api;
+		request.name = api;
 
 		var data = {};
 		data.category = getCrimeCategory();
@@ -304,7 +310,7 @@ var GeoCodingHandler = (function(DataHandler){
 		console.log(response);
 		// This is the default action.
 		if (map){
-			zoomTo(getCenter(response["data"]),DEFAULT_ZOOM+5);      
+			zoomTo(getCenter(response.data),DEFAULT_ZOOM+5);      
 		}else{
 			init();
 		}

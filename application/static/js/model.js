@@ -71,7 +71,6 @@ var initialiseModel = function(api_names) {
 		//add getters to the response
 		var adjusted_response = (function(data){
 			var new_response = {};	
-			console.log(data)
 			if(!data && !data.data) {
 				return undefined;
 			}
@@ -208,7 +207,6 @@ var initialiseModel = function(api_names) {
 			if(!api) return undefined;
 			//check if the given api was added on init of cache
 			if(! (api in cache) ) {
-				console.log(cache)
 				console.log('trying to check cache for non valid API');
 				return undefined;
 			}
@@ -221,19 +219,18 @@ var initialiseModel = function(api_names) {
 				console.log("API cache doesn't have the entry for the request");
 				return undefined;
 			}
-			console.log(cached_response)
+		 
 			//check what is the timestamp of the object
 			var timestamp = cached_response.timestamp;
-			console.log(timestamp)
+		 
 			//check if the data is fresh enough
 			if (ageOfTimestamp(timestamp) < MAX_CACHE_TIME) {
 				console.log("Cache object is fresh enough");
 				return cached_response.data;
 			} else{
 				//remove it from the cache
-				console.log(cache[api][md5_of_request])
-				delete cache[api][md5_of_request];
 				console.log("Cache object is not fresh enough");
+ 				delete cache[api][md5_of_request];
 				return undefined;
 			}
 		};
@@ -248,8 +245,7 @@ var initialiseModel = function(api_names) {
 //wrapper for the ajax request.
 //accepts the request object(@data) and a callback function(@cb)
 function makeRequest( request_object, modelResponseHandler, err, cb){
-console.log('begin request')
-console.log(Date.now())
+ 
 	$.ajax({
 	      type: "POST",
 	      url: domain+'/app/allData',
@@ -269,9 +265,7 @@ console.log(Date.now())
 
 	      },
 	      success:  function(response){ 
-	      	console.log('Server returned')
-	      	console.log(Date.now());
-	      	console.log('receiving the data');
+	      	console.log('Server returned, receiving the data');
 			console.log(response);
 			if(modelResponseHandler && cb){
 		      	modelResponseHandler(request_object,response,cb,err); //data is the request object
