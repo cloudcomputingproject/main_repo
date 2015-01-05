@@ -18,22 +18,21 @@ var Utils = {
 /* Helper methods, used throughout the application */
 
 function enable_preloader(){
-    console.log('ebable preloader')
-$.blockUI({
-    message: $('#preloader'),
-     css:  {
-            border: 'none', 
-            padding: '15px', 
-            backgroundColor: '#000', 
-            '-webkit-border-radius': '10px', 
-            '-moz-border-radius': '10px', 
-            opacity: .5, 
-            color: '#fff' 
-        } }); 
+  
+    $.blockUI({
+        message: $('#preloader'),
+         css:  {
+                border: 'none', 
+                padding: '15px', 
+                backgroundColor: '#000', 
+                '-webkit-border-radius': '10px', 
+                '-moz-border-radius': '10px', 
+                opacity: 0.5, 
+                color: '#fff' 
+            } }); 
   }
   function disable_preloader(){
-    console.log('disable_preloader')
-    setTimeout($.unblockUI, 80); 
+     setTimeout($.unblockUI, 80); 
   }
 //Note: it's in milliseconds :)
 function ageOfTimestamp(timestamp){
@@ -43,7 +42,7 @@ function ageOfTimestamp(timestamp){
 function getAPIFromRequestObject(request_object){
     // console.log(request_object)
     if(request_object && request_object.name){
-        return request_object.name
+        return request_object.name;
     }
     return undefined;
  
@@ -70,7 +69,7 @@ function getResponseData(response){
 function circleLayerToCircle(raw_layer){
     var circle = {};
 
-    circle['type'] = 'area'
+    circle['type'] = 'area';
     circle['radius'] = raw_layer.getRadius();
     circle['lat'] = raw_layer.getgetLatLng().lat;
     circle['long'] = raw_layer.getgetLatLng().lng;
@@ -79,7 +78,7 @@ function circleLayerToCircle(raw_layer){
 function rectangleLayerToRectangle(raw_layer){
   var rectangle = {};
 
-    rectangle['type'] = 'rectangle'
+    rectangle['type'] = 'rectangle';
     var northEast = raw_layer.getBounds().getNorthWest();
     rectangle['northEast'] = [northEast.lat, northEast.lng];
     var southWest = raw_layer.getBounds().getSouthWest();
@@ -177,35 +176,31 @@ function getAirqualityPrettyHtml(json){
 return html;
 }
 function getPolicePrettyHtml(json){
-     var category = json.category;
-     // var context = json.context;
-     var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
-     var date = json.outcome_status ? json.outcome_status.date : "N/A";
+    var category = json.category;
+    // var context = json.context;
+    var outcome_status_category = json.outcome_status ? json.outcome_status.category : "N/A";
+    var date = json.outcome_status ? json.outcome_status.date : "N/A";
 
-  var pre_content = "Crime details";
+    var pre_content = "Crime details";
     var content = '<tr><td>Category</td><td>'+category+'</td></tr>'+
     '<tr><td>Outcome</td><td>'+outcome_status_category+'</td></tr>'+
     '<tr><td>Date</td><td>'+date+'</td></tr>';
 
     var html = '<div class="panel panel-info">'+
-  '<!-- Default panel contents -->'+
-  '<div class="panel-heading">'+'Crime'+' </div>'+
-  '<div class="panel-body">'+
-  '  <p>'+pre_content + '</p>'+
-  '</div>'+
-  '<!-- Table -->'+
-  '<table class="table">'+content+
-  '</table>'+
-'</div>';
-return html;
+    '<!-- Default panel contents -->'+
+    '<div class="panel-heading">'+'Crime'+' </div>'+
+    '<div class="panel-body">'+
+    '  <p>'+pre_content + '</p>'+
+    '</div>'+
+    '<!-- Table -->'+
+    '<table class="table">'+content+
+    '</table>'+
+    '</div>';
+    return html;
 }
-  /**
-    }
-}
-}
-}
-}
-}
+
+
+ /*
 *
 *  MD5 (Message-Digest Algorithm)
 *  http://www.webtoolkit.info/

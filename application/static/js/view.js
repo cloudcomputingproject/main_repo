@@ -9,6 +9,24 @@ The data contains the geoJSON response from the server + getter methods
 for specific data format(Heatmap layer and Marker layer need different types of data)
 If a given API requires custom viewing, the View takes this into considaration and
 executes the custom API view handler
+
+The layers object stores all layers for the application
+It uses the md5 of the request object with which the response was requested to 
+uniquely identify the data.
+layers {
+	police : {
+		heatmap: {
+			md5code: layer
+			..
+		},
+		markers:{
+			md5code: layer
+			..
+		}
+	}
+	restaurant
+	....
+}
 */
 
 //add default layers(marker and heatmap) for each api
@@ -40,7 +58,7 @@ function getLayers(){
 }
 function getLayer(api, layer_type, md5){
 	if(layers && layers[api] && layers[api][layer_type] && layers[api][layer_type][md5]){
-		return layers[api][layer_type][md5]
+		return layers[api][layer_type][md5];
 	} else{
 		return undefined; 
 	}
@@ -60,19 +78,17 @@ function removeDataFromAllLayers(api){
 	all_heatmap_ids.forEach(function(id){
 		//for each layer we want to remove it from the map
 		var layer  = layers[api]['heatmap'][id];
-
-		console.log(layer)
+		 
 		if(layer && map.hasLayer(layer)){
 			map.removeLayer(layer);
 			layers[api]['heatmap'][id] = createHeatmapEmptyLayer();
 		}
 	});
 	var all_marker_ids = Object.keys(layers[api]['markers']);
-	console.log(all_marker_ids)
+
 	all_marker_ids.forEach(function(id){
 		//for each layer we want to remove it from the map
 		var layer  = layers[api]['markers'][id];
-				console.log(layer)
 
 		if(layer && map.hasLayer(layer)){
 
@@ -95,13 +111,11 @@ function removeDataFromLayer(api,layer_type, md5){
 	}
 
 	if(layer_type === 'markers'){
-		console.log(layers)
 
 		// var marker_layer = layers[api]['markers'][md5];
 		var marker_layer = getLayer(api, 'markers', md5);
 		if(marker_layer){
-			console.log(marker_layer)
-			layers[api]['markers'][md5] = createMarkersEmptyLayer();
+ 			layers[api]['markers'][md5] = createMarkersEmptyLayer();
 			map.removeLayer(marker_layer);
 			return true;
 		} else {
@@ -139,7 +153,7 @@ var initialiseView = function(){
 		} else { // no custom view defined so just visualise on the map(using the defaultViewHandler)
 			defaultViewHandler(response, api);
 		}
-	}
+	};
 	//private methods
 	var defaultViewHandler = function(data, api){
 		var render_mode = getRenderMode(api);
@@ -150,15 +164,13 @@ var initialiseView = function(){
 		render_mode.forEach(function(mode){
 			if (mode === 'markers') {
 				// use the Model method to retrieve the data suitable for Markers
-				console.log(data);
-				//create new layer for this data
+ 				//create new layer for this data
 
 				// data_for_map = getMarkersData(data); 
 				renderMarkersOnMap(data, api);
 
 			} else if (mode === 'heatmap'){
-				console.log(data)
-				renderHeatmapOnMap(data, api);
+ 				renderHeatmapOnMap(data, api);
 			} else{
 				console.log('Render mode not specified');
 				return;
@@ -175,7 +187,6 @@ var initialiseView = function(){
 		
 		var md5_of_request = data.md5_of_request;
 
-		var heatmap = layers[api]['heatmap'][md5_of_request];
 		var heatmap = getLayer(api, 'heatmap', md5_of_request);
 		if(!heatmap){
 			heatmap = addLayer(api, 'heatmap', md5_of_request);
@@ -193,14 +204,14 @@ var initialiseView = function(){
 	};
 	var renderMarkersOnMap = function(data, api){
 		console.log('adding data to '+api+'\'s markers layer');
-		console.log(layers)
+	 
 		var md5_of_request = data.md5_of_request;
 		var layer = layers[api]['markers'][md5_of_request];
 		if(!layer){
 			layer = addLayer(api, 'markers', md5_of_request);
 		} 
 		var getMarkersData = data.getMarkersData;
-		var json = getMarkersData()
+		var json = getMarkersData();
 		if(json){
 	 		layer.addLayers(json); 
 	 		map.fitBounds(layer.getBounds());
@@ -222,10 +233,10 @@ var initialiseView = function(){
 					l.setPopupContent(new_content);
 				});
 			}else{
-				console.log('no layer :(')
+				console.log('no layer :(');
 			}
 		};
-		var module = {handle: handle} //houses
+		var module = {handle: handle}; //houses
 		return module;
 	})();
 	var airqualityViewHandler = (function(){
@@ -241,10 +252,10 @@ var initialiseView = function(){
 					l.setPopupContent(new_content);
 				});
 			}else{
-				console.log('no layer :(')
+				console.log('no layer :(');
 			}
 		};
-		var module = {handle: handle} //houses
+		var module = {handle: handle}; //houses
 		return module;
 	})();
 	var restaurantViewHandler = (function(){
@@ -260,10 +271,10 @@ var initialiseView = function(){
 					l.setPopupContent(new_content);
 				});
 			}else{
-				console.log('no layer :(')
+				console.log('no layer :(');
 			}
 		};
-		var module = {handle: handle} //houses
+		var module = {handle: handle}; //houses
 		return module;
 	})();
 	var houseViewHandler = (function(){
@@ -283,20 +294,20 @@ var initialiseView = function(){
 					l.setPopupContent(new_content);
 				});
 			}else{
-				console.log('no layer :(')
+				console.log('no layer :(');
 			}
 
 
 		};
 		//private method
-		var module = {handle: handle} //houses
+		var module = {handle: handle}; //houses
 		return module;
 	})();
 
 	var geoCodingViewHandler = (function(){
 		var handle = function(data){ 
 			console.log('geo coding cusomt viewer entered');
-		}
+		};
 		var module = {handle: handle};
 		return module; //geocoding
 	})();
