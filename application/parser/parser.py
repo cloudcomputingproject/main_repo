@@ -187,7 +187,7 @@ def parseSchoolData(listdata):
 			altEmail = item['altEmail']
 
 		point = Point((lng, lat))
-		props = {'name':name, 'type of establishment':typeOfEst, 'phase of education':phase, 'capacity':capacity, 'gender':gender, 'religious character':religiousChar, 'preferred email':prefEmail, 'alternative email':altEmail}
+		props = {'name':name, 'type_of_establishment':typeOfEst, 'phase_of_education':phase, 'capacity':capacity, 'gender':gender, 'religious_character':religiousChar, 'preferred_email':prefEmail, 'alternative_email':altEmail}
 		feature = Feature(geometry=point, properties=props)
 		features.append(feature)
 
